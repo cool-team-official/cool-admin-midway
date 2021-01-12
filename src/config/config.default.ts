@@ -1,4 +1,5 @@
 import { EggAppConfig, EggAppInfo, PowerPartial } from 'egg';
+import * as path from 'path';
 
 export type DefaultConfig = PowerPartial<EggAppConfig>;
 
@@ -10,6 +11,10 @@ export default (appInfo: EggAppInfo) => {
 
   // add your config here
   config.middleware = [];
+
+  config.view = {
+    root: path.join(appInfo.baseDir, 'view'),
+  }
 
   return config;
 };
