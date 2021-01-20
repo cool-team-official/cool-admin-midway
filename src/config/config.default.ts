@@ -9,7 +9,7 @@ export default (appInfo: EggAppInfo) => {
   config.keys = appInfo.name + '_1611125891022_7317';
 
   // add your config here
-  config.middleware = [];
+  config.middleware = ['reportMiddleware'];
 
   return config;
 };
