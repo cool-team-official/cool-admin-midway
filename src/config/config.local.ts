@@ -7,10 +7,10 @@ export default (appInfo: EggAppInfo) => {
 
     config.orm = {
         type: 'mysql',
-        host: '127.0.0.1',
+        host: '139.196.196.203',
         port: 3306,
-        username: 'root',
-        password: '123123',
+        username: 'midway',
+        password: 'Yxd8mJYE4p8BytHF',
         database: 'midway',
         synchronize: true,
         logging: false,
