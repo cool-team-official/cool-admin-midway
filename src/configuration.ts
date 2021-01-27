@@ -1,10 +1,10 @@
 import { App, Configuration } from '@midwayjs/decorator';
 import { ILifeCycle, IMidwayContainer } from '@midwayjs/core';
 import * as orm from '@midwayjs/orm';
-import * as cool from '@midwayjs/cool-core';
 import { listModule } from '@midwayjs/decorator';
 import { Application } from 'egg';
 import * as moment from 'moment';
+import * as cool from '@midwayjs/cool-core';
 
 @Configuration({
   imports: [

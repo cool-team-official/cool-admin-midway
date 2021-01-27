@@ -1,9 +1,8 @@
 import { Provide } from '@midwayjs/decorator';
 import { IUserOptions } from '../interface';
-import { BaseService } from '@midwayjs/cool-core'
 
 @Provide()
-export class UserService extends BaseService {
+export class UserService {
 
   async getUser(options: IUserOptions) {
     return {

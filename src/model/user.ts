@@ -1,10 +1,9 @@
+import { BaseModel } from '@midwayjs/cool-core';
 import { EntityModel } from '@midwayjs/orm';
-import { PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Column } from 'typeorm';
  
 @EntityModel('user')
-export class User {
-  @PrimaryGeneratedColumn({ name: "id" })
-  id: number;
+export class User extends BaseModel{
  
   @Column({ name: "name" })
   name: string;
