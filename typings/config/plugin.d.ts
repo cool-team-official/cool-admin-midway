@@ -7,6 +7,7 @@ import 'egg-session';
 import 'egg-i18n';
 import 'egg-multipart';
 import 'egg-security';
+import 'egg-logrotator';
 import 'egg-schedule';
 import 'egg-jsonp';
 import 'egg-view';

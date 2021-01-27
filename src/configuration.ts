@@ -1,12 +1,16 @@
 import { App, Configuration } from '@midwayjs/decorator';
 import { ILifeCycle, IMidwayContainer } from '@midwayjs/core';
 import * as orm from '@midwayjs/orm';
+import * as cool from '@midwayjs/cool-core';
 import { listModule } from '@midwayjs/decorator';
 import { Application } from 'egg';
-
+import * as moment from 'moment';
 
 @Configuration({
   imports: [
+    // cool官方核心组件 官网：https://cool-js.com
+    cool,
+    // typeorm数据库组件 文档地址 https://typeorm.io/， 打不开可以用这个链接 https://typeorm.biunav.com/zh/
     orm
   ],
 })
@@ -16,6 +20,14 @@ export class ContainerLifeCycle implements ILifeCycle {
   app: Application;
 
   async onReady(container?: IMidwayContainer): Promise<void> {
+    // 格式化时间
+    Date.prototype.toJSON = function () {
+      return moment(this).format('YYYY-MM-DD HH:mm:ss');
+    };
+    // 新增String支持replaceAll方法
+    String.prototype['replaceAll'] = function (s1, s2) {
+      return this.replace(new RegExp(s1, 'gm'), s2);
+    };
 
     console.log('加载配置')
     // this.app.use(async (ctx, next) => {
