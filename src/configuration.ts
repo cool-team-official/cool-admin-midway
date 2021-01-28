@@ -20,6 +20,7 @@ export class ContainerLifeCycle implements ILifeCycle {
   app: Application;
 
   async onReady(container?: IMidwayContainer): Promise<void> {
+    //this.app.use(await this.app.generateMiddleware('reportMiddleware'));
     // 格式化时间
     Date.prototype.toJSON = function () {
       return moment(this).format('YYYY-MM-DD HH:mm:ss');
