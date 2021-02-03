@@ -4,7 +4,7 @@ import * as orm from '@midwayjs/orm';
 import { listModule } from '@midwayjs/decorator';
 import { Application } from 'egg';
 import * as moment from 'moment';
-import * as cool from '@midwayjs/cool-core';
+import * as cool from 'midwayjs-cool-core';
 
 @Configuration({
   imports: [

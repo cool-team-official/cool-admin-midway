@@ -1,11 +1,13 @@
-import { Controller, Get, Query, Provide } from '@midwayjs/decorator';
+import { Get, Query, Provide } from '@midwayjs/decorator';
 import { User } from '../model/user';
 import { Repository } from 'typeorm';
 import { InjectEntityModel } from '@midwayjs/orm';
-import { BaseController } from '@midwayjs/cool-core';
+import { BaseController, Controller } from 'midwayjs-cool-core';
+
+//import {Controller} from './controller';
 
 @Provide()
-@Controller('/test')
+@Controller()
 export class HomeController extends BaseController{
 
   @InjectEntityModel(User)

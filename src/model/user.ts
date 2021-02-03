@@ -1,4 +1,4 @@
-import { BaseModel } from '@midwayjs/cool-core';
+import { BaseModel } from 'midwayjs-cool-core';
 import { EntityModel } from '@midwayjs/orm';
 import { Column } from 'typeorm';
  
