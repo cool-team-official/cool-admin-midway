@@ -1,26 +1,10 @@
-import { Get, Query, Provide } from '@midwayjs/decorator';
-import { User } from '../model/user';
-import { Repository } from 'typeorm';
-import { InjectEntityModel } from '@midwayjs/orm';
-import { BaseController, Controller } from 'midwayjs-cool-core';
-
-//import {Controller} from './controller';
+import { Controller, Get, Provide } from '@midwayjs/decorator';
 
 @Provide()
-@Controller()
-export class HomeController extends BaseController{
-
-  @InjectEntityModel(User)
-  userModel: Repository<User>
-
-  getModel() {
-    return this.userModel;
+@Controller('/')
+export class HomeController {
+  @Get('/')
+  async home() {
+    return 'Hello Midwayjs!';
   }
-
-   // 根据ID 获得单条信息
-   @Get("/info")
-   async info(@Query() id) {
-       return id;
-   }
-
 }

@@ -4,12 +4,22 @@ export type DefaultConfig = PowerPartial<EggAppConfig>;
 
 export default (appInfo: EggAppInfo) => {
   const config = {} as DefaultConfig;
+  // cookie sign key
+  config.keys = appInfo.name + 'cool-admin-next';
 
-  // use for cookie sign key, should change to your own and keep security
-  config.keys = appInfo.name + '_1611125891022_7317';
+  // 中间件
+  //config.middleware = [];
 
-  // add your config here
-  config.middleware = [];
+  config.security = {
+    csrf: {
+      enable: false,
+    },
+  };
+
+  // 替换成midway的日志
+  config.midwayFeature = {
+    replaceEggLogger: true
+  }
 
   return config;
 };

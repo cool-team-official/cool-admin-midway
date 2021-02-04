@@ -1,4 +1,4 @@
-# my_midway_project
+# my-midway-project
 
 ## 快速入门
 
