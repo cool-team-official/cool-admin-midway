@@ -8,15 +8,29 @@ export default (appInfo: EggAppInfo) => {
   config.keys = appInfo.name + 'cool-admin-next';
 
   // 中间件
-  //config.middleware = [];
+  config.middleware = [];
 
+  // 关闭安全校验
   config.security = {
     csrf: {
       enable: false,
     },
   };
 
-  // 替换成midway的日志
+  // cool-admin特有的配置
+  config.cool = {
+    // 全局路由前缀
+    router: {
+      prefix: ''
+    },
+    // 分页配置
+    page: {
+      // 分页查询每页条数
+      size: 15,
+    }
+  }
+
+  // 将egg日志替换成midway
   config.midwayFeature = {
     replaceEggLogger: true
   }
