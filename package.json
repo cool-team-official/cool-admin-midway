@@ -10,6 +10,7 @@
     "egg": "^2.29.1",
     "egg-scripts": "^2.13.0",
     "midwayjs-cool-core": "file:/Users/ap/Documents/srcs/cool-admin/midway-core/core/dist",
+    "midwayjs-cool-redis": "file:/Users/ap/Documents/srcs/cool-admin/midway-core/redis/dist",
     "mysql2": "^2.2.5"
   },
   "devDependencies": {

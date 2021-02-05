@@ -4,7 +4,7 @@ import { CoolController, CoolCache } from 'midwayjs-cool-core';
 @Provide()
 @CoolController()
 export class Home1Controller {
-  @Inject('cool-core:coolCache')
+  @Inject('cool:cache')
   coolCache: CoolCache;
   @Get('/1')
   async home() {
