@@ -9,7 +9,8 @@ export class HomeController {
 
   @Get('/1')
   async home(@Query() data: string) {
-    console.log(await this.coolCache.set('a', data, 10000))
+    //console.log(this.coolCache)
+    await this.coolCache.set('a', data);
     return await this.coolCache.get('a');
   }
 }
