@@ -1,8 +1,11 @@
 import { Get, Provide, Inject, Query } from '@midwayjs/decorator';
 import { CoolController, CoolCache } from 'midwayjs-cool-core';
+//import { InjectEntityModel } from '@midwayjs/orm';
+import { User } from '../entity/user';
+
 
 @Provide()
-@CoolController()
+@CoolController({ api: ['add'], model: User })
 export class HomeController {
   @Inject('cool:cache')
   coolCache: CoolCache;
