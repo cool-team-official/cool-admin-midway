@@ -1,8 +1,6 @@
 import { Rule, RuleType } from "@midwayjs/decorator";
 
-export class UserDTO {
-  @Rule(RuleType.number().required())
-  id: number;
+export class TestDTO {
   
   @Rule(RuleType.string().required())
   firstName: string;

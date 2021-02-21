@@ -8,7 +8,7 @@ export default (appInfo: EggAppInfo) => {
   config.keys = appInfo.name + 'cool-admin-next';
 
   // 中间件
-  config.middleware = [];
+  config.middleware = ['reportMiddleware'];
 
   // 关闭安全校验
   config.security = {
