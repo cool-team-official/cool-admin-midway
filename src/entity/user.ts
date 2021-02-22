@@ -6,11 +6,11 @@ import { Rule, RuleType } from "@midwayjs/decorator";
 @EntityModel('user')
 export class User extends BaseModel {
 
-    @Rule(RuleType.number().required())
+    @Rule(RuleType.string().required())
     @Column()
     name: string;
     
-    @Rule(RuleType.number().max(60))
+    @Rule(RuleType.number().max(18))
     @Column('int')
     age: number;
 

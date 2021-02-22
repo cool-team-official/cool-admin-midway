@@ -13,7 +13,7 @@ export default (appInfo: EggAppInfo) => {
         password: '123123',
         database: 'cool-admin-next',
         synchronize: true,
-        logging: false,
+        logging: true,
     }
 
     config.logger = {

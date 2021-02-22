@@ -1,28 +1,26 @@
-import { Get, Provide, Inject, Query, Body, ALL, Post, Validate } from '@midwayjs/decorator';
+import { Get, Provide, Inject, Query, Post } from '@midwayjs/decorator';
 import { CoolController, CoolCache, BaseController, RESCODE } from 'midwayjs-cool-core';
-//import { InjectEntityModel } from '@midwayjs/orm';
-import { User } from '../entity/user';
-import { TestDTO } from '../dto/test';
+import { InjectEntityModel } from '@midwayjs/orm';
+import { Repository } from 'typeorm';
+import { Role } from '../entity/role';
 
 @Provide()
 @CoolController({
-  api: ['info', 'add'],
-  entity: User,
-  infoIgnoreProperty: ['age']
+  api: ['add','delete','update','info','list','page'],
+  entity: 实体,
+  pageQueryOp: {
+    fieldEq: ['id', 'name'],
+    keyWordLikeFields: ['a.name'],
+    select: ['a.*, b.name AS roleName'],
+    leftJoin: [
+      {
+        entity: Role,
+        alias: 'b',
+        condition: 'a.id = b.userId'
+      }
+    ]
+  }
 })
-export class HomeController extends BaseController {
-  @Inject('cool:cache')
-  coolCache: CoolCache;
-
-  @Get('/1')
-  async home(@Query() data: string) {
-    //console.log(this.coolCache)
-    await this.coolCache.set('a', data);
-    return await this.coolCache.get('a');
-  }
-
-  @Post('/2')
-  async 2(@Body(ALL) test: TestDTO) {
-    return this.fail('哈哈', RESCODE.VALIDATEFAIL);
-  }
+export class XxxController extends BaseController {
+ 
 }

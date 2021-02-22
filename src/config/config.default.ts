@@ -7,8 +7,8 @@ export default (appInfo: EggAppInfo) => {
   // cookie sign key
   config.keys = appInfo.name + 'cool-admin-next';
 
-  // 中间件
-  config.middleware = ['reportMiddleware'];
+  // 启用中间件 这里需要设置为 [] 否则CoolController设置的中间件也会无效
+  config.middleware = [];
 
   // 关闭安全校验
   config.security = {
