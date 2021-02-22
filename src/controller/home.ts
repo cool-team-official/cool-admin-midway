@@ -1,7 +1,5 @@
 import { Get, Provide, Inject, Query, Post } from '@midwayjs/decorator';
-import { CoolController, CoolCache, BaseController, RESCODE } from 'midwayjs-cool-core';
-import { InjectEntityModel } from '@midwayjs/orm';
-import { Repository } from 'typeorm';
+import { CoolController, BaseController } from 'midwayjs-cool-core';
 import { Role } from '../entity/role';
 
 @Provide()
