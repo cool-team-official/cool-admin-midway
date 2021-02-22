@@ -1,4 +1,4 @@
-import { Get, Provide, Inject, Query, Post } from '@midwayjs/decorator';
+import { Provide } from '@midwayjs/decorator';
 import { CoolController, BaseController } from 'midwayjs-cool-core';
 import { Role } from '../entity/role';
 
