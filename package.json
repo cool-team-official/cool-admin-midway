@@ -9,6 +9,8 @@
     "@midwayjs/web": "^2.7.7",
     "egg": "^2.29.3",
     "egg-scripts": "^2.13.0",
+    "egg-view-nunjucks": "^2.3.0",
+    "ipip-ipdb": "^0.3.0",
     "midwayjs-cool-core": "file:/Users/ap/Documents/srcs/cool-admin/midway-core/core/dist",
     "midwayjs-cool-redis": "file:/Users/ap/Documents/srcs/cool-admin/midway-core/redis/dist",
     "mysql2": "^2.2.5"

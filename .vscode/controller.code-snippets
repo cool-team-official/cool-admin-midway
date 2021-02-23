@@ -1,31 +1,22 @@
 {
-    "controller": {
-      "prefix": "controller",
-      "body": [
-        "import { BaseController } from 'egg-cool-controller';",
-        "import router from 'egg-cool-router';\n",
-  
-        "/**",
-        "* 控制器功能描述",
-        "*/",
-        "@router.prefix(['add', 'delete', 'update', 'info', 'list', 'page'])",
-        "export default class XXXController extends BaseController {",
-        "\tinit() {",
-        "\t\tthis.setEntity(this.ctx.repo.xxx);",
-        "\t\tthis.setService(this.ctx.service.xxx);",
-        "\t}\n",
-  
-        "\t/**",
-        "\t* 其他接口",
-        "\t*/",
-        "\t@router.post('/xxx')",
-        "\tasync xxx() {",
-        "\t\tawait this.OpService.xxx(this.getBody());",
-        "\t\tthis.res();",
-        "\t}",
-        "}"
-      ],
-      "description": "cool-admin controller代码片段 node后端"
-    }
+  "controller": {
+    "prefix": "controller",
+    "body": [
+      "import { Provide } from '@midwayjs/decorator';",
+      "import { CoolController, BaseController } from 'midwayjs-cool-core';",
+      "",
+      "/**",
+      " * 描述",
+      " */",
+      "@Provide()",
+      "@CoolController({",
+      "  api: ['add', 'delete', 'update', 'info', 'list', 'page'],",
+      "  entity: 实体",
+      "})",
+      "export class XxxController extends BaseController {",
+      "",
+      "}"
+    ],
+    "description": "cool-admin controller代码片段"
   }
-  
+}

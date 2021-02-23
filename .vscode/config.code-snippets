@@ -1,0 +1,24 @@
+{
+  "config": {
+    "prefix": "config",
+    "body": [
+      "import { Application } from 'egg';",
+      "import { ModuleConfig } from 'midwayjs-cool-core';",
+      "",
+      "/**",
+      " * 模块配置",
+      " */",
+      "export default (app: Application) => {",
+      "    return {",
+      "        // 模块名称",
+      "        name: 'xxx',",
+      "        // 模块描述",
+      "        describe: 'xxx',",
+      "        // 中间件",
+      "        middlewares: [],",
+      "    } as ModuleConfig;",
+      "};"
+    ],
+    "description": "cool-admin config代码片段"
+  }
+}
