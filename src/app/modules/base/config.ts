@@ -11,6 +11,6 @@ export default (app: Application) => {
         // 模块描述
         describe: '基础的权限管理功能，包括登录，权限校验',
         // 中间件
-        middlewares: ['adminLogsMiddleware'],
+        middlewares: ['baseLogsMiddleware'],
     } as ModuleConfig;
 };

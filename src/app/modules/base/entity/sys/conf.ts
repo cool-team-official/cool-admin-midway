@@ -5,8 +5,8 @@ import { BaseEntity } from 'midwayjs-cool-core';
 /**
  * 系统配置
  */
-@EntityModel('admin_sys_conf')
-export class AdminSysConfEntity extends BaseEntity {
+@EntityModel('base_sys_conf')
+export class BaseSysConfEntity extends BaseEntity {
 
     @Index({ unique: true })
     @Column({ comment: '配置键' })

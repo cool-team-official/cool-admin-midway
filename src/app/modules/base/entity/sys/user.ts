@@ -5,8 +5,8 @@ import { Column, Index } from 'typeorm';
 /**
  * 系统用户
  */
-@EntityModel('admin_sys_user')
-export class AdminSysUserEntity extends BaseEntity {
+@EntityModel('base_sys_user')
+export class BaseSysUserEntity extends BaseEntity {
 
     @Index()
     @Column({ comment: '部门ID', type: 'bigint', nullable: true })

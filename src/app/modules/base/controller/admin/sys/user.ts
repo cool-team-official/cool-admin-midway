@@ -1,7 +1,7 @@
 import { Body, Inject, Post, Provide } from '@midwayjs/decorator';
 import { CoolController, BaseController } from 'midwayjs-cool-core';
-import { AdminSysUserEntity } from '../../entity/sys/user';
-import { AdminSysUserService } from '../../service/sys/user';
+import { BaseSysUserEntity } from '../../../entity/sys/user';
+import { BaseSysUserService } from '../../../service/sys/user';
 
 /**
  * 系统用户
@@ -9,19 +9,19 @@ import { AdminSysUserService } from '../../service/sys/user';
 @Provide()
 @CoolController({
     api: ['add', 'delete', 'update', 'info', 'list', 'page'],
-    entity: AdminSysUserEntity
+    entity: BaseSysUserEntity
 })
-export class AdminSysUserController extends BaseController {
+export class BaseSysUserController extends BaseController {
 
     @Inject()
-    adminSysUserService: AdminSysUserService;
+    BaseSysUserService: BaseSysUserService;
 
     /**
      * 移动部门
      */
     @Post('/move')
     async move(@Body() departmentId: number, @Body() userIds: []) {
-        await this.adminSysUserService.move(departmentId, userIds);
+        await this.BaseSysUserService.move(departmentId, userIds);
         this.ok();
     }
 

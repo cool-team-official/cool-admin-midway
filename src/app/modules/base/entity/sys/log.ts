@@ -5,8 +5,8 @@ import { Column, Index } from 'typeorm';
 /**
  * 系统日志
  */
-@EntityModel('admin_sys_log')
-export class AdminSysLogEntity extends BaseEntity {
+@EntityModel('base_sys_log')
+export class BaseSysLogEntity extends BaseEntity {
 
     @Index()
     @Column({ comment: '用户ID', nullable: true, type: 'bigint' })

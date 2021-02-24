@@ -1,7 +1,7 @@
 import { Provide } from '@midwayjs/decorator';
 import { CoolController, BaseController } from 'midwayjs-cool-core';
 import { Context } from 'vm';
-import { AdminSysRoleEntity } from '../../entity/sys/role';
+import { BaseSysRoleEntity } from '../../../entity/sys/role';
 
 /**
  * 系统角色
@@ -9,7 +9,12 @@ import { AdminSysRoleEntity } from '../../entity/sys/role';
 @Provide()
 @CoolController({
   api: ['add', 'delete', 'update', 'info', 'list', 'page'],
-  entity: AdminSysRoleEntity,
+  entity: BaseSysRoleEntity,
+  insertParam: (async (ctx: Context) => {
+    return {
+      userId: ctx.admin.userId
+    }
+  }),
   pageQueryOp: {
     keyWordLikeFields: ['name', 'label'],
     where: (async (ctx: Context) => {
@@ -23,6 +28,6 @@ import { AdminSysRoleEntity } from '../../entity/sys/role';
     })
   }
 })
-export class AdminSysRoleController extends BaseController {
+export class BaseSysRoleController extends BaseController {
 
 }

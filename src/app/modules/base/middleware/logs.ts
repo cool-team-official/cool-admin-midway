@@ -5,10 +5,11 @@ import { IWebMiddleware, IMidwayWebNext, IMidwayWebContext } from '@midwayjs/web
  * 日志中间件
  */
 @Provide()
-export class AdminLogsMiddleware implements IWebMiddleware {
+export class BaseLogsMiddleware implements IWebMiddleware {
 
     resolve() {
         return async (ctx: IMidwayWebContext, next: IMidwayWebNext) => {
+            console.log('日志')
             // 控制器前执行的逻辑
             const startTime = Date.now();
             // 执行下一个 Web 中间件，最后执行到控制器

@@ -4,20 +4,20 @@ import { InjectEntityModel } from '@midwayjs/orm';
 import { Repository } from 'typeorm';
 import { Context } from 'egg';
 import * as _ from 'lodash';
-import { AdminSysLogEntity } from '../../entity/sys/log';
+import { BaseSysLogEntity } from '../../entity/sys/log';
 import * as moment from 'moment';
 
 /**
  * 描述
  */
 @Provide()
-export class AdminSysLogService extends BaseService {
+export class BaseSysLogService extends BaseService {
 
     @Inject()
     ctx: Context;
 
-    @InjectEntityModel(AdminSysLogEntity)
-    adminSysLogEntity: Repository<AdminSysLogEntity>;
+    @InjectEntityModel(BaseSysLogEntity)
+    baseSysLogEntity: Repository<BaseSysLogEntity>;
 
     /**
      * 记录
@@ -27,7 +27,7 @@ export class AdminSysLogService extends BaseService {
      */
     async record(url, params, userId) {
         const ip = await this.ctx.helper.getReqIP();
-        const sysLog = new AdminSysLogEntity();
+        const sysLog = new BaseSysLogEntity();
         sysLog.userId = userId;
         sysLog.ip = ip;
         const ipAddrArr = new Array();
@@ -37,7 +37,7 @@ export class AdminSysLogService extends BaseService {
         if (!_.isEmpty(params)) {
             sysLog.params = JSON.stringify(params);
         }
-        await this.adminSysLogEntity.insert(sysLog);
+        await this.baseSysLogEntity.insert(sysLog);
     }
 
     /**
@@ -46,17 +46,17 @@ export class AdminSysLogService extends BaseService {
      */
     async clear(isAll?) {
         if (isAll) {
-            await this.adminSysLogEntity.clear();
+            await this.baseSysLogEntity.clear();
             return;
         }
         const keepDay = await this.ctx.service.sys.conf.getValue('logKeep');
         if (keepDay) {
             const beforeDate = `${moment().subtract(keepDay, 'days').format('YYYY-MM-DD')} 00:00:00`;
-            await this.adminSysLogEntity.createQueryBuilder()
+            await this.baseSysLogEntity.createQueryBuilder()
                 .where('createTime < :createTime', { createTime: beforeDate })
             await this.nativeQuery(' delete from sys_log where createTime < ? ', [beforeDate]);
         } else {
-            await this.adminSysLogEntity.clear();
+            await this.baseSysLogEntity.clear();
         }
     }
 }

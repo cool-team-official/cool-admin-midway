@@ -13,7 +13,6 @@ import * as cool from 'midwayjs-cool-core';
     // 必须，不可移除， cool-admin 官方组件 https://www.cool-js.com
     cool,
     //redis
-
   ]
 })
 export class ContainerLifeCycle implements ILifeCycle {
@@ -22,7 +21,6 @@ export class ContainerLifeCycle implements ILifeCycle {
   app: Application;
   // 应用启动完成
   async onReady(container?: IMidwayContainer) {
-  
 
   }
   // 应用停止

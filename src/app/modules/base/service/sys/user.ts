@@ -2,16 +2,16 @@ import { Provide } from '@midwayjs/decorator';
 import { BaseService } from 'midwayjs-cool-core';
 import { InjectEntityModel } from '@midwayjs/orm';
 import { Repository } from 'typeorm';
-import { AdminSysUserEntity } from '../../entity/sys/user';
+import { BaseSysUserEntity } from '../../entity/sys/user';
 
 /**
  * 系统用户
  */
 @Provide()
-export class AdminSysUserService extends BaseService {
+export class BaseSysUserService extends BaseService {
 
-    @InjectEntityModel(AdminSysUserEntity)
-    adminSysUserEntity: Repository<AdminSysUserEntity>;
+    @InjectEntityModel(BaseSysUserEntity)
+    baseSysUserEntity: Repository<BaseSysUserEntity>;
 
     /**
      * 移动部门
@@ -19,7 +19,7 @@ export class AdminSysUserService extends BaseService {
      * @param userIds 
      */
     async move(departmentId, userIds) {
-        await this.adminSysUserEntity.createQueryBuilder()
+        await this.baseSysUserEntity.createQueryBuilder()
             .update().set({ departmentId })
             .where('id =: (:userIds)', { userIds })
             .execute();

@@ -1,0 +1,17 @@
+{
+  "dto": {
+    "prefix": "dto",
+    "body": [
+      "import { Rule, RuleType } from '@midwayjs/decorator';",
+      "/**",
+      " * 描述",
+      " */",
+      "export class xxxDTO {",
+      "    // 描述",
+      "    @Rule(RuleType.string().required())",
+      "    xxx: string;",
+      "}"
+    ],
+    "description": "cool-admin dto代码片段"
+  }
+}

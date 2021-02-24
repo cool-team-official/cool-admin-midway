@@ -5,8 +5,8 @@ import { Column, Index } from 'typeorm';
 /**
  * 角色
  */
-@EntityModel('admin_sys_role')
-export class AdminSysRoleEntity extends BaseEntity {
+@EntityModel('base_sys_role')
+export class BaseSysRoleEntity extends BaseEntity {
 
     @Column({ comment: '用户ID' })
     userId: string;

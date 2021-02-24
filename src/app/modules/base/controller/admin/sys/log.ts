@@ -1,8 +1,8 @@
 import { Provide, Post, Inject } from '@midwayjs/decorator';
 import { CoolController, BaseController } from 'midwayjs-cool-core';
-import { AdminSysLogEntity } from '../../entity/sys/log';
-import { AdminSysUserEntity } from '../../entity/sys/user';
-import { AdminSysLogService } from '../../service/sys/log';
+import { BaseSysLogEntity } from '../../../entity/sys/log';
+import { BaseSysUserEntity } from '../../../entity/sys/user';
+import { BaseSysLogService } from '../../../service/sys/log';
 
 /**
  * 系统日志
@@ -10,21 +10,21 @@ import { AdminSysLogService } from '../../service/sys/log';
 @Provide()
 @CoolController({
     api: ['page'],
-    entity: AdminSysLogEntity,
+    entity: BaseSysLogEntity,
     pageQueryOp: {
         keyWordLikeFields: ['b.name', 'a.params', 'a.ipAddr'],
         select: ['a.*, b.name'],
         leftJoin: [{
-            entity: AdminSysUserEntity,
+            entity: BaseSysUserEntity,
             alias: 'b',
             condition: 'a.userId = b.id'
         }]
     }
 })
-export class AdminSysLogController extends BaseController {
+export class BaseSysLogController extends BaseController {
 
     @Inject()
-    adminSysLogService: AdminSysLogService;
+    adminSysLogService: BaseSysLogService;
 
     /**
      * 清空日志
