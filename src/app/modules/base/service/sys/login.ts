@@ -1,5 +1,5 @@
 import { Inject, Provide, Config } from '@midwayjs/decorator';
-import { BaseService, CoolCache, CoolCommException } from 'midwayjs-cool-core';
+import { BaseService, CoolCache, CoolCommException, CoolConfig, RESCODE } from 'midwayjs-cool-core';
 import { LoginDTO } from '../../dto/login';
 import * as svgCaptcha from 'svg-captcha';
 import * as svgToDataURL from 'svg-to-dataurl';
@@ -13,6 +13,7 @@ import * as _ from 'lodash';
 import { BaseSysMenuService } from './menu';
 import { BaseSysDepartmentService } from './department';
 import * as jwt from 'jsonwebtoken';
+import { Context } from 'egg';
 
 /**
  * 登录
@@ -24,7 +25,7 @@ export class BaseSysLoginService extends BaseService {
     coolCache: CoolCache;
 
     @InjectEntityModel(BaseSysUserEntity)
-    baseSysLogEntity: Repository<BaseSysUserEntity>;
+    baseSysUserEntity: Repository<BaseSysUserEntity>;
 
     @Inject()
     baseSysRoleService: BaseSysRoleService;
@@ -35,8 +36,11 @@ export class BaseSysLoginService extends BaseService {
     @Inject()
     baseSysDepartmentService: BaseSysDepartmentService;
 
+    @Inject()
+    ctx: Context;
+
     @Config('cool')
-    coolConfig;
+    coolConfig: CoolConfig;
 
     /**
      * 登录
@@ -46,7 +50,7 @@ export class BaseSysLoginService extends BaseService {
         const { username, captchaId, verifyCode, password } = login;
         const checkV = await this.captchaCheck(captchaId, verifyCode);
         if (checkV) {
-            const user = await this.baseSysLogEntity.findOne({ username });
+            const user = await this.baseSysUserEntity.findOne({ username });
             if (user) {
                 if (user.status === 0 || user.password !== md5(password)) {
                     throw new CoolCommException('账户或密码不正确~');
@@ -59,12 +63,12 @@ export class BaseSysLoginService extends BaseService {
                 throw new CoolCommException('该用户未设置任何角色，无法登录~');
             }
 
-            const { expire, refreshExpire } = this.coolConfig.token.jwt;
+            const { expire, refreshExpire } = this.coolConfig.jwt.token;
             const result = {
                 expire,
                 token: await this.generateToken(user, roleIds, expire),
                 refreshExpire,
-                refreshToken: await this.generateToken(user, roleIds, refreshExpire),
+                refreshToken: await this.generateToken(user, roleIds, refreshExpire, true),
             };
 
             const perms = await this.baseSysMenuService.getPerms(roleIds);
@@ -111,11 +115,11 @@ export class BaseSysLoginService extends BaseService {
     }
 
     /**
-   * 检验图片验证码
-   * @param captchaId 验证码ID
-   * @param value 验证码
-   */
-    public async captchaCheck(captchaId, value) {
+     * 检验图片验证码
+     * @param captchaId 验证码ID
+     * @param value 验证码
+     */
+    async captchaCheck(captchaId, value) {
         const rv = await this.coolCache.get(`verify:img:${captchaId}`);
         if (!rv || !value || value.toLowerCase() !== rv) {
             return false;
@@ -137,16 +141,40 @@ export class BaseSysLoginService extends BaseService {
         const tokenInfo = {
             isRefresh: false,
             roleIds,
+            username: user.username,
             userId: user.id,
             passwordVersion: user.passwordV,
         };
         if (isRefresh) {
-            delete tokenInfo.roleIds;
             tokenInfo.isRefresh = true;
         }
         return jwt.sign(tokenInfo,
-            this.coolConfig.token.jwt.secret, {
+            this.coolConfig.jwt.secret, {
             expiresIn: expire,
         });
+    }
+
+    /**
+     * 刷新token
+     * @param token 
+     */
+    async refreshToken(token: string) {
+        try {
+            const decoded = jwt.verify(token, this.coolConfig.jwt.secret);
+            if (decoded && decoded['isRefresh']) {
+                return jwt.sign(decoded,
+                    this.coolConfig.jwt.secret, {
+                    expiresIn: this.coolConfig.jwt.token.expire,
+                });
+            }
+        } catch (err) {
+            this.ctx.status = 401;
+            this.ctx.body = {
+                code: RESCODE.COMMFAIL,
+                message: '登录失效~',
+            };
+            return;
+        }
+
     }
 }

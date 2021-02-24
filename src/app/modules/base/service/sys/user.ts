@@ -25,8 +25,10 @@ export class BaseSysUserService extends BaseService {
             .execute();
     }
 
-    async test(){
-        // const a = await this.adminSysUserEntity.find();
-        // console.log(a);
+    /**
+     * 获得个人信息
+     */
+    async person() {
+        return await this.baseSysUserEntity.findOne({ id: this.ctx.admin.userId })
     }
 }

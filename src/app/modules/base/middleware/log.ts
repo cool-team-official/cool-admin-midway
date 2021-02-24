@@ -1,21 +1,21 @@
-import { Provide } from '@midwayjs/decorator';
-import { IWebMiddleware, IMidwayWebNext, IMidwayWebContext } from '@midwayjs/web';
+import { Inject, Provide } from '@midwayjs/decorator';
+import { IWebMiddleware, IMidwayWebNext } from '@midwayjs/web';
+import { BaseSysLogService } from '../service/sys/log';
+import { Context } from 'egg';
 
 /**
  * 日志中间件
  */
 @Provide()
-export class BaseLogsMiddleware implements IWebMiddleware {
+export class BaseLogMiddleware implements IWebMiddleware {
+
+    @Inject()
+    baseSysLogService: BaseSysLogService;
 
     resolve() {
-        return async (ctx: IMidwayWebContext, next: IMidwayWebNext) => {
-            console.log('日志')
-            // 控制器前执行的逻辑
-            const startTime = Date.now();
-            // 执行下一个 Web 中间件，最后执行到控制器
+        return async (ctx: Context, next: IMidwayWebNext) => {
+            this.baseSysLogService.record(ctx.url.split('?')[0], ctx.req.method === 'GET' ? ctx.request.query : ctx.request.body, ctx.admin ? ctx.admin.userId : null);
             await next();
-            // 控制器之后执行的逻辑
-            console.log(Date.now() - startTime);
         };
     }
 

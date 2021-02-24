@@ -53,6 +53,8 @@ export default (appInfo: EggAppInfo) => {
     router: {
       prefix: ''
     },
+    // 单点登录
+    sso: false,
     // jwt 生成解密token的
     jwt: {
       // 注意： 最好重新修改，防止破解

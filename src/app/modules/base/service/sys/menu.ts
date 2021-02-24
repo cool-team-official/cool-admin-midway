@@ -22,7 +22,7 @@ export class BaseSysMenuService extends BaseService {
      * 获得所有菜单
      */
     async list() {
-        const menus = await this.getMenus(this.ctx.admin.roleIds);
+        const menus = await this.getMenus(this.ctx.admin.roleIds, this.ctx.admin.username === 'admin');
         if (!_.isEmpty(menus)) {
             menus.forEach(e => {
                 const parentMenu = menus.filter(m => {
@@ -46,8 +46,8 @@ export class BaseSysMenuService extends BaseService {
         let perms = [];
         if (!_.isEmpty(roleIds)) {
             const result = await this.nativeQuery(`
-            SELECT a.perms FROM sys_menu a ${this.setSql(!roleIds.includes('1'),
-                'JOIN sys_role_menu b on a.id = b.menuId AND b.roleId in (?)', [roleIds])}
+            SELECT a.perms FROM base_sys_menu a ${this.setSql(!roleIds.includes('1'),
+                'JOIN base_sys_role_menu b on a.id = b.menuId AND b.roleId in (?)', [roleIds])}
             where 1=1 and a.perms is not NULL
             `, [roleIds]);
             if (result) {
@@ -68,14 +68,15 @@ export class BaseSysMenuService extends BaseService {
     /**
     * 获得用户菜单信息
     * @param roleIds
+    * @param isAdmin 是否是超管
     */
-    async getMenus(roleIds) {
+    async getMenus(roleIds, isAdmin) {
         return await this.nativeQuery(`
         SELECT
             a.*
         FROM
-            sys_menu a
-        ${this.setSql(!roleIds.includes('1'), 'JOIN sys_role_menu b on a.id = b.menuId AND b.roleId in (?)', [roleIds])}
+            base_sys_menu a
+        ${this.setSql(!isAdmin, 'JOIN base_sys_role_menu b on a.id = b.menuId AND b.roleId in (?)', [roleIds])}
         GROUP BY a.id
         ORDER BY
             orderNum ASC`);
@@ -122,7 +123,7 @@ export class BaseSysMenuService extends BaseService {
     * @param menuId
     */
     async refreshPerms(menuId) {
-        const users = await this.nativeQuery('select b.userId from sys_role_menu a left join sys_user_role b on a.roleId = b.roleId where a.menuId = ? group by b.userId', [menuId]);
+        const users = await this.nativeQuery('select b.userId from base_sys_role_menu a left join base_sys_user_role b on a.roleId = b.roleId where a.menuId = ? group by b.userId', [menuId]);
         // 刷新admin权限
         await this.ctx.service.sys.perms.refreshPerms(1);
         if (!_.isEmpty(users)) {

@@ -1,7 +1,8 @@
-import { Body, Provide, ALL, Inject, Post, Get, Query } from '@midwayjs/decorator';
+import { Provide, Inject, Get } from '@midwayjs/decorator';
+import { Context } from 'egg';
 import { CoolController, BaseController } from 'midwayjs-cool-core';
-import { LoginDTO } from '../../dto/login';
-import { BaseSysLoginService } from '../../service/sys/login';
+import { BaseSysPermsService } from '../../service/sys/perms';
+import { BaseSysUserService } from '../../service/sys/user';
 
 /**
  * Base 通用接口 一般写不需要权限过滤的接口
@@ -11,23 +12,28 @@ import { BaseSysLoginService } from '../../service/sys/login';
 export class BaseCommController extends BaseController {
 
     @Inject()
-    baseSysLoginService: BaseSysLoginService;
+    baseSysUserService: BaseSysUserService;
+
+    @Inject()
+    baseSysPermsService: BaseSysPermsService;
+
+    @Inject()
+    ctx: Context;
 
     /**
-     * 登录
-     * @param login 
+     * 获得个人信息
      */
-    @Post('/login')
-    async login(@Body(ALL) login: LoginDTO) {
-        return this.ok(await this.baseSysLoginService.login(login))
+    @Get('/person')
+    public async person() {
+        return this.ok(await this.baseSysUserService.person());
     }
 
     /**
-     * 获得验证码
+     * 权限菜单
      */
-    @Get('/captcha')
-    async captcha(@Query() type: string, @Query() width: number, @Query() height: number) {
-        return this.ok(await this.baseSysLoginService.captcha(type, width, height));
+    @Get('/permmenu')
+    public async permmenu() {
+        return this.ok(await this.baseSysPermsService.permmenu(this.ctx.admin.roleIds));
     }
 
 }

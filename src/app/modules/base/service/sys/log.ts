@@ -6,6 +6,7 @@ import { Context } from 'egg';
 import * as _ from 'lodash';
 import { BaseSysLogEntity } from '../../entity/sys/log';
 import * as moment from 'moment';
+import { Helper } from '../../../../extend/helper';
 
 /**
  * 描述
@@ -15,6 +16,9 @@ export class BaseSysLogService extends BaseService {
 
     @Inject()
     ctx: Context;
+
+    // @Inject()
+    // helper: Helper;
 
     @InjectEntityModel(BaseSysLogEntity)
     baseSysLogEntity: Repository<BaseSysLogEntity>;
@@ -26,18 +30,18 @@ export class BaseSysLogService extends BaseService {
      * @param userId 用户ID
      */
     async record(url, params, userId) {
-        const ip = await this.ctx.helper.getReqIP();
-        const sysLog = new BaseSysLogEntity();
-        sysLog.userId = userId;
-        sysLog.ip = ip;
-        const ipAddrArr = new Array();
-        for (const e of ip.split(',')) ipAddrArr.push(await this.ctx.helper.getIpAddr(e));
-        sysLog.ipAddr = ipAddrArr.join(',');
-        sysLog.action = url;
-        if (!_.isEmpty(params)) {
-            sysLog.params = JSON.stringify(params);
-        }
-        await this.baseSysLogEntity.insert(sysLog);
+        // const ip = await this.helper.getReqIP(this.ctx);
+        // const sysLog = new BaseSysLogEntity();
+        // sysLog.userId = userId;
+        // sysLog.ip = ip;
+        // const ipAddrArr = new Array();
+        // for (const e of ip.split(',')) ipAddrArr.push(await this.ctx.helper.getIpAddr(e));
+        // sysLog.ipAddr = ipAddrArr.join(',');
+        // sysLog.action = url;
+        // if (!_.isEmpty(params)) {
+        //     sysLog.params = JSON.stringify(params);
+        // }
+        // await this.baseSysLogEntity.insert(sysLog);
     }
 
     /**

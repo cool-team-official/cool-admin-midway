@@ -26,4 +26,8 @@ export class BaseSysLogEntity extends BaseEntity {
 
     @Column({ comment: '参数', nullable: true, type: 'text' })
     params: string;
+
+    @Column({ comment: '响应毫秒数， 值为-1则响应不成功', default: -1 })
+    ms: number;
+
 }
