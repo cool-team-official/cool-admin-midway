@@ -21,7 +21,7 @@ export class BaseSysDepartmentService extends BaseService {
     baseSysRoleDepartmentEntity: Repository<BaseSysRoleDepartmentEntity>;
 
     @Inject()
-    baseSysPremsService: BaseSysPermsService;
+    baseSysPermsService: BaseSysPermsService;
 
     @Inject()
     ctx: Context;
@@ -30,7 +30,7 @@ export class BaseSysDepartmentService extends BaseService {
      * 获得部门菜单
      */
     async list () {
-        const permsDepartmentArr = await this.baseSysPremsService.departmentIds(this.ctx.admin.userId); // 部门权限
+        const permsDepartmentArr = await this.baseSysPermsService.departmentIds(this.ctx.admin.userId); // 部门权限
         const departments = await this.nativeQuery(`
         SELECT
             *
@@ -38,7 +38,7 @@ export class BaseSysDepartmentService extends BaseService {
         base_sys_department a
         WHERE
         1 = 1
-        ${ this.setSql(this.ctx.decoded.userId !== '1', 'and a.id in (?)', [ !_.isEmpty(permsDepartmentArr) ? permsDepartmentArr : [ null ] ]) }
+        ${ this.setSql(this.ctx.admin.userId !== '1', 'and a.id in (?)', [ !_.isEmpty(permsDepartmentArr) ? permsDepartmentArr : [ null ] ]) }
         ORDER BY
         a.orderNum ASC`);
         if (!_.isEmpty(departments)) {

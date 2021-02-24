@@ -32,7 +32,7 @@ export class BaseSysLogController extends BaseController {
     @Post('/clear')
     public async clear() {
         await this.adminSysLogService.clear(true);
-        this.ok();
+        return this.ok();
     }
 
 }

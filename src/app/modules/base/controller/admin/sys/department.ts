@@ -23,7 +23,7 @@ export class BaseDepartmentController extends BaseController {
     @Post('/order')
     async order(@Body(ALL) params: Object) {
         await this.baseDepartmentService.order(params);
-        this.ok();
+        return this.ok();
     }
 
 }
