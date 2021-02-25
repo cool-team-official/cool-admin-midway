@@ -22,4 +22,7 @@ export class BaseSysRoleEntity extends BaseEntity {
     @Column({ comment: '备注', nullable: true })
     remark: string;
 
+    @Column({ comment: '数据权限是否关联上下级', default: 1 })
+    relevance: number;
+
 }

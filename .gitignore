@@ -13,3 +13,4 @@ run/
 *.un~
 .tsbuildinfo
 .tsbuildinfo.*
+src/app/public/uploads/

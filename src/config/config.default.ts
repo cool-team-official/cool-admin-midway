@@ -62,7 +62,7 @@ export default (appInfo: EggAppInfo) => {
       // token
       token: {
         // 2小时过期，需要用刷新token
-        expire: 2 * 3600,
+        expire: 2 * 5,
         // 15天内，如果没操作过就需要重新登录
         refreshExpire: 24 * 3600 * 15
       },
@@ -71,7 +71,12 @@ export default (appInfo: EggAppInfo) => {
     page: {
       // 分页查询每页条数
       size: 15,
-    }
+    },
+    // 文件上传
+    file: {
+      // 文件路径前缀 本地上传模式下 有效
+      domain: 'https://cool-admin.cn.utools.club'
+    } 
   }
 
   // 文件上传

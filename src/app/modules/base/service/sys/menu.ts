@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { BaseSysMenuEntity } from '../../entity/sys/menu';
 import * as _ from 'lodash';
 import { Context } from 'egg';
+import { BaseSysPermsService } from './perms';
 
 /**
  * 菜单
@@ -18,6 +19,9 @@ export class BaseSysMenuService extends BaseService {
     @InjectEntityModel(BaseSysMenuEntity)
     baseSysMenuEntity: Repository<BaseSysMenuEntity>;
 
+    @Inject()
+    baseSysPermsService: BaseSysPermsService;
+
     /**
      * 获得所有菜单
      */
@@ -26,7 +30,8 @@ export class BaseSysMenuService extends BaseService {
         if (!_.isEmpty(menus)) {
             menus.forEach(e => {
                 const parentMenu = menus.filter(m => {
-                    if (e.parentId === m.id) {
+                    e.parentId = parseInt(e.parentId);
+                    if (e.parentId == m.id) {
                         return m.name;
                     }
                 });
@@ -135,11 +140,11 @@ export class BaseSysMenuService extends BaseService {
     async refreshPerms(menuId) {
         const users = await this.nativeQuery('select b.userId from base_sys_role_menu a left join base_sys_user_role b on a.roleId = b.roleId where a.menuId = ? group by b.userId', [menuId]);
         // 刷新admin权限
-        await this.ctx.service.sys.perms.refreshPerms(1);
+        await this.baseSysPermsService.refreshPerms(1);
         if (!_.isEmpty(users)) {
             // 刷新其他权限
             for (const user of users) {
-                await this.ctx.service.sys.perms.refreshPerms(user.userId);
+                await this.baseSysPermsService.refreshPerms(user.userId);
             }
         }
     }

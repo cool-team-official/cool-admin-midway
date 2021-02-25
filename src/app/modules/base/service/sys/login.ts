@@ -187,6 +187,7 @@ export class BaseSysLoginService extends BaseService {
                     this.coolConfig.jwt.secret, {
                     expiresIn: refreshExpire,
                 });
+                await this.coolCache.set(`admin:passwordVersion:${decoded['userId']}`, decoded['passwordVersion']);
                 return result;
             }
         } catch (err) {

@@ -1,6 +1,6 @@
 import { Provide, Inject, Get, Post, Body, ALL } from '@midwayjs/decorator';
 import { Context } from 'egg';
-import { CoolController, BaseController } from 'midwayjs-cool-core';
+import { CoolController, BaseController, CoolFile } from 'midwayjs-cool-core';
 import { BaseSysUserEntity } from '../../entity/sys/user';
 import { BaseSysPermsService } from '../../service/sys/perms';
 import { BaseSysUserService } from '../../service/sys/user';
@@ -21,11 +21,14 @@ export class BaseCommController extends BaseController {
     @Inject()
     ctx: Context;
 
+    @Inject('cool:file')
+    coolFile: CoolFile;
+
     /**
      * 获得个人信息
      */
     @Get('/person')
-    public async person() {
+    async person() {
         return this.ok(await this.baseSysUserService.person());
     }
 
@@ -33,7 +36,7 @@ export class BaseCommController extends BaseController {
      * 修改个人信息
      */
     @Post('/personUpdate')
-    public async personUpdate(@Body(ALL) user: BaseSysUserEntity) {
+    async personUpdate(@Body(ALL) user: BaseSysUserEntity) {
         await this.baseSysUserService.personUpdate(user);
         return this.ok();
     }
@@ -42,8 +45,24 @@ export class BaseCommController extends BaseController {
      * 权限菜单
      */
     @Get('/permmenu')
-    public async permmenu() {
+    async permmenu() {
         return this.ok(await this.baseSysPermsService.permmenu(this.ctx.admin.roleIds));
+    }
+
+    /**
+     * 文件上传
+     */
+    @Post('/upload')
+    async upload() {
+        return this.ok(await this.coolFile.upload(this.ctx));
+    }
+
+    /**
+     * 文件上传模式，本地或者云存储
+     */
+    @Get('/uploadMode')
+    async uploadMode() {
+        return this.ok(this.coolFile.getMode());
     }
 
 }
