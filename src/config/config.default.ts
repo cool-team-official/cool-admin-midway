@@ -74,6 +74,12 @@ export default (appInfo: EggAppInfo) => {
     }
   }
 
+  // 文件上传
+  config.multipart = {
+    fileSize: '100mb',
+    mode: 'file'
+  };
+
   // 将egg日志替换成midway
   config.midwayFeature = {
     replaceEggLogger: true

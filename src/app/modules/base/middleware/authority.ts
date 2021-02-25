@@ -6,7 +6,7 @@ import * as jwt from 'jsonwebtoken';
 import { Context } from 'egg';
 
 /**
- * 描述
+ * 权限校验
  */
 @Provide()
 export class BaseAuthorityMiddleware implements IWebMiddleware {

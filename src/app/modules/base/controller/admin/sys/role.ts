@@ -10,6 +10,7 @@ import { BaseSysRoleEntity } from '../../../entity/sys/role';
 @CoolController({
   api: ['add', 'delete', 'update', 'info', 'list', 'page'],
   entity: BaseSysRoleEntity,
+  // 新增的时候插入当前用户ID
   insertParam: (async (ctx: Context) => {
     return {
       userId: ctx.admin.userId

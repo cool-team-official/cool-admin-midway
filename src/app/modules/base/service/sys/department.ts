@@ -26,25 +26,23 @@ export class BaseSysDepartmentService extends BaseService {
     @Inject()
     ctx: Context;
 
-     /**
-     * 获得部门菜单
-     */
-    async list () {
-        const permsDepartmentArr = await this.baseSysPermsService.departmentIds(this.ctx.admin.userId); // 部门权限
-        const departments = await this.nativeQuery(`
-        SELECT
-            *
-            FROM
-        base_sys_department a
-        WHERE
-        1 = 1
-        ${ this.setSql(this.ctx.admin.userId !== '1', 'and a.id in (?)', [ !_.isEmpty(permsDepartmentArr) ? permsDepartmentArr : [ null ] ]) }
-        ORDER BY
-        a.orderNum ASC`);
+    /**
+    * 获得部门菜单
+    */
+    async list() {
+        // 部门权限
+        const permsDepartmentArr = await this.baseSysPermsService.departmentIds(this.ctx.admin.userId); 
+
+        // 过滤部门权限
+        const find = this.baseSysDepartmentEntity.createQueryBuilder();
+        if (this.ctx.admin.username !== 'admin') find.andWhere('id in (:ids)', { ids: !_.isEmpty(permsDepartmentArr) ? permsDepartmentArr : [null] });
+        find.addOrderBy('orderNum', 'ASC');
+        const departments: BaseSysDepartmentEntity[] = await find.getMany();
+       
         if (!_.isEmpty(departments)) {
             departments.forEach(e => {
                 const parentMenu = departments.filter(m => {
-                    if (e.parentId === m.id) {
+                    if (e.parentId == m.id) {
                         return m.name;
                     }
                 });
@@ -83,7 +81,7 @@ export class BaseSysDepartmentService extends BaseService {
      * 部门排序
      * @param params
      */
-    async order (params) {
+    async order(params) {
         for (const e of params) {
             await this.baseSysDepartmentEntity.update(e.id, e);
         }
@@ -92,15 +90,15 @@ export class BaseSysDepartmentService extends BaseService {
     /**
      * 删除
      */
-    async delete (ids: number[]) {
+    async delete(ids: number[]) {
         let { deleteUser } = this.ctx.request.body;
         await this.baseSysDepartmentEntity.delete(ids);
         if (deleteUser) {
-            await this.nativeQuery('delete from base_sys_user where departmentId in (?)', [ ids ]);
+            await this.nativeQuery('delete from base_sys_user where departmentId in (?)', [ids]);
         } else {
             const topDepartment = await this.baseSysDepartmentEntity.createQueryBuilder().where('parentId is null').getOne();
             if (topDepartment) {
-                await this.nativeQuery('update base_sys_user a set a.departmentId = ? where a.departmentId in (?)', [ topDepartment.id, ids ]);
+                await this.nativeQuery('update base_sys_user a set a.departmentId = ? where a.departmentId in (?)', [topDepartment.id, ids]);
             }
         }
     }

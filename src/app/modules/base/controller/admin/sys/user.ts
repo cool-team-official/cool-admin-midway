@@ -9,20 +9,21 @@ import { BaseSysUserService } from '../../../service/sys/user';
 @Provide()
 @CoolController({
     api: ['add', 'delete', 'update', 'info', 'list', 'page'],
-    entity: BaseSysUserEntity
+    entity: BaseSysUserEntity,
+    service: BaseSysUserService
 })
 export class BaseSysUserController extends BaseController {
 
     @Inject()
-    BaseSysUserService: BaseSysUserService;
+    baseSysUserService: BaseSysUserService;
 
     /**
      * 移动部门
      */
     @Post('/move')
     async move(@Body() departmentId: number, @Body() userIds: []) {
-        await this.BaseSysUserService.move(departmentId, userIds);
-        this.ok();
+        await this.baseSysUserService.move(departmentId, userIds);
+        return this.ok();
     }
 
 }

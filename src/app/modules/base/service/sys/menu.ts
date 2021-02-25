@@ -39,6 +39,16 @@ export class BaseSysMenuService extends BaseService {
     }
 
     /**
+     * 修改之后
+     * @param param 
+     */
+    async modifyAfter(param) {
+        if (param.id) {
+            await this.refreshPerms(param.id);
+        }
+    }
+
+    /**
      * 根据角色获得权限信息
      * @param {[]} roleIds 数组
      */

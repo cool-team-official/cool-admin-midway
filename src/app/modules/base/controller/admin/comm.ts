@@ -1,6 +1,7 @@
-import { Provide, Inject, Get } from '@midwayjs/decorator';
+import { Provide, Inject, Get, Post, Body, ALL } from '@midwayjs/decorator';
 import { Context } from 'egg';
 import { CoolController, BaseController } from 'midwayjs-cool-core';
+import { BaseSysUserEntity } from '../../entity/sys/user';
 import { BaseSysPermsService } from '../../service/sys/perms';
 import { BaseSysUserService } from '../../service/sys/user';
 
@@ -26,6 +27,15 @@ export class BaseCommController extends BaseController {
     @Get('/person')
     public async person() {
         return this.ok(await this.baseSysUserService.person());
+    }
+
+    /**
+     * 修改个人信息
+     */
+    @Post('/personUpdate')
+    public async personUpdate(@Body(ALL) user: BaseSysUserEntity) {
+        await this.baseSysUserService.personUpdate(user);
+        return this.ok();
     }
 
     /**

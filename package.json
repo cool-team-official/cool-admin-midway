@@ -6,7 +6,7 @@
   "dependencies": {
     "@midwayjs/decorator": "^2.7.5",
     "@midwayjs/orm": "^1.3.0",
-    "@midwayjs/web": "^2.3.0",
+    "@midwayjs/web": "^2.7.7",
     "egg": "^2.29.3",
     "egg-scripts": "^2.13.0",
     "egg-view-nunjucks": "^2.3.0",

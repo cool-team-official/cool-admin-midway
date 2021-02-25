@@ -38,9 +38,13 @@ export class BaseSysUserEntity extends BaseEntity {
     @Column({ comment: '邮箱', nullable: true })
     email: string;
 
-    @Column({ comment: '备注', nullable: true, length: 500 })
+    @Column({ comment: '备注', nullable: true })
     remark: string;
 
     @Column({ comment: '状态 0:禁用 1：启用', default: 1, type: 'tinyint' })
     status: number;
+    // 部门名称
+    departmentName: string;
+    // 角色ID列表
+    roleIdList: number[];
 }

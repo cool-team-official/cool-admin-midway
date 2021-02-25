@@ -48,21 +48,26 @@ export class BaseSysLoginService extends BaseService {
      */
     async login(login: LoginDTO) {
         const { username, captchaId, verifyCode, password } = login;
+        // 校验验证码
         const checkV = await this.captchaCheck(captchaId, verifyCode);
         if (checkV) {
             const user = await this.baseSysUserEntity.findOne({ username });
+            // 校验用户
             if (user) {
+                // 校验用户状态及密码
                 if (user.status === 0 || user.password !== md5(password)) {
                     throw new CoolCommException('账户或密码不正确~');
                 }
             } else {
                 throw new CoolCommException('账户或密码不正确~');
             }
+            // 校验角色
             const roleIds = await this.baseSysRoleService.getByUser(user.id);
             if (_.isEmpty(roleIds)) {
                 throw new CoolCommException('该用户未设置任何角色，无法登录~');
             }
 
+            // 生成token
             const { expire, refreshExpire } = this.coolConfig.jwt.token;
             const result = {
                 expire,
@@ -71,12 +76,13 @@ export class BaseSysLoginService extends BaseService {
                 refreshToken: await this.generateToken(user, roleIds, refreshExpire, true),
             };
 
+            // 将用户相关信息保存到缓存
             const perms = await this.baseSysMenuService.getPerms(roleIds);
             const departments = await this.baseSysDepartmentService.getByRoleIds(roleIds, user.username === 'admin');
             await this.coolCache.set(`admin:department:${user.id}`, JSON.stringify(departments));
             await this.coolCache.set(`admin:perms:${user.id}`, JSON.stringify(perms));
-            await this.coolCache.set(`admin:token:${user.id}`, result.token, expire);
-            await this.coolCache.set(`admin:token:refresh:${user.id}`, result.token, refreshExpire);
+            await this.coolCache.set(`admin:token:${user.id}`, result.token);
+            await this.coolCache.set(`admin:token:refresh:${user.id}`, result.token);
 
             return result;
         } else {
@@ -162,12 +168,29 @@ export class BaseSysLoginService extends BaseService {
         try {
             const decoded = jwt.verify(token, this.coolConfig.jwt.secret);
             if (decoded && decoded['isRefresh']) {
-                return jwt.sign(decoded,
+                delete decoded['exp'];
+                delete decoded['iat'];
+
+                const { expire, refreshExpire } = this.coolConfig.jwt.token;
+                decoded['isRefresh'] = false;
+                const result = {
+                    expire,
+                    token: jwt.sign(decoded,
+                        this.coolConfig.jwt.secret, {
+                        expiresIn: expire,
+                    }),
+                    refreshExpire,
+                    refreshToken: '',
+                };
+                decoded['isRefresh'] = true;
+                result.refreshToken = jwt.sign(decoded,
                     this.coolConfig.jwt.secret, {
-                    expiresIn: this.coolConfig.jwt.token.expire,
+                    expiresIn: refreshExpire,
                 });
+                return result;
             }
         } catch (err) {
+            console.log(err);
             this.ctx.status = 401;
             this.ctx.body = {
                 code: RESCODE.COMMFAIL,

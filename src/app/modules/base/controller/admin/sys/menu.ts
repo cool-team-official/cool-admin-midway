@@ -8,7 +8,7 @@ import { BaseSysMenuService } from '../../../service/sys/menu';
  */
 @Provide()
 @CoolController({
-    api: ['add', 'delete', 'update', 'list', 'page'],
+    api: ['add', 'delete', 'update', 'info', 'list', 'page'],
     entity: BaseSysMenuEntity,
     service: BaseSysMenuService
 })

@@ -6,7 +6,8 @@ import { Context } from 'egg';
 import * as _ from 'lodash';
 import { BaseSysLogEntity } from '../../entity/sys/log';
 import * as moment from 'moment';
-import { Helper } from '../../../../extend/helper';
+import { Utils } from '../../../../comm/utils';
+import { BaseSysConfService } from './conf';
 
 /**
  * 描述
@@ -17,11 +18,14 @@ export class BaseSysLogService extends BaseService {
     @Inject()
     ctx: Context;
 
-    // @Inject()
-    // helper: Helper;
+    @Inject()
+    utils: Utils;
 
     @InjectEntityModel(BaseSysLogEntity)
     baseSysLogEntity: Repository<BaseSysLogEntity>;
+
+    @Inject()
+    baseSysConfService: BaseSysConfService;
 
     /**
      * 记录
@@ -29,19 +33,19 @@ export class BaseSysLogService extends BaseService {
      * @param params 参数
      * @param userId 用户ID
      */
-    async record(url, params, userId) {
-        // const ip = await this.helper.getReqIP(this.ctx);
-        // const sysLog = new BaseSysLogEntity();
-        // sysLog.userId = userId;
-        // sysLog.ip = ip;
-        // const ipAddrArr = new Array();
-        // for (const e of ip.split(',')) ipAddrArr.push(await this.ctx.helper.getIpAddr(e));
-        // sysLog.ipAddr = ipAddrArr.join(',');
-        // sysLog.action = url;
-        // if (!_.isEmpty(params)) {
-        //     sysLog.params = JSON.stringify(params);
-        // }
-        // await this.baseSysLogEntity.insert(sysLog);
+    async record(context: Context, url, params, userId) {
+        const ip = await this.utils.getReqIP(context)
+        const sysLog = new BaseSysLogEntity();
+        sysLog.userId = userId;
+        sysLog.ip = typeof ip === 'string' ? ip : ip.join(',');
+        const ipAddrArr = new Array();
+        for (const e of sysLog.ip.split(',')) ipAddrArr.push(await await this.utils.getIpAddr(context, e));
+        sysLog.ipAddr = ipAddrArr.join(',');
+        sysLog.action = url;
+        if (!_.isEmpty(params)) {
+            sysLog.params = JSON.stringify(params);
+        }
+        await this.baseSysLogEntity.insert(sysLog);
     }
 
     /**
@@ -53,12 +57,12 @@ export class BaseSysLogService extends BaseService {
             await this.baseSysLogEntity.clear();
             return;
         }
-        const keepDay = await this.ctx.service.sys.conf.getValue('logKeep');
+        const keepDay = await this.baseSysConfService.getValue('logKeep');
         if (keepDay) {
-            const beforeDate = `${moment().subtract(keepDay, 'days').format('YYYY-MM-DD')} 00:00:00`;
+            const beforeDate = `${moment().add(-keepDay, 'days').format('YYYY-MM-DD')} 00:00:00`;
             await this.baseSysLogEntity.createQueryBuilder()
                 .where('createTime < :createTime', { createTime: beforeDate })
-            await this.nativeQuery(' delete from sys_log where createTime < ? ', [beforeDate]);
+            await this.nativeQuery(' delete from base_sys_log where createTime < ? ', [beforeDate]);
         } else {
             await this.baseSysLogEntity.clear();
         }

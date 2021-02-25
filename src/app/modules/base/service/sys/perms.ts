@@ -3,9 +3,10 @@ import { BaseService, CoolCache } from 'midwayjs-cool-core';
 import { BaseSysMenuService } from './menu';
 import { BaseSysRoleService } from './role';
 import { BaseSysDepartmentService } from './department';
+import { Context } from 'egg';
 
 /**
- * 描述
+ * 权限
  */
 @Provide()
 export class BaseSysPermsService extends BaseService {
@@ -21,6 +22,9 @@ export class BaseSysPermsService extends BaseService {
 
     @Inject()
     baseSysDepartmentService: BaseSysDepartmentService;
+
+    @Inject()
+    ctx: Context;
     
 
     /**
@@ -29,11 +33,11 @@ export class BaseSysPermsService extends BaseService {
      */
     async refreshPerms(userId) {
         const roleIds = await this.baseSysRoleService.getByUser(userId);
-        const perms = await this.ctx.service.sys.menu.getPerms(roleIds);
-        await this.coolCache.set(`admin:perms:${userId}`, JSON.stringify(perms), this.app.config.token.expires);
+        const perms = await this.baseSysMenuService.getPerms(roleIds);
+        await this.coolCache.set(`admin:perms:${userId}`, JSON.stringify(perms));
         // 更新部门权限
         const departments = await this.baseSysDepartmentService.getByRoleIds(roleIds, this.ctx.admin.username === 'admin');
-        await this.coolCache.set(`admin:department:${userId}`, JSON.stringify(departments), this.app.config.token.expires);
+        await this.coolCache.set(`admin:department:${userId}`, JSON.stringify(departments));
     }
 
     /**
