@@ -52,7 +52,7 @@ export class BaseSysRoleService extends BaseService {
      */
     async modifyAfter(param) {
         if (param.id) {
-            await this.updatePerms(param.id, param.menuIdList, param.departmentIdList);
+            this.updatePerms(param.id, param.menuIdList, param.departmentIdList);
         }
     }
 

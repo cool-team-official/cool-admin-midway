@@ -2,6 +2,7 @@ import { Provide, Inject, Get, Post, Body, ALL } from '@midwayjs/decorator';
 import { Context } from 'egg';
 import { CoolController, BaseController, CoolFile } from 'midwayjs-cool-core';
 import { BaseSysUserEntity } from '../../entity/sys/user';
+import { BaseSysLoginService } from '../../service/sys/login';
 import { BaseSysPermsService } from '../../service/sys/perms';
 import { BaseSysUserService } from '../../service/sys/user';
 
@@ -17,6 +18,9 @@ export class BaseCommController extends BaseController {
 
     @Inject()
     baseSysPermsService: BaseSysPermsService;
+
+    @Inject()
+    baseSysLoginService: BaseSysLoginService;
 
     @Inject()
     ctx: Context;
@@ -63,6 +67,15 @@ export class BaseCommController extends BaseController {
     @Get('/uploadMode')
     async uploadMode() {
         return this.ok(this.coolFile.getMode());
+    }
+
+    /**
+     * 退出
+     */
+    @Post('/logout')
+    async logout() {
+        await this.baseSysLoginService.logout();
+        return this.ok();
     }
 
 }

@@ -62,7 +62,7 @@ export default (appInfo: EggAppInfo) => {
       // token
       token: {
         // 2小时过期，需要用刷新token
-        expire: 2 * 5,
+        expire: 2 * 3600,
         // 15天内，如果没操作过就需要重新登录
         refreshExpire: 24 * 3600 * 15
       },

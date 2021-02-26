@@ -121,6 +121,17 @@ export class BaseSysLoginService extends BaseService {
     }
 
     /**
+     * 退出登录
+     */
+    async logout() {
+        const { userId } = this.ctx.admin;
+        await this.coolCache.del(`admin:department:${userId}`);
+        await this.coolCache.del(`admin:perms:${userId}`);
+        await this.coolCache.del(`admin:token:${userId}`);
+        await this.coolCache.del(`admin:token:refresh:${userId}`);
+    }
+
+    /**
      * 检验图片验证码
      * @param captchaId 验证码ID
      * @param value 验证码

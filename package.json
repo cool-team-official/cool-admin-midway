@@ -1,6 +1,6 @@
 {
-  "name": "cool-admin-next",
-  "version": "1.0.0",
+  "name": "cool-admin",
+  "version": "3.0.0",
   "description": "",
   "private": true,
   "dependencies": {
@@ -13,13 +13,11 @@
     "ipip-ipdb": "^0.3.0",
     "jsonwebtoken": "^8.5.1",
     "md5": "^2.3.0",
-    "midway-test-component": "^1.0.1",
     "midwayjs-cool-core": "/Users/ap/Documents/srcs/cool-admin/midway-core/core/dist",
-    "midwayjs-cool-redis": "file:/Users/ap/Documents/srcs/cool-admin/midway-core/redis/dist",
+    "midwayjs-cool-oss": "/Users/ap/Documents/srcs/cool-admin/midway-core/oss/dist",
     "mysql2": "^2.2.5",
     "svg-captcha": "^1.4.0",
-    "svg-to-dataurl": "^1.0.0",
-    "uuid": "^8.3.2"
+    "svg-to-dataurl": "^1.0.0"
   },
   "devDependencies": {
     "@midwayjs/cli": "^1.2.41",

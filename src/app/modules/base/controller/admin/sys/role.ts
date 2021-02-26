@@ -2,6 +2,7 @@ import { Provide } from '@midwayjs/decorator';
 import { CoolController, BaseController } from 'midwayjs-cool-core';
 import { Context } from 'vm';
 import { BaseSysRoleEntity } from '../../../entity/sys/role';
+import { BaseSysRoleService } from '../../../service/sys/role';
 
 /**
  * 系统角色
@@ -10,6 +11,7 @@ import { BaseSysRoleEntity } from '../../../entity/sys/role';
 @CoolController({
   api: ['add', 'delete', 'update', 'info', 'list', 'page'],
   entity: BaseSysRoleEntity,
+  service: BaseSysRoleService,
   // 新增的时候插入当前用户ID
   insertParam: (async (ctx: Context) => {
     return {

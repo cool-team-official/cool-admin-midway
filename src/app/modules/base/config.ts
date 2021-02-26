@@ -9,8 +9,8 @@ export default (app: Application) => {
         // 模块名称
         name: '权限管理',
         // 模块描述
-        describe: '基础的权限管理功能，包括登录，权限校验',
+        description: '基础的权限管理功能，包括登录，权限校验',
         // 中间件
-        middlewares: ['baseAuthorityMiddleware', 'baseLogMiddleware'],
+        middlewares: [],
     } as ModuleConfig;
 };
