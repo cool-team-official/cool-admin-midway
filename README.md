@@ -1,4 +1,4 @@
-# cool-admin-midway
+# cool-admin
 
 <p align="center">
   <a href="https://midwayjs.org/" target="blank"><img src="https://admin.cool-js.com/logo.png" width="200" alt="Midway Logo" /></a>
