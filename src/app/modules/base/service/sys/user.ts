@@ -74,7 +74,9 @@ export class BaseSysUserService extends BaseService {
      * 获得个人信息
      */
     async person() {
-        return await this.baseSysUserEntity.findOne({ id: this.ctx.admin.userId })
+        const info = await this.baseSysUserEntity.findOne({ id: this.ctx.admin.userId });
+        delete info.password;
+        return info;
     }
 
     /**
