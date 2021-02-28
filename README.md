@@ -1,7 +1,5 @@
-# cool-admin
-
 <p align="center">
-  <a href="https://midwayjs.org/" target="blank"><img src="https://admin.cool-js.com/logo.png" width="200" alt="Midway Logo" /></a>
+  <a href="https://midwayjs.org/" target="blank"><img src="https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/logo.png" width="200" alt="Midway Logo" /></a>
 </p>
 
 <p align="center">cool-admin 一个很酷的后台权限管理系统，开源免费，模块化、插件化、极速开发CRUD，方便快速构建迭代后台管理系统，
@@ -13,12 +11,19 @@
 </p>
 
 <!-- 在此次添加使用文档 -->
+## 展示
 
+<img src="https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/home-mini.png" alt="Admin Home"></a>
 
+#### 项目前端
+
+[https://github.com/cool-team-official/cool-admin-vue](https://github.com/cool-team-official/cool-admin-vue)
 
 ## 运行
 
 #### 修改数据库配置，配置文件位于`src/config/config.local.ts`
+
+数据库为mysql(`推荐>=5.7版本`)
 
 ```js
 config.orm = {
