@@ -11,7 +11,12 @@
 </p>
 
 <!-- 在此次添加使用文档 -->
-## 展示
+## 演示
+[https://show.cool-admin.com](https://show.cool-admin.com)
+
+* 账户：admin
+* 密码：123456
+
 
 <img src="https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/home-mini.png" alt="Admin Home"></a>
 
