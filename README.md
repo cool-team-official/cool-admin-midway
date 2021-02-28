@@ -17,8 +17,9 @@
 * 账户：admin
 * 密码：123456
 
-
 <img src="https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/home-mini.png" alt="Admin Home"></a>
+#### 文档
+[https://admin.cool-js.com](https://admin.cool-js.com)
 
 #### 项目前端
 
