@@ -29,7 +29,7 @@
 
 #### 修改数据库配置，配置文件位于`src/config/config.local.ts`
 
-数据库为mysql(`推荐>=5.7版本`)
+数据库为mysql(`>=5.7版本`)
 
 ```js
 config.orm = {
