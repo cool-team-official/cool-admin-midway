@@ -25,6 +25,11 @@
 
 [https://github.com/cool-team-official/cool-admin-vue](https://github.com/cool-team-official/cool-admin-vue)
 
+## 微信群
+
+<img width="260" src="https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/code_wechat.jpeg" alt="Admin Wechat"></a>
+
+
 ## 运行
 
 #### 修改数据库配置，配置文件位于`src/config/config.local.ts`
