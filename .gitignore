@@ -14,3 +14,4 @@ run/
 .tsbuildinfo
 .tsbuildinfo.*
 src/app/public/uploads/
+typings/
