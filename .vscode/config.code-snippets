@@ -13,7 +13,7 @@
       "        // 模块名称",
       "        name: 'xxx',",
       "        // 模块描述",
-      "        describe: 'xxx',",
+      "        description: 'xxx',",
       "        // 中间件",
       "        middlewares: [],",
       "    } as ModuleConfig;",
