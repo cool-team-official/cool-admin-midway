@@ -24,22 +24,19 @@ export class BaseAuthorityMiddleware implements IWebMiddleware {
             const token = ctx.get('Authorization');
             let { prefix } = this.coolConfig.router;
             const adminUrl = prefix ? `${prefix}/admin/` : '/admin/';
-            // 只要登录每个人都有权限的接口
-            const commUrl = prefix ? `${prefix}/admin/comm/` : '/admin/comm/';
-            // 不需要登录的接口
-            const openUrl = prefix ? `${prefix}/admin/open/` : '/admin/open/';
             // 路由地址为 admin前缀的 需要权限校验
             if (_.startsWith(url, adminUrl)) {
                 try {
                     ctx.admin = jwt.verify(token, this.coolConfig.jwt.secret);
                 } catch (err) { }
-                // comm 不需要登录 无需权限校验
-                if (_.startsWith(url, openUrl)) {
+                // 不需要登录 无需权限校验
+                if (new RegExp(`^${adminUrl}?.*/open/`).test(url)) {
                     await next();
                     return;
                 }
                 if (ctx.admin) {
-                    if (_.startsWith(url, commUrl)) {
+                    // 要登录每个人都有权限的接口
+                    if (new RegExp(`^${adminUrl}?.*/comm/`).test(url)) {
                         await next();
                         return;
                     }
