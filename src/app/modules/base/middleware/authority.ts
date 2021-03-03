@@ -1,7 +1,11 @@
-import { Config, Inject, Provide } from '@midwayjs/decorator';
-import { IWebMiddleware, IMidwayWebNext } from '@midwayjs/web';
+import { App, Config, Provide } from '@midwayjs/decorator';
+import {
+  IWebMiddleware,
+  IMidwayWebNext,
+  IMidwayWebApplication,
+} from '@midwayjs/web';
 import * as _ from 'lodash';
-import { CoolCache, CoolConfig, RESCODE } from 'midwayjs-cool-core';
+import { CoolConfig, RESCODE } from 'midwayjs-cool-core';
 import * as jwt from 'jsonwebtoken';
 import { Context } from 'egg';
 
@@ -13,8 +17,10 @@ export class BaseAuthorityMiddleware implements IWebMiddleware {
   @Config('cool')
   coolConfig: CoolConfig;
 
-  @Inject('cool:cache')
-  coolCache: CoolCache;
+  coolCache;
+
+  @App()
+  app: IMidwayWebApplication;
 
   resolve() {
     return async (ctx: Context, next: IMidwayWebNext) => {
@@ -48,12 +54,15 @@ export class BaseAuthorityMiddleware implements IWebMiddleware {
             };
             return;
           }
+          // 需要动态获得缓存
+          this.coolCache = await this.app
+            .getApplicationContext()
+            .getAsync('cool:cache');
           // 判断密码版本是否正确
           const passwordV = await this.coolCache.get(
             `admin:passwordVersion:${ctx.admin.userId}`
           );
-          console.log(6666666666, '密码版本', passwordV);
-          if (passwordV !== ctx.admin.passwordVersion) {
+          if (passwordV != ctx.admin.passwordVersion) {
             ctx.status = 401;
             ctx.body = {
               code: RESCODE.COMMFAIL,

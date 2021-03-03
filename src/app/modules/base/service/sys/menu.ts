@@ -33,7 +33,7 @@ export class BaseSysMenuService extends BaseService {
       menus.forEach(e => {
         const parentMenu = menus.filter(m => {
           e.parentId = parseInt(e.parentId);
-          if (e.parentId === m.id) {
+          if (e.parentId == m.id) {
             return m.name;
           }
         });
@@ -63,12 +63,11 @@ export class BaseSysMenuService extends BaseService {
     let perms = [];
     if (!_.isEmpty(roleIds)) {
       const result = await this.nativeQuery(
-        `
-            SELECT a.perms FROM base_sys_menu a ${this.setSql(
-              !roleIds.includes('1'),
-              'JOIN base_sys_role_menu b on a.id = b.menuId AND b.roleId in (?)',
-              [roleIds]
-            )}
+        `SELECT a.perms FROM base_sys_menu a ${this.setSql(
+          !roleIds.includes('1'),
+          'JOIN base_sys_role_menu b on a.id = b.menuId AND b.roleId in (?)',
+          [roleIds]
+        )}
             where 1=1 and a.perms is not NULL
             `,
         [roleIds]

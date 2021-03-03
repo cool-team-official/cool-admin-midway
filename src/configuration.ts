@@ -4,6 +4,7 @@ import { Application } from 'egg';
 import * as orm from '@midwayjs/orm';
 import * as cool from 'midwayjs-cool-core';
 import * as oss from 'midwayjs-cool-oss';
+import * as redis from 'midwayjs-cool-redis';
 
 @Configuration({
   // 注意组件顺序 cool 有依赖orm组件， 所以必须放在，orm组件之后 cool的其他组件必须放在cool 核心组件之后
@@ -14,6 +15,8 @@ import * as oss from 'midwayjs-cool-oss';
     cool,
     // oss插件，需要到后台配置之后才有用，默认是本地上传
     oss,
+    // 将缓存替换成redis
+    redis,
   ],
 })
 export class ContainerLifeCycle implements ILifeCycle {

@@ -47,7 +47,7 @@ export class BaseSysDepartmentService extends BaseService {
       departments.forEach(e => {
         const parentMenu = departments.filter(m => {
           e.parentId = parseInt(e.parentId + '');
-          if (e.parentId === m.id) {
+          if (e.parentId == m.id) {
             return m.name;
           }
         });

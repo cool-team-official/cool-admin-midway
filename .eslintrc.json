@@ -17,6 +17,7 @@
     "@typescript-eslint/no-unused-vars": "off",
     "node/no-extraneous-import": "off",
     "no-empty": "off",
-    "node/no-extraneous-require": "off"
+    "node/no-extraneous-require": "off",
+    "eqeqeq": "off"
   }
 }
