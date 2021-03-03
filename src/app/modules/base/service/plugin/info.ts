@@ -1,5 +1,5 @@
 import { Inject, Provide } from '@midwayjs/decorator';
-import { BaseService, CoolPlugin, Cache } from 'midwayjs-cool-core';
+import { BaseService, CoolPlugin } from 'midwayjs-cool-core';
 
 /**
  * 插件
@@ -12,7 +12,6 @@ export class BasePluginInfoService extends BaseService {
   /**
    * 列表
    */
-  @Cache(3000)
   async list(keyWord) {
     return this.coolPlugin.list(keyWord);
   }
