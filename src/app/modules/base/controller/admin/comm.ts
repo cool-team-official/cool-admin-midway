@@ -12,70 +12,70 @@ import { BaseSysUserService } from '../../service/sys/user';
 @Provide()
 @CoolController()
 export class BaseCommController extends BaseController {
+  @Inject()
+  baseSysUserService: BaseSysUserService;
 
-    @Inject()
-    baseSysUserService: BaseSysUserService;
+  @Inject()
+  baseSysPermsService: BaseSysPermsService;
 
-    @Inject()
-    baseSysPermsService: BaseSysPermsService;
+  @Inject()
+  baseSysLoginService: BaseSysLoginService;
 
-    @Inject()
-    baseSysLoginService: BaseSysLoginService;
+  @Inject()
+  ctx: Context;
 
-    @Inject()
-    ctx: Context;
+  @Inject('cool:file')
+  coolFile: CoolFile;
 
-    @Inject('cool:file')
-    coolFile: CoolFile;
+  /**
+   * 获得个人信息
+   */
+  @Get('/person')
+  async person() {
+    return this.ok(await this.baseSysUserService.person());
+  }
 
-    /**
-     * 获得个人信息
-     */
-    @Get('/person')
-    async person() {
-        return this.ok(await this.baseSysUserService.person());
-    }
+  /**
+   * 修改个人信息
+   */
+  @Post('/personUpdate')
+  async personUpdate(@Body(ALL) user: BaseSysUserEntity) {
+    await this.baseSysUserService.personUpdate(user);
+    return this.ok();
+  }
 
-    /**
-     * 修改个人信息
-     */
-    @Post('/personUpdate')
-    async personUpdate(@Body(ALL) user: BaseSysUserEntity) {
-        await this.baseSysUserService.personUpdate(user);
-        return this.ok();
-    }
+  /**
+   * 权限菜单
+   */
+  @Get('/permmenu')
+  async permmenu() {
+    return this.ok(
+      await this.baseSysPermsService.permmenu(this.ctx.admin.roleIds)
+    );
+  }
 
-    /**
-     * 权限菜单
-     */
-    @Get('/permmenu')
-    async permmenu() {
-        return this.ok(await this.baseSysPermsService.permmenu(this.ctx.admin.roleIds));
-    }
+  /**
+   * 文件上传
+   */
+  @Post('/upload')
+  async upload() {
+    return this.ok(await this.coolFile.upload(this.ctx));
+  }
 
-    /**
-     * 文件上传
-     */
-    @Post('/upload')
-    async upload() {
-        return this.ok(await this.coolFile.upload(this.ctx));
-    }
+  /**
+   * 文件上传模式，本地或者云存储
+   */
+  @Get('/uploadMode')
+  async uploadMode() {
+    return this.ok(this.coolFile.getMode());
+  }
 
-    /**
-     * 文件上传模式，本地或者云存储
-     */
-    @Get('/uploadMode')
-    async uploadMode() {
-        return this.ok(this.coolFile.getMode());
-    }
-
-    /**
-     * 退出
-     */
-    @Post('/logout')
-    async logout() {
-        await this.baseSysLoginService.logout();
-        return this.ok();
-    }
-
+  /**
+   * 退出
+   */
+  @Post('/logout')
+  async logout() {
+    await this.baseSysLoginService.logout();
+    return this.ok();
+  }
 }

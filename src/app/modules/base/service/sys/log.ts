@@ -14,57 +14,63 @@ import { BaseSysConfService } from './conf';
  */
 @Provide()
 export class BaseSysLogService extends BaseService {
+  @Inject()
+  ctx: Context;
 
-    @Inject()
-    ctx: Context;
+  @Inject()
+  utils: Utils;
 
-    @Inject()
-    utils: Utils;
+  @InjectEntityModel(BaseSysLogEntity)
+  baseSysLogEntity: Repository<BaseSysLogEntity>;
 
-    @InjectEntityModel(BaseSysLogEntity)
-    baseSysLogEntity: Repository<BaseSysLogEntity>;
+  @Inject()
+  baseSysConfService: BaseSysConfService;
 
-    @Inject()
-    baseSysConfService: BaseSysConfService;
-
-    /**
-     * 记录
-     * @param url URL地址
-     * @param params 参数
-     * @param userId 用户ID
-     */
-    async record(context: Context, url, params, userId) {
-        const ip = await this.utils.getReqIP(context)
-        const sysLog = new BaseSysLogEntity();
-        sysLog.userId = userId;
-        sysLog.ip = typeof ip === 'string' ? ip : ip.join(',');
-        const ipAddrArr = new Array();
-        for (const e of sysLog.ip.split(',')) ipAddrArr.push(await await this.utils.getIpAddr(context, e));
-        sysLog.ipAddr = ipAddrArr.join(',');
-        sysLog.action = url;
-        if (!_.isEmpty(params)) {
-            sysLog.params = JSON.stringify(params);
-        }
-        await this.baseSysLogEntity.insert(sysLog);
+  /**
+   * 记录
+   * @param url URL地址
+   * @param params 参数
+   * @param userId 用户ID
+   */
+  async record(context: Context, url, params, userId) {
+    const ip = await this.utils.getReqIP(context);
+    const sysLog = new BaseSysLogEntity();
+    sysLog.userId = userId;
+    sysLog.ip = typeof ip === 'string' ? ip : ip.join(',');
+    const ipAddrArr = [];
+    for (const e of sysLog.ip.split(','))
+      ipAddrArr.push(await await this.utils.getIpAddr(context, e));
+    sysLog.ipAddr = ipAddrArr.join(',');
+    sysLog.action = url;
+    if (!_.isEmpty(params)) {
+      sysLog.params = JSON.stringify(params);
     }
+    await this.baseSysLogEntity.insert(sysLog);
+  }
 
-    /**
-     * 日志
-     * @param isAll 是否清除全部
-     */
-    async clear(isAll?) {
-        if (isAll) {
-            await this.baseSysLogEntity.clear();
-            return;
-        }
-        const keepDay = await this.baseSysConfService.getValue('logKeep');
-        if (keepDay) {
-            const beforeDate = `${moment().add(-keepDay, 'days').format('YYYY-MM-DD')} 00:00:00`;
-            await this.baseSysLogEntity.createQueryBuilder()
-                .where('createTime < :createTime', { createTime: beforeDate })
-            await this.nativeQuery(' delete from base_sys_log where createTime < ? ', [beforeDate]);
-        } else {
-            await this.baseSysLogEntity.clear();
-        }
+  /**
+   * 日志
+   * @param isAll 是否清除全部
+   */
+  async clear(isAll?) {
+    if (isAll) {
+      await this.baseSysLogEntity.clear();
+      return;
     }
+    const keepDay = await this.baseSysConfService.getValue('logKeep');
+    if (keepDay) {
+      const beforeDate = `${moment()
+        .add(-keepDay, 'days')
+        .format('YYYY-MM-DD')} 00:00:00`;
+      await this.baseSysLogEntity
+        .createQueryBuilder()
+        .where('createTime < :createTime', { createTime: beforeDate });
+      await this.nativeQuery(
+        ' delete from base_sys_log where createTime < ? ',
+        [beforeDate]
+      );
+    } else {
+      await this.baseSysLogEntity.clear();
+    }
+  }
 }

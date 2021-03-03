@@ -7,11 +7,10 @@ import { BaseEntity } from 'midwayjs-cool-core';
  */
 @EntityModel('base_sys_conf')
 export class BaseSysConfEntity extends BaseEntity {
+  @Index({ unique: true })
+  @Column({ comment: '配置键' })
+  cKey: string;
 
-    @Index({ unique: true })
-    @Column({ comment: '配置键' })
-    cKey: string;
-
-    @Column({ comment: '配置值' })
-    cValue: string;
+  @Column({ comment: '配置值' })
+  cValue: string;
 }

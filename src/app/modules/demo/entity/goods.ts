@@ -7,14 +7,12 @@ import { Column } from 'typeorm';
  */
 @EntityModel('demo_app_goods')
 export class DemoAppGoodsEntity extends BaseEntity {
+  @Column({ comment: '标题' })
+  title: string;
 
-    @Column({ comment: '标题' })
-    title: string;
+  @Column({ comment: '图片' })
+  pic: string;
 
-    @Column({ comment: '图片' })
-    pic: string;
-
-    @Column({ comment: '价格', type: 'decimal', precision: 5, scale: 2 })
-    price: number;
-
+  @Column({ comment: '价格', type: 'decimal', precision: 5, scale: 2 })
+  price: number;
 }

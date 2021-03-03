@@ -14,6 +14,8 @@
         "jsonwebtoken": "^8.5.1",
         "md5": "^2.3.0",
         "midwayjs-cool-core": "/Users/ap/Documents/srcs/cool-admin/midway-core/core/dist",
+        "midwayjs-cool-oss": "^1.0.0",
+        "midwayjs-cool-redis": "/Users/ap/Documents/srcs/cool-admin/midway-core/redis/dist",
         "mysql2": "^2.2.5",
         "svg-captcha": "^1.4.0",
         "svg-to-dataurl": "^1.0.0"

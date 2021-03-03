@@ -7,11 +7,9 @@ import { Column } from 'typeorm';
  */
 @EntityModel('base_sys_user_role')
 export class BaseSysUserRoleEntity extends BaseEntity {
+  @Column({ comment: '用户ID', type: 'bigint' })
+  userId: number;
 
-    @Column({ comment: '用户ID', type: 'bigint' })
-    userId: number;
-
-    @Column({ comment: '角色ID', type: 'bigint' })
-    roleId: number;
-
+  @Column({ comment: '角色ID', type: 'bigint' })
+  roleId: number;
 }

@@ -14,9 +14,7 @@ export default (appInfo: EggAppInfo) => {
 
   // 模板渲染 用法 https://nunjucks.bootcss.com
   config.view = {
-    root: [
-      path.join(appInfo.baseDir, 'app/view'),
-    ].join(','),
+    root: [path.join(appInfo.baseDir, 'app/view')].join(','),
     defaultViewEngine: 'nunjucks',
     defaultExtension: '.html',
     mapping: {
@@ -37,7 +35,9 @@ export default (appInfo: EggAppInfo) => {
 
   // 修改默认的 favicon.ico
   config.siteFile = {
-    '/favicon.ico': fs.readFileSync(path.join(appInfo.baseDir, 'app/public/favicon.ico')),
+    '/favicon.ico': fs.readFileSync(
+      path.join(appInfo.baseDir, 'app/public/favicon.ico')
+    ),
   };
 
   // 关闭安全校验
@@ -51,7 +51,7 @@ export default (appInfo: EggAppInfo) => {
   config.cool = {
     // 全局路由前缀
     router: {
-      prefix: ''
+      prefix: '',
     },
     // 单点登录
     sso: false,
@@ -64,7 +64,7 @@ export default (appInfo: EggAppInfo) => {
         // 2小时过期，需要用刷新token
         expire: 2 * 3600,
         // 15天内，如果没操作过就需要重新登录
-        refreshExpire: 24 * 3600 * 15
+        refreshExpire: 24 * 3600 * 15,
       },
     },
     // 分页配置
@@ -75,20 +75,20 @@ export default (appInfo: EggAppInfo) => {
     // 文件上传
     file: {
       // 文件路径前缀 本地上传模式下 有效
-      domain: 'https://cool-admin.cn.utools.club'
-    } 
-  }
+      domain: 'https://admin.cn.utools.club',
+    },
+  };
 
   // 文件上传
   config.multipart = {
     fileSize: '100mb',
-    mode: 'file'
+    mode: 'file',
   };
 
   // 将egg日志替换成midway
   config.midwayFeature = {
-    replaceEggLogger: true
-  }
+    replaceEggLogger: true,
+  };
 
   return config;
 };

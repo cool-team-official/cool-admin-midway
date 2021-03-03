@@ -8,15 +8,18 @@ import { Context } from 'egg';
  */
 @Provide()
 export class BaseLogMiddleware implements IWebMiddleware {
+  @Inject()
+  baseSysLogService: BaseSysLogService;
 
-    @Inject()
-    baseSysLogService: BaseSysLogService;
-
-    resolve() {
-        return async (ctx: Context, next: IMidwayWebNext) => {
-            this.baseSysLogService.record(ctx, ctx.url.split('?')[0], ctx.req.method === 'GET' ? ctx.request.query : ctx.request.body, ctx.admin ? ctx.admin.userId : null);
-            await next();
-        };
-    }
-
+  resolve() {
+    return async (ctx: Context, next: IMidwayWebNext) => {
+      this.baseSysLogService.record(
+        ctx,
+        ctx.url.split('?')[0],
+        ctx.req.method === 'GET' ? ctx.request.query : ctx.request.body,
+        ctx.admin ? ctx.admin.userId : null
+      );
+      await next();
+    };
+  }
 }

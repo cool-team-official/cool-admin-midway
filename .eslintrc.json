@@ -1,7 +1,22 @@
 {
   "extends": "./node_modules/mwts/",
-  "ignorePatterns": ["node_modules", "dist", "test", "jest.config.js", "typings"],
+  "ignorePatterns": [
+    "node_modules",
+    "dist",
+    "test",
+    "jest.config.js",
+    "typings",
+    "src/app/public/**/**",
+    "src/app/view/**/**"
+  ],
   "env": {
     "jest": true
+  },
+  "rules": {
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "node/no-extraneous-import": "off",
+    "no-empty": "off",
+    "node/no-extraneous-require": "off"
   }
 }

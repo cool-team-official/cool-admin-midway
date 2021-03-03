@@ -7,10 +7,10 @@ import { ModuleConfig } from 'midwayjs-cool-core';
 export default (app: Application) => {
   return {
     // 模块名称
-    name: '权限管理',
+    name: '文件空间',
     // 模块描述
-    description: '基础的权限管理功能，包括登录，权限校验',
+    description: '上传和管理文件资源',
     // 中间件
-    middlewares: ['baseAuthorityMiddleware', 'baseLogMiddleware'],
+    middlewares: [],
   } as ModuleConfig;
 };

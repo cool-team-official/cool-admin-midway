@@ -8,12 +8,11 @@ import { CoolController, BaseController } from 'midwayjs-cool-core';
 @Provide()
 @CoolController('/')
 export class WelcomeController extends BaseController {
+  @Inject()
+  ctx: Context;
 
-    @Inject()
-    ctx: Context;
-
-    @Get('/')
-    public async welcome () {
-        await this.ctx.render('welcome', { text: 'HELLO COOL-ADMIN' });
-    }
+  @Get('/')
+  public async welcome() {
+    await this.ctx.render('welcome', { text: 'HELLO COOL-ADMIN' });
+  }
 }

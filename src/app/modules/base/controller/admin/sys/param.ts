@@ -9,26 +9,24 @@ import { BaseSysParamService } from '../../../service/sys/param';
  */
 @Provide()
 @CoolController({
-    api: ['add', 'delete', 'update', 'info', 'page'],
-    entity: BaseSysParamEntity,
-    pageQueryOp: {
-        keyWordLikeFields: ['name', 'keyName']
-    }
+  api: ['add', 'delete', 'update', 'info', 'page'],
+  entity: BaseSysParamEntity,
+  pageQueryOp: {
+    keyWordLikeFields: ['name', 'keyName'],
+  },
 })
 export class BaseSysParamController extends BaseController {
+  @Inject()
+  baseSysParamService: BaseSysParamService;
 
-    @Inject()
-    baseSysParamService: BaseSysParamService;
+  @Inject()
+  ctx: Context;
 
-    @Inject()
-    ctx: Context;
-
-    /**
-     * 根据配置参数key获得网页内容(富文本)
-     */
-    @Get('/html')
-    async htmlByKey(@Query() key: string) {
-        this.ctx.body = await this.baseSysParamService.htmlByKey(key);
-    }
-
+  /**
+   * 根据配置参数key获得网页内容(富文本)
+   */
+  @Get('/html')
+  async htmlByKey(@Query() key: string) {
+    this.ctx.body = await this.baseSysParamService.htmlByKey(key);
+  }
 }

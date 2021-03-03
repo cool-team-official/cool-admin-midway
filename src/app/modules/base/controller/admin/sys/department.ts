@@ -8,22 +8,20 @@ import { BaseSysDepartmentService } from '../../../service/sys/department';
  */
 @Provide()
 @CoolController({
-    api: ['add', 'delete', 'update', 'list'],
-    entity: BaseSysDepartmentEntity,
-    service: BaseSysDepartmentService
+  api: ['add', 'delete', 'update', 'list'],
+  entity: BaseSysDepartmentEntity,
+  service: BaseSysDepartmentService,
 })
 export class BaseDepartmentController extends BaseController {
+  @Inject()
+  baseDepartmentService: BaseSysDepartmentService;
 
-    @Inject()
-    baseDepartmentService: BaseSysDepartmentService;
-
-    /**
-     * 部门排序
-     */
-    @Post('/order')
-    async order(@Body(ALL) params: Object) {
-        await this.baseDepartmentService.order(params);
-        return this.ok();
-    }
-
+  /**
+   * 部门排序
+   */
+  @Post('/order')
+  async order(@Body(ALL) params: any) {
+    await this.baseDepartmentService.order(params);
+    return this.ok();
+  }
 }
