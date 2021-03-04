@@ -15,6 +15,7 @@
         "md5": "^2.3.0",
         "midwayjs-cool-core": "/Users/ap/Documents/srcs/cool-admin/midway-core/core/dist",
         "midwayjs-cool-oss": "^1.0.0",
+        "midwayjs-cool-queue": "/Users/ap/Documents/srcs/cool-admin/midway-core/queue/dist",
         "midwayjs-cool-redis": "/Users/ap/Documents/srcs/cool-admin/midway-core/redis/dist",
         "mysql2": "^2.2.5",
         "svg-captcha": "^1.4.0",
