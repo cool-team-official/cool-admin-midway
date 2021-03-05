@@ -11,11 +11,10 @@
       "@Provide()",
       "@CoolController({",
       "  api: ['add', 'delete', 'update', 'info', 'list', 'page'],",
-      "  entity: 实体",
+      "  entity: 实体,",
       "})",
-      "export class XxxController extends BaseController {",
-      "",
-      "}"
+      "export class XxxController extends BaseController {}",
+      ""
     ],
     "description": "cool-admin controller代码片段"
   }

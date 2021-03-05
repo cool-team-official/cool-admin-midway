@@ -11,11 +11,10 @@
       " */",
       "@EntityModel('xxx_xxx_xxx')",
       "export class XxxEntity extends BaseEntity {",
-      "",
-      "  @Column({comment: '描述'})",
+      "  @Column({ comment: '描述' })",
       "  xxx: string;",
-      "",
       "}",
+      ""
     ],
     "description": "cool-admin entity代码片段"
   }

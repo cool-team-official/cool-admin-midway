@@ -8,7 +8,7 @@ import { ICoolQueue, Queue } from 'midwayjs-cool-queue';
 @Provide()
 export abstract class DemoOrderQueue implements ICoolQueue {
   data(job: any, done: any): void {
-    console.log(6666, job.data);
+    console.log('收到的数据', job.data);
     done();
   }
 }

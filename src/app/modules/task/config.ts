@@ -2,15 +2,15 @@ import { Application } from 'egg';
 import { ModuleConfig } from 'midwayjs-cool-core';
 
 /**
- * 模块的配置
+ * 模块配置
  */
 export default (app: Application) => {
   return {
     // 模块名称
-    name: '权限管理',
+    name: '任务调度',
     // 模块描述
-    description: '基础的权限管理功能，包括登录，权限校验',
+    description: '任务调度模块，支持分布式任务，由redis整个集群的任务',
     // 中间件
-    middlewares: ['baseAuthorityMiddleware', 'baseLogMiddleware'],
+    middlewares: [],
   } as ModuleConfig;
 };

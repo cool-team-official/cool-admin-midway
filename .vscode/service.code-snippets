@@ -12,17 +12,15 @@
       " */",
       "@Provide()",
       "export class XxxService extends BaseService {",
+      "  @InjectEntityModel(实体)",
+      "  xxxEntity: Repository<实体>;",
       "",
-      "    @InjectEntityModel(实体)",
-      "    xxxEntity: Repository<实体>;",
-      "",
-      "    /**",
-      "     * 描述",
-      "     */",
-      "    async xxx() {",
-      "",
-      "    }",
-      "}"
+      "  /**",
+      "   * 描述",
+      "   */",
+      "  async xxx() {}",
+      "}",
+      ""
     ],
     "description": "cool-admin service代码片段"
   }

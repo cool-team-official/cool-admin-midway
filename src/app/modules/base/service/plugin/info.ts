@@ -1,6 +1,5 @@
 import { Inject, Provide } from '@midwayjs/decorator';
 import { BaseService, CoolCache, CoolPlugin } from 'midwayjs-cool-core';
-import { DemoOrderQueue } from '../../../demo/queue/order';
 
 /**
  * 插件
@@ -13,17 +12,10 @@ export class BasePluginInfoService extends BaseService {
   @Inject('cool:cache')
   coolCache: CoolCache;
 
-  @Inject()
-  demoOrderQueue: DemoOrderQueue;
-
-  @Inject('demoOrderQueue')
-  test;
-
   /**
    * 列表
    */
   async list(keyWord) {
-    this.test.queue.add({ a: 1, b: 2 });
     return this.coolPlugin.list(keyWord);
   }
 
