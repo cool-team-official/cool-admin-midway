@@ -39,7 +39,7 @@
         "node": ">=12.0.0"
     },
     "scripts": {
-        "start": "egg-scripts start --daemon --title=cool-admin-midway --framework=@midwayjs/web",
+        "start": "egg-scripts start --daemon --title=cool-admin-midway --framework=@midwayjs/web --port=8001",
         "stop": "egg-scripts stop --title=cool-admin-midway",
         "start_build": "npm run build && cross-env NODE_ENV=development midway-bin dev",
         "docker": "egg-scripts start --title=cool-admin-midway --framework=@midwayjs/web",
