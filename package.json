@@ -52,7 +52,8 @@
         "lint:fix": "mwts fix",
         "ci": "npm run cov",
         "build": "midway-bin build -c",
-        "check": "luckyeye"
+        "check": "luckyeye",
+        "deploy": "midway-bin deploy"
     },
     "midway-bin-clean": [
         ".vscode/.tsbuildinfo",
@@ -63,10 +64,18 @@
             "midway_v2"
         ]
     },
+    "midway-integration": {
+        "lifecycle": {
+            "before:package:cleanup": "npm run build"
+        }
+    },
+    "egg": {
+        "framework": "@midwayjs/web"
+    },
     "repository": {
         "type": "git",
         "url": ""
     },
-    "author": "",
+    "author": "cool-js.com",
     "license": "MIT"
 }
