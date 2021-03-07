@@ -1,9 +1,6 @@
-import { Get, Provide } from '@midwayjs/decorator';
-import { InjectEntityModel } from '@midwayjs/orm';
+import { Provide } from '@midwayjs/decorator';
 import { CoolController, BaseController } from 'midwayjs-cool-core';
 import { DemoAppGoodsEntity } from '../../entity/goods';
-import { Repository } from 'typeorm';
-import { BaseSysMenuEntity } from '../../../base/entity/sys/menu';
 
 /**
  * 商品
