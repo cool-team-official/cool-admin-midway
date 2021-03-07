@@ -6,6 +6,7 @@ import * as cool from 'midwayjs-cool-core';
 import * as oss from 'midwayjs-cool-oss';
 import * as redis from 'midwayjs-cool-redis';
 import * as queue from 'midwayjs-cool-queue';
+// import * as socket from 'midwayjs-cool-socket';
 
 @Configuration({
   // 注意组件顺序 cool 有依赖orm组件， 所以必须放在，orm组件之后 cool的其他组件必须放在cool 核心组件之后
@@ -20,6 +21,8 @@ import * as queue from 'midwayjs-cool-queue';
     redis,
     // 队列
     queue,
+    // socket
+    //socket
   ],
 })
 export class ContainerLifeCycle implements ILifeCycle {
