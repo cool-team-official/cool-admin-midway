@@ -15,3 +15,4 @@ run/
 .tsbuildinfo.*
 src/app/public/uploads/
 typings/
+resource/.cache
