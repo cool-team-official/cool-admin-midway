@@ -14,22 +14,5 @@ import { BaseSysMenuEntity } from '../../../base/entity/sys/menu';
   entity: DemoAppGoodsEntity,
 })
 export class DemoAppGoodsController extends BaseController {
-  @InjectEntityModel(BaseSysMenuEntity)
-  baseSysMenuEntity: Repository<BaseSysMenuEntity>;
-
-  @Get('/123')
-  async 123() {
-    const ms = await this.baseSysMenuEntity.find();
-    for (const item of ms) {
-      if (item.perms) {
-        let a = item.perms.split(',');
-        a = a.map(e => {
-          return 'base:' + e;
-        });
-        item.perms = a.join(',');
-        this.baseSysMenuEntity.update(item.id, item);
-      }
-    }
-    return this.ok(122);
-  }
+ 
 }
