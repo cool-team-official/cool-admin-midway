@@ -18,8 +18,8 @@ export abstract class TaskInfoQueue implements ICoolQueue {
   async data(job: any, done: any): Promise<void> {
     try {
       console.log('收到的数据', job.data);
-      this.taskInfoService.invokeService(job.data.service);
-      this.taskInfoService.record(job.data, 1);
+      const result = await this.taskInfoService.invokeService(job.data.service);
+      this.taskInfoService.record(job.data, 1, JSON.stringify(result));
     } catch (error) {
       this.taskInfoService.record(job.data, 0, error);
     }

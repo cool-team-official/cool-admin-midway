@@ -2,5 +2,7 @@ service: cool-admin  ## 应用发布到云平台的名字，一般指应用名
 
 provider:
   name: aliyun        ## 发布的云平台，aliyun，tencent 等
+  runtime: nodejs12
+  memorySize: 512
 
 deployType: egg       ## 部署的应用类型

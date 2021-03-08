@@ -295,9 +295,9 @@ export class TaskInfoService extends BaseService {
           const lastArr = child.split('(');
           const param = lastArr[1].replace(')', '');
           if (!param) {
-            service[lastArr[0]]();
+            return service[lastArr[0]]();
           } else {
-            service[lastArr[0]](JSON.parse(param));
+            return service[lastArr[0]](JSON.parse(param));
           }
         }
       }
