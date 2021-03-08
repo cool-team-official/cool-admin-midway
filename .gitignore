@@ -16,3 +16,4 @@ run/
 src/app/public/uploads/
 typings/
 .cache
+.serverless/

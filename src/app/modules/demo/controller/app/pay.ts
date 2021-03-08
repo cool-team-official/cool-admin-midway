@@ -11,7 +11,7 @@ import { parseString } from 'xml2js';
 @CoolController()
 export class DemoPayController extends BaseController {
   // 微信支付
-  @Inject('cool:wxpay')
+  @Inject()
   wxpay: ICoolWxPay;
 
   @Inject()
