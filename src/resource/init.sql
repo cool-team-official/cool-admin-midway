@@ -712,49 +712,6 @@ CREATE TABLE `core_config` (
   KEY `IDX_ad74623a3e9a43335eac8d1154` (`updateTime`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 
--- ----------------------------
--- Records of core_config
--- ----------------------------
-BEGIN;
-INSERT INTO `core_config` VALUES (1, '2021-02-26 17:58:21.201000', '2021-02-27 13:33:27.671000', 'oss.accessKeyId', '');
-INSERT INTO `core_config` VALUES (2, '2021-02-26 17:58:48.970000', '2021-02-27 11:49:59.205000', 'oss.accessKeySecret', '');
-INSERT INTO `core_config` VALUES (3, '2021-02-26 17:59:09.894000', '2021-02-27 11:50:00.921000', 'oss.bucket', '');
-INSERT INTO `core_config` VALUES (4, '2021-02-26 17:59:25.566000', '2021-02-27 11:50:03.167000', 'oss.endpoint', '');
-INSERT INTO `core_config` VALUES (5, '2021-02-26 18:00:06.396000', '2021-02-27 13:32:58.068000', 'oss.timeout', '3600s');
-INSERT INTO `core_config` VALUES (10, '2021-03-03 17:22:50.757000', '2021-03-03 17:22:50.757000', 'redis.redis', '{\n    \"host\": \"127.0.0.1\",\n    \"password\": \"\",\n    \"port\": 6379,\n    \"db\": 2\n}');
-COMMIT;
-
--- ----------------------------
--- Table structure for core_plugin
--- ----------------------------
-DROP TABLE IF EXISTS `core_plugin`;
-CREATE TABLE `core_plugin` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `createTime` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
-  `updateTime` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '更新时间',
-  `name` varchar(255) NOT NULL COMMENT '名称',
-  `author` varchar(255) NOT NULL COMMENT '作者',
-  `contact` varchar(255) NOT NULL COMMENT '联系方式',
-  `description` text NOT NULL COMMENT '功能描述',
-  `version` varchar(255) NOT NULL COMMENT '版本号',
-  `enable` tinyint(4) NOT NULL DEFAULT '1' COMMENT '是否启用 0：否 1：是',
-  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态 0:缺少配置 1:可用 2: 配置错误 3:未知错误',
-  `namespace` varchar(255) NOT NULL COMMENT '命名空间',
-  `view` text COMMENT '页面信息',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `IDX_eecfe4f7cae1c102745ffccb9d` (`name`),
-  KEY `IDX_851967f56db40707b8a55914d7` (`createTime`),
-  KEY `IDX_b9880bb45d647eba03fc3052c4` (`updateTime`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4;
-
--- ----------------------------
--- Records of core_plugin
--- ----------------------------
-BEGIN;
-INSERT INTO `core_plugin` VALUES (8, '2021-03-03 11:26:59.822415', '2021-03-05 16:34:25.000000', 'Redis缓存', 'cool官方', '邮箱：team@cool-js.com', '替换系统的默认缓存为redis', '1.0.0', 0, 1, 'redis', '[{\n    \"label\": \"配置\",\n    \"prop\": \"redis\",\n    \"component\": {\n        \"name\": \"cl-codemirror\",\n        \"attrs\": {\n            \"placeholder\": \"{\\\"host\\\":\\\"127.0.0.1\\\",\\\"password\\\":\\\"\\\",\\\"port\\\":6379,\\\"db\\\":2}\"\n        },\n        \"props\":{\n            \"height\": \"200px\"\n        }\n    },\n    \"value\": \"{\\\"host\\\":\\\"127.0.0.1\\\",\\\"password\\\":\\\"\\\",\\\"port\\\":6379,\\\"db\\\":2}\",\n    \"props\": {\n        \"label-width\": \"80px\"\n    },\n    \"rules\": {\n        \"required\": true,\n        \"message\": \"值不能为空\"\n    }\n}]');
-INSERT INTO `core_plugin` VALUES (9, '2021-03-03 16:25:14.668900', '2021-03-05 16:35:24.000000', '阿里云OSS', 'cool官方', '邮箱：team@cool-js.com', '将文件上传到阿里云oss，前端签名直传方式', '1.0.2', 1, 0, 'oss', NULL);
-INSERT INTO `core_plugin` VALUES (14, '2021-03-04 16:28:00.891291', '2021-03-05 16:34:26.000000', '任务与队列', 'cool官方', '邮箱：team@cool-js.com', '基于bull的任务与队列，支持分布式任务', '1.0.0', 0, 1, 'queue', NULL);
-COMMIT;
 
 -- ----------------------------
 -- Table structure for demo_app_goods
