@@ -1,7 +1,7 @@
 import { Inject, Provide, Config } from '@midwayjs/decorator';
 import {
   BaseService,
-  CoolCache,
+  ICoolCache,
   CoolCommException,
   CoolConfig,
   RESCODE,
@@ -27,7 +27,7 @@ import { Context } from 'egg';
 @Provide()
 export class BaseSysLoginService extends BaseService {
   @Inject('cool:cache')
-  coolCache: CoolCache;
+  coolCache: ICoolCache;
 
   @InjectEntityModel(BaseSysUserEntity)
   baseSysUserEntity: Repository<BaseSysUserEntity>;

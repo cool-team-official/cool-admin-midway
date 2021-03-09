@@ -1,5 +1,5 @@
 import { Inject, Provide } from '@midwayjs/decorator';
-import { BaseService, CoolCache } from 'midwayjs-cool-core';
+import { BaseService, ICoolCache } from 'midwayjs-cool-core';
 import { InjectEntityModel } from '@midwayjs/orm';
 import { Repository } from 'typeorm';
 import { BaseSysParamEntity } from '../../entity/sys/param';
@@ -13,7 +13,7 @@ export class BaseSysParamService extends BaseService {
   baseSysParamEntity: Repository<BaseSysParamEntity>;
 
   @Inject('cool:cache')
-  coolCache: CoolCache;
+  coolCache: ICoolCache;
 
   /**
    * 根据key获得对应的参数

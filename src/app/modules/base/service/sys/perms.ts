@@ -1,5 +1,5 @@
 import { Inject, Provide } from '@midwayjs/decorator';
-import { BaseService, CoolCache } from 'midwayjs-cool-core';
+import { BaseService, ICoolCache } from 'midwayjs-cool-core';
 import { BaseSysMenuService } from './menu';
 import { BaseSysRoleService } from './role';
 import { BaseSysDepartmentService } from './department';
@@ -11,7 +11,7 @@ import { Context } from 'egg';
 @Provide()
 export class BaseSysPermsService extends BaseService {
   @Inject('cool:cache')
-  coolCache: CoolCache;
+  coolCache: ICoolCache;
 
   @Inject()
   baseSysMenuService: BaseSysMenuService;

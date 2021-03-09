@@ -1,6 +1,5 @@
 import { EggAppConfig, EggAppInfo, PowerPartial } from 'egg';
 import * as path from 'path';
-import * as fs from 'fs';
 
 export type DefaultConfig = PowerPartial<EggAppConfig>;
 
@@ -33,12 +32,12 @@ export default (appInfo: EggAppInfo) => {
     buffer: false,
   };
 
-  // 修改默认的 favicon.ico
-  config.siteFile = {
-    '/favicon.ico': fs.readFileSync(
-      path.join(appInfo.baseDir, 'app/public/favicon.ico')
-    ),
-  };
+  // 修改默认的 favicon.ico serverless 环境下无用
+  // config.siteFile = {
+  //   '/favicon.ico': fs.readFileSync(
+  //     path.join(appInfo.baseDir, 'app/public/favicon.ico')
+  //   ),
+  // };
 
   // 关闭安全校验
   config.security = {
@@ -85,7 +84,8 @@ export default (appInfo: EggAppInfo) => {
     mode: 'file',
     whitelist: [
       // images
-      '.jpg', '.jpeg', // image/jpeg
+      '.jpg',
+      '.jpeg', // image/jpeg
       '.png', // image/png, image/x-png
       '.gif', // image/gif
       '.bmp', // image/bmp
@@ -95,22 +95,27 @@ export default (appInfo: EggAppInfo) => {
       '.psd',
       // text
       '.svg',
-      '.js', '.jsx',
+      '.js',
+      '.jsx',
       '.json',
-      '.css', '.less',
-      '.html', '.htm',
+      '.css',
+      '.less',
+      '.html',
+      '.htm',
       '.xml',
       // tar
       '.zip',
-      '.gz', '.tgz', '.gzip',
+      '.gz',
+      '.tgz',
+      '.gzip',
       // video
       '.mp3',
       '.mp4',
       '.avi',
       // 证书
       '.p12',
-      '.pem'
-    ]
+      '.pem',
+    ],
   };
 
   // 将egg日志替换成midway

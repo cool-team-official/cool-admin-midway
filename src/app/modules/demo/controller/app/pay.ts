@@ -1,4 +1,5 @@
-import { Inject, Post, Provide } from '@midwayjs/decorator';
+import { App, Inject, Post, Provide } from '@midwayjs/decorator';
+import { IMidwayWebApplication } from '@midwayjs/web';
 import { Context } from 'egg';
 import { CoolController, BaseController } from 'midwayjs-cool-core';
 import { ICoolWxPay } from 'midwayjs-cool-wxpay';
@@ -11,19 +12,24 @@ import { parseString } from 'xml2js';
 @CoolController()
 export class DemoPayController extends BaseController {
   // 微信支付
-  @Inject()
-  wxpay: ICoolWxPay;
+  @Inject('wxpay:sdk')
+  wxPay: ICoolWxPay;
 
   @Inject()
   ctx: Context;
+
+  @App()
+  app: IMidwayWebApplication;
 
   /**
    * 扫码支付
    */
   @Post('/wx')
   async wx() {
-    const orderNum = await this.wxpay.createOrderNum();
-    const data = await this.wxpay.getInstance().unifiedOrder({
+    // const a = this.app.getApplicationContext().registry.keys();
+    // console.log(a);
+    const orderNum = await this.wxPay.createOrderNum();
+    const data = await this.wxPay.getInstance().unifiedOrder({
       out_trade_no: orderNum,
       body: '测试微信支付',
       total_fee: 1,
@@ -49,7 +55,7 @@ export class DemoPayController extends BaseController {
           if (err) {
             return reject('success');
           }
-          const checkSign = await this.wxpay.signVerify(json.xml);
+          const checkSign = await this.wxPay.signVerify(json.xml);
           if (checkSign && json.xml.result_code === 'SUCCESS') {
             // 处理业务逻辑
             console.log('微信支付成功', json.xml);

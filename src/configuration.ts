@@ -3,11 +3,11 @@ import { ILifeCycle, IMidwayContainer } from '@midwayjs/core';
 import { Application } from 'egg';
 import * as orm from '@midwayjs/orm';
 import * as cool from 'midwayjs-cool-core';
-import * as oss from 'midwayjs-cool-oss';
-import * as redis from 'midwayjs-cool-redis';
-import * as queue from 'midwayjs-cool-queue';
 import * as wxpay from 'midwayjs-cool-wxpay';
-import * as alipay from 'midwayjs-cool-alipay';
+// import * as oss from 'midwayjs-cool-oss';
+import * as redis from 'midwayjs-cool-redis';
+// import * as queue from 'midwayjs-cool-queue';
+// import * as alipay from 'midwayjs-cool-alipay';
 // import * as socket from 'midwayjs-cool-socket';
 
 @Configuration({
@@ -18,15 +18,15 @@ import * as alipay from 'midwayjs-cool-alipay';
     // 必须，不可移除， cool-admin 官方组件 https://www.cool-js.com
     cool,
     // oss插件，需要到后台配置之后才有用，默认是本地上传
-    oss,
+    //oss,
     // 将缓存替换成redis
     redis,
     // 队列
-    queue,
+    //queue,
     // 微信支付
     wxpay,
     // 支付宝支付
-    alipay
+    //alipay
     // socket
     //socket
   ],

@@ -1,5 +1,5 @@
 import { Inject, Provide } from '@midwayjs/decorator';
-import { BaseService, CoolCache, CoolCommException } from 'midwayjs-cool-core';
+import { BaseService, ICoolCache, CoolCommException } from 'midwayjs-cool-core';
 import { InjectEntityModel } from '@midwayjs/orm';
 import { Repository } from 'typeorm';
 import { BaseSysUserEntity } from '../../entity/sys/user';
@@ -24,7 +24,7 @@ export class BaseSysUserService extends BaseService {
   baseSysDepartmentEntity: Repository<BaseSysDepartmentEntity>;
 
   @Inject('cool:cache')
-  coolCache: CoolCache;
+  coolCache: ICoolCache;
 
   @Inject()
   baseSysPermsService: BaseSysPermsService;
