@@ -6,3 +6,7 @@ provider:
   memorySize: 512
 
 deployType: egg       ## 部署的应用类型
+
+package:
+  include:
+     - public/*

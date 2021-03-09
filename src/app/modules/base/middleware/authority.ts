@@ -55,9 +55,7 @@ export class BaseAuthorityMiddleware implements IWebMiddleware {
             return;
           }
           // 需要动态获得缓存
-          this.coolCache = await this.app
-            .getApplicationContext()
-            .getAsync('cool:cache');
+          this.coolCache = await ctx.requestContext.getAsync('cool:cache');
           // 判断密码版本是否正确
           const passwordV = await this.coolCache.get(
             `admin:passwordVersion:${ctx.admin.userId}`

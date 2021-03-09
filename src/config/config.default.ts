@@ -24,7 +24,7 @@ export default (appInfo: EggAppInfo) => {
   // 靜態目錄及緩存設置
   config.static = {
     prefix: '/',
-    dir: path.join(appInfo.baseDir, 'app/public'),
+    dir: path.join(appInfo.baseDir, '..', 'public'),
     dynamic: true,
     preload: false,
     // maxAge: 31536000,
