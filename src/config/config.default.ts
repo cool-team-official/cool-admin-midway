@@ -23,7 +23,7 @@ export default (appInfo: EggAppInfo) => {
 
   // 靜態目錄及緩存設置
   config.static = {
-    prefix: '/',
+    prefix: '',
     dir: path.join(appInfo.baseDir, '..', 'public'),
     dynamic: true,
     preload: false,
@@ -74,7 +74,7 @@ export default (appInfo: EggAppInfo) => {
     // 文件上传
     file: {
       // 文件路径前缀 本地上传模式下 有效
-      domain: 'https://admin.cn.utools.club',
+      domain: 'https://admin.cool-js.cool',
     },
   };
 

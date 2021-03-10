@@ -25,10 +25,11 @@ export class BaseAuthorityMiddleware implements IWebMiddleware {
   resolve() {
     return async (ctx: Context, next: IMidwayWebNext) => {
       let statusCode = 200;
-      const { url } = ctx;
-      const token = ctx.get('Authorization');
+      let { url } = ctx;
       const { prefix } = this.coolConfig.router;
-      const adminUrl = prefix ? `${prefix}/admin/` : '/admin/';
+      url = url.replace(prefix, '');
+      const token = ctx.get('Authorization');
+      const adminUrl = '/admin/';
       // 路由地址为 admin前缀的 需要权限校验
       if (_.startsWith(url, adminUrl)) {
         try {

@@ -18,7 +18,7 @@ import { BaseSysParamService } from '../../service/sys/param';
  */
 @Provide()
 @CoolController()
-export class BaseSysOpenController extends BaseController {
+export class BaseOpenController extends BaseController {
   @Inject()
   baseSysLoginService: BaseSysLoginService;
 
