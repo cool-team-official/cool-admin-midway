@@ -12,8 +12,8 @@
 
 ## 技术栈
 
-* 后端：**`node.js`、 `midway.js`、`egg.js`、`mysql`、`typescript`**
-* 前端：**`vue.js`、`element-ui`、`jsx`、`vuex`、`vue-router`**
+* 后端：**`node.js` `midway.js` `egg.js` `mysql` `typescript`**
+* 前端：**`vue.js` `element-ui` `jsx` `vuex` `vue-router`**
 
 如果你是前端，后端的这些技术选型对你是特别友好的，前端开发者可以较快速地上手。
 如果你是后端，Typescript的语法又跟java、php等特别类似，一切看起来也是那么得熟悉。
