@@ -25,6 +25,9 @@
 
 [https://github.com/cool-team-official/cool-admin-vue](https://github.com/cool-team-official/cool-admin-vue)
 
+## QQ群
+2群：539478405
+
 ## 微信群
 
 <img width="260" src="https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/wechat.jpeg" alt="Admin Wechat"></a>
