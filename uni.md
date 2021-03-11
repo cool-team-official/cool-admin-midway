@@ -1,14 +1,7 @@
-<p align="center">
-  <a href="https://midwayjs.org/" target="blank"><img src="https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/logo.png" width="200" alt="Midway Logo" /></a>
-</p>
+![LOGO](https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/logo.png)
 
-<p align="center">cool-admin(midway版)一个很酷的后台权限管理系统，开源免费，模块化、插件化、极速开发CRUD，方便快速构建迭代后台管理系统，支持serverless、docker、普通服务器等多种方式部署
-到 <a href="https://bbs.cool-js.com" target="_blank">论坛</a> 进一步了解
-<p align="center">
-    <a href="https://github.com/cool-team-official/cool-admin-midway/blob/master/LICENSE" target="_blank"><img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="GitHub license" />
-    <a href=""><img src="https://img.shields.io/github/package-json/v/cool-team-official/cool-admin-midway?style=flat-square" alt="GitHub tag"></a>
-    <img src="https://img.shields.io/github/last-commit/cool-team-official/cool-admin-midway?style=flat-square" alt="GitHub tag"></a>
-</p>
+![](https://img.shields.io/badge/license-MIT-green?style=flat-square) ![](https://img.shields.io/github/package-json/v/cool-team-official/cool-admin-midway?style=flat-square) ![](https://img.shields.io/github/last-commit/cool-team-official/cool-admin-midway?style=flat-square)
+
 
 ## 技术栈
 
@@ -25,7 +18,7 @@
 * 账户：admin
 * 密码：123456
 
-<img src="https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/home-mini.png" alt="Admin Home"></a>
+![](https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/home-mini.png)
 #### 文档
 [https://admin.cool-js.com](https://admin.cool-js.com)
 
@@ -38,11 +31,11 @@
 
 ## 微信群
 
-<img width="260" src="https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/wechat.jpeg" alt="Admin Wechat"></a>
+![](https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/wechat.jpeg?x-oss-process=image/resize,h_260,m_lfit)
 
 ## 微信公众号
 
-<img width="260" src="https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/mp.jpg" alt="Admin Wechat"></a>
+![](https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/mp.jpg?x-oss-process=image/resize,h_260,m_lfit)
 
 
 ## 运行

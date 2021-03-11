@@ -190,7 +190,7 @@ export class BaseSysUserService extends BaseService {
     }
     if (!_.isEmpty(param.password)) {
       param.password = md5(param.password);
-      const userInfo = await this.ctx.repo.sys.User.findOne({ id: param.id });
+      const userInfo = await this.baseSysUserEntity.findOne({ id: param.id });
       if (!userInfo) {
         throw new CoolCommException('用户不存在');
       }
