@@ -36,7 +36,6 @@ export class ContainerLifeCycle implements ILifeCycle {
   app: Application;
   // 应用启动完成
   async onReady(container?: IMidwayContainer) {
-    console.log(container.baseDir);
   }
   // 应用停止
   async onStop() {}
