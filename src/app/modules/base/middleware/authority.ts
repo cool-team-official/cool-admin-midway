@@ -35,7 +35,7 @@ export class BaseAuthorityMiddleware implements IWebMiddleware {
         try {
           ctx.admin = jwt.verify(token, this.coolConfig.jwt.secret);
           // 超管拥有所有权限
-          if(ctx.admin.username == 'admin' && !ctx.admin.isRefresh){
+          if (ctx.admin.username == 'admin' && !ctx.admin.isRefresh) {
             await next();
             return;
           }

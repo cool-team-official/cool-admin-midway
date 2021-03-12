@@ -10,17 +10,17 @@ import { ICoolCache } from 'midwayjs-cool-core';
  */
 @Provide()
 export class DemoGoodsService extends BaseService {
-    @InjectEntityModel(DemoAppGoodsEntity)
-    demoAppGoodsEntity: Repository<DemoAppGoodsEntity>;
+  @InjectEntityModel(DemoAppGoodsEntity)
+  demoAppGoodsEntity: Repository<DemoAppGoodsEntity>;
 
-    @Inject('cool:cache')
-    coolCache: ICoolCache;
+  @Inject('cool:cache')
+  coolCache: ICoolCache;
 
-    /**
-     * 返回所有数据
-     */
-    @Cache(5)
-    async all() {
-        return this.demoAppGoodsEntity.find();
-    }
+  /**
+   * 返回所有数据
+   */
+  @Cache(5)
+  async all() {
+    return this.demoAppGoodsEntity.find();
+  }
 }

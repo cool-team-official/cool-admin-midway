@@ -30,27 +30,29 @@ import { DemoAppGoodsEntity } from '../../entity/goods';
     // 指定返回字段
     select: ['a.*', 'b.name'],
     // 关联表用户表
-    leftJoin: [{
-      // 管理的表
-      entity: BaseSysUserEntity,
-      // 别名
-      alias: 'b',
-      // 关联条件
-      condition: 'a.userId = b.id'
-    }],
+    leftJoin: [
+      {
+        // 管理的表
+        entity: BaseSysUserEntity,
+        // 别名
+        alias: 'b',
+        // 关联条件
+        condition: 'a.userId = b.id',
+      },
+    ],
     // 增加其他条件
     where: async (ctx: Context) => {
       return [
         // 价格大于90
-        ['a.price > :price', { price: 90.00 }]
-      ]
+        ['a.price > :price', { price: 90.0 }],
+      ];
     },
     // 添加排序
     addOrderBy: {
       // 排序字段及排序方式
-      price: 'desc'
-    }
-  }
+      price: 'desc',
+    },
+  },
 })
 export class DemoAdminGoodsController extends BaseController {
   /**

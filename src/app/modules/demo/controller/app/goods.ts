@@ -17,7 +17,7 @@ export class DemoAppGoodsController extends BaseController {
 
   /**
    * 请求所有数据
-   * @returns 
+   * @returns
    */
   @Get('/all')
   async all() {

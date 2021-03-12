@@ -20,5 +20,5 @@ export class DemoAppGoodsEntity extends BaseEntity {
   price: number;
 
   @Column({ comment: '分类', type: 'tinyint' })
-  type: number
+  type: number;
 }
