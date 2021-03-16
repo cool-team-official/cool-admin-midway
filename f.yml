@@ -10,3 +10,5 @@ deployType: egg       ## 部署的应用类型
 package:
   include:
      - public/*
+  exclude:
+    - package-lock.json   ## 忽略 package-lock.json 文件
