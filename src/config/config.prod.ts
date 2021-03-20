@@ -7,11 +7,11 @@ export default (appInfo: EggAppInfo) => {
 
   config.orm = {
     type: 'mysql',
-    host: '127.0.0.1',
-    port: 3306,
-    username: 'root',
-    password: '123123',
-    database: 'cool',
+    host: process.env.MYSQL_HOST || '127.0.0.1',
+    port: parseInt(process.env.MYSQL_PORT || '3306'),
+    username: process.env.MYSQL_USER || 'root',
+    password: process.env.MYSQL_PASSWORD || '123123',
+    database: process.env.MYSQL_DATABASE || 'cool',
     // 自动建表 注意：线上部署的时候不要使用，有可能导致数据丢失
     synchronize: false,
     // 打印日志
