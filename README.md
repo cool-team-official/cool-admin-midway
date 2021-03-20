@@ -49,7 +49,7 @@
 
 #### 修改数据库配置，配置文件位于`src/config/config.local.ts`
 
-数据库为mysql(`>=5.7版本`)，首次启动会自动初始化并导入数据
+数据库为mysql(`>=5.7版本`)，node版本(`>=12.x`)，首次启动会自动初始化并导入数据
 
 ```js
 config.orm = {
@@ -72,7 +72,7 @@ $ npm run dev
 $ open http://localhost:8001/
 ```
 
-注： 如果你的网络不佳可以尝试使用[cnpm](https://developer.aliyun.com/mirror/NPM?from=tnpm)，或者切换您的镜像源
+注： `npm i`如果安装失败可以尝试使用[cnpm](https://developer.aliyun.com/mirror/NPM?from=tnpm)，或者切换您的镜像源
 
 ## CURD(快速增删改查)
 
