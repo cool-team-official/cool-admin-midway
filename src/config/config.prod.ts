@@ -24,5 +24,11 @@ export default (appInfo: EggAppInfo) => {
     },
   };
 
+  // cool配置
+  config.cool = {
+    // 是否初始化模块数据库
+    initDB: false,
+  };
+
   return config;
 };

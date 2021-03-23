@@ -1,4 +1,5 @@
 import { EggAppConfig, EggAppInfo, PowerPartial } from 'egg';
+import { CoolConfig } from 'midwayjs-cool-core';
 import * as path from 'path';
 
 export type DefaultConfig = PowerPartial<EggAppConfig>;
@@ -48,6 +49,8 @@ export default (appInfo: EggAppInfo) => {
 
   // cool-admin特有的配置
   config.cool = {
+    // 是否初始化模块数据库
+    initDB: true,
     // 全局路由前缀
     router: {
       prefix: '',
@@ -76,7 +79,7 @@ export default (appInfo: EggAppInfo) => {
       // 文件路径前缀 本地上传模式下 有效
       domain: 'https://admin.cool-js.cool',
     },
-  };
+  } as CoolConfig;
 
   // 文件上传
   config.multipart = {
