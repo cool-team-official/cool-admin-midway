@@ -7,9 +7,6 @@ import { Column } from 'typeorm';
  */
 @EntityModel('demo_app_goods')
 export class DemoAppGoodsEntity extends BaseEntity {
-  @Column({ comment: '用户ID' })
-  userId: number;
-
   @Column({ comment: '标题' })
   title: string;
 

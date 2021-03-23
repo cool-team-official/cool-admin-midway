@@ -1,7 +1,7 @@
 import { Get, Inject, Provide } from '@midwayjs/decorator';
 import { CoolController, BaseController } from 'midwayjs-cool-core';
-import { DemoAppGoodsEntity } from '../../entity/goods';
-import { DemoGoodsService } from '../../service/goods';
+import { DemoAppGoodsEntity } from '../../../entity/goods';
+import { DemoGoodsService } from '../../../service/goods';
 
 /**
  * 商品
@@ -10,6 +10,9 @@ import { DemoGoodsService } from '../../service/goods';
 @CoolController({
   api: ['add', 'delete', 'update', 'info', 'list', 'page'],
   entity: DemoAppGoodsEntity,
+  listQueryOp: {
+    keyWordLikeFields: ['title'],
+  },
 })
 export class DemoAppGoodsController extends BaseController {
   @Inject()

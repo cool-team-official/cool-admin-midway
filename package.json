@@ -15,7 +15,7 @@
         "lodash": "^4.17.21",
         "md5": "^2.3.0",
         "midwayjs-cool-alipay": "^1.0.3",
-        "midwayjs-cool-core": "^3.1.4",
+        "midwayjs-cool-core": "^3.1.5",
         "midwayjs-cool-oss": "^1.0.12",
         "midwayjs-cool-queue": "^1.0.6",
         "midwayjs-cool-redis": "^1.0.9",
@@ -44,7 +44,7 @@
         "node": ">=12.0.0"
     },
     "scripts": {
-        "start": "egg-scripts start --title=cool-admin-midway --framework=@midwayjs/web --port=8001 --sticky",
+        "start": "egg-scripts start --daemon --title=cool-admin-midway --framework=@midwayjs/web --port=8001 --sticky",
         "stop": "egg-scripts stop --title=cool-admin-midway",
         "start_build": "npm run build && cross-env NODE_ENV=development midway-bin dev",
         "docker": "egg-scripts start --title=cool-admin-midway --framework=@midwayjs/web  --sticky",
