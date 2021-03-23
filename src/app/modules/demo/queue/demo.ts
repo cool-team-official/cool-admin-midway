@@ -13,7 +13,7 @@ export abstract class DemoQueue implements ICoolQueue {
 
   async data(job: any, done: any): Promise<void> {
     // 这边可以执行定时任务具体的业务或队列的业务
-    console.log('数据', job);
+    console.log('数据', job.data);
     done();
   }
 }
