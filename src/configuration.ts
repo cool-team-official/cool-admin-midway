@@ -35,7 +35,7 @@ export class ContainerLifeCycle implements ILifeCycle {
   @App()
   app: Application;
   // 应用启动完成
-  async onReady(container?: IMidwayContainer) {}
+  async onReady(container?: IMidwayContainer) { }
   // 应用停止
-  async onStop() {}
+  async onStop() { }
 }
