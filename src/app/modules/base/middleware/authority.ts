@@ -34,18 +34,18 @@ export class BaseAuthorityMiddleware implements IWebMiddleware {
       if (_.startsWith(url, adminUrl)) {
         try {
           ctx.admin = jwt.verify(token, this.coolConfig.jwt.secret);
-          // 超管拥有所有权限
-          if (ctx.admin.username == 'admin' && !ctx.admin.isRefresh) {
-            await next();
-            return;
-          }
-        } catch (err) {}
+        } catch (err) { }
         // 不需要登录 无需权限校验
         if (new RegExp(`^${adminUrl}?.*/open/`).test(url)) {
           await next();
           return;
         }
         if (ctx.admin) {
+          // 超管拥有所有权限
+          if (ctx.admin.username == 'admin' && !ctx.admin.isRefresh) {
+            await next();
+            return;
+          }
           // 要登录每个人都有权限的接口
           if (new RegExp(`^${adminUrl}?.*/comm/`).test(url)) {
             await next();
