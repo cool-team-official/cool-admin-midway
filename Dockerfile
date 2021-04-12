@@ -2,7 +2,9 @@ FROM node:lts-alpine
 
 WORKDIR /app
 
-
+# 设置时区
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN echo 'Asia/Shanghai' >/etc/timezone
 
 # 如果各公司有自己的私有源，可以替换registry地址,如使用官方源注释下一行
 RUN npm set registry https://registry.npm.taobao.org
