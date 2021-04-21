@@ -9,7 +9,7 @@ export class LoginDTO {
 
   // 密码
   @Rule(RuleType.string().required())
-  password: number;
+  password: string;
 
   // 验证码ID
   @Rule(RuleType.string().required())
