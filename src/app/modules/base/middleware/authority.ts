@@ -34,7 +34,7 @@ export class BaseAuthorityMiddleware implements IWebMiddleware {
       if (_.startsWith(url, adminUrl)) {
         try {
           ctx.admin = jwt.verify(token, this.coolConfig.jwt.secret);
-        } catch (err) { }
+        } catch (err) {}
         // 不需要登录 无需权限校验
         if (new RegExp(`^${adminUrl}?.*/open/`).test(url)) {
           await next();

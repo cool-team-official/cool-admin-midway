@@ -11,6 +11,6 @@ export default (app: Application) => {
     // 模块描述
     description: '上传和管理文件资源',
     // 中间件
-    middlewares: [],
+    middlewares: ['baseAuthorityMiddleware', 'baseLogMiddleware'],
   } as ModuleConfig;
 };

@@ -8,13 +8,18 @@ import { DemoGoodsService } from '../../service/goods';
  * 商品
  */
 @Provide()
-@CoolController({
-  api: ['add', 'delete', 'update', 'info', 'list', 'page'],
-  entity: DemoAppGoodsEntity,
-  listQueryOp: {
-    keyWordLikeFields: ['title'],
+@CoolController(
+  {
+    api: ['add', 'delete', 'update', 'info', 'list', 'page'],
+    entity: DemoAppGoodsEntity,
+    listQueryOp: {
+      keyWordLikeFields: ['title'],
+    },
   },
-})
+  {
+    middleware: [],
+  }
+)
 export class DemoAppGoodsController extends BaseController {
   @Inject()
   demoGoodsService: DemoGoodsService;
@@ -36,10 +41,13 @@ export class DemoAppGoodsController extends BaseController {
    * 发送数据到队列
    */
   @Post('/queue')
-  async queue(){
-    this.demoQueue.queue.add({a: 1}, {
-      removeOnComplete: true,
-      removeOnFail: true,
-    });
+  async queue() {
+    this.demoQueue.queue.add(
+      { a: 1 },
+      {
+        removeOnComplete: true,
+        removeOnFail: true,
+      }
+    );
   }
 }

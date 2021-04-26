@@ -11,6 +11,6 @@ export default (app: Application) => {
     // 模块描述
     description: '任务调度模块，支持分布式任务，由redis整个集群的任务',
     // 中间件
-    middlewares: [],
+    middlewares: ['baseAuthorityMiddleware', 'baseLogMiddleware'],
   } as ModuleConfig;
 };
