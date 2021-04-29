@@ -1,7 +1,7 @@
 import { Inject, Provide } from '@midwayjs/decorator';
-import { BaseService, Cache } from 'midwayjs-cool-core';
+import { BaseService, Cache, CoolTransaction } from 'midwayjs-cool-core';
 import { InjectEntityModel } from '@midwayjs/orm';
-import { Repository } from 'typeorm';
+import { Repository, QueryRunner } from 'typeorm';
 import { DemoAppGoodsEntity } from '../entity/goods';
 import { ICoolCache } from 'midwayjs-cool-core';
 
@@ -22,5 +22,20 @@ export class DemoGoodsService extends BaseService {
   @Cache(5)
   async all() {
     return this.demoAppGoodsEntity.find();
+  }
+
+  /**
+   * 事务
+   * @param params
+   * @param queryRunner
+   */
+  @CoolTransaction({ isolation: 'SERIALIZABLE' })
+  async testTransaction(params: any, queryRunner?: QueryRunner) {
+    await queryRunner.manager.insert<DemoAppGoodsEntity>(DemoAppGoodsEntity, {
+      title: '这是个商品',
+      pic: '商品图',
+      price: 99.0,
+      type: 1,
+    });
   }
 }
