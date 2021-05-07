@@ -15,6 +15,7 @@
   "rules": {
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
     "node/no-extraneous-import": "off",
     "no-empty": "off",
     "node/no-extraneous-require": "off",
