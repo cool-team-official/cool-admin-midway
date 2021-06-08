@@ -6,7 +6,6 @@ import { BaseSysUserEntity } from '../../entity/sys/user';
 import { BaseSysPermsService } from './perms';
 import * as _ from 'lodash';
 import { BaseSysUserRoleEntity } from '../../entity/sys/user_role';
-import * as md5 from 'md5';
 import { BaseSysDepartmentEntity } from '../../entity/sys/department';
 
 /**
@@ -123,7 +122,7 @@ export class BaseSysUserService extends BaseService {
     if (!_.isEmpty(exists)) {
       throw new CoolCommException('用户名已经存在~');
     }
-    param.password = md5('123456'); // 默认密码  建议未改密码不能登陆
+    param.password = await this.ctx.genHash('123456'); // 默认密码  建议未改密码不能登陆
     await this.baseSysUserEntity.save(param);
     await this.updateUserRole(param);
     return param.id;
@@ -164,7 +163,7 @@ export class BaseSysUserService extends BaseService {
   public async personUpdate(param) {
     param.id = this.ctx.admin.userId;
     if (!_.isEmpty(param.password)) {
-      param.password = md5(param.password);
+      param.password = await this.ctx.genHash(param.password);
       const userInfo = await this.baseSysUserEntity.findOne({ id: param.id });
       if (!userInfo) {
         throw new CoolCommException('用户不存在');
@@ -189,7 +188,7 @@ export class BaseSysUserService extends BaseService {
       throw new CoolCommException('非法操作~');
     }
     if (!_.isEmpty(param.password)) {
-      param.password = md5(param.password);
+      param.password = await this.ctx.genHash(param.password);
       const userInfo = await this.baseSysUserEntity.findOne({ id: param.id });
       if (!userInfo) {
         throw new CoolCommException('用户不存在');

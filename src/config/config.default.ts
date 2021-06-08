@@ -47,6 +47,11 @@ export default (appInfo: EggAppInfo) => {
     },
   };
 
+  // egg-bcrypt
+  config.bcrypt = {
+    saltRounds: 10
+  };
+
   // cool-admin特有的配置
   config.cool = {
     // 是否初始化模块数据库

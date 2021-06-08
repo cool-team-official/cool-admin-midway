@@ -13,7 +13,6 @@ import { v1 as uuid } from 'uuid';
 import { BaseSysUserEntity } from '../../entity/sys/user';
 import { Repository } from 'typeorm';
 import { InjectEntityModel } from '@midwayjs/orm';
-import * as md5 from 'md5';
 import { BaseSysRoleService } from './role';
 import * as _ from 'lodash';
 import { BaseSysMenuService } from './menu';
@@ -59,8 +58,13 @@ export class BaseSysLoginService extends BaseService {
       const user = await this.baseSysUserEntity.findOne({ username });
       // 校验用户
       if (user) {
-        // 校验用户状态及密码
-        if (user.status === 0 || user.password !== md5(password)) {
+        // 校验用户状态
+        if (user.status === 0) {
+          throw new CoolCommException('账户已禁用~');
+        }
+        // 校验密码
+        const comparePassword = await this.ctx.compare(password, user.password);
+        if (!comparePassword) {
           throw new CoolCommException('账户或密码不正确~');
         }
       } else {

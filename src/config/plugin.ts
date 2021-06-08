@@ -7,4 +7,8 @@ export default {
     enable: true,
     package: 'egg-view-nunjucks',
   },
+  bcrypt: {
+    enable: true,
+    package: 'egg-bcrypt'
+  },
 } as EggPlugin;
