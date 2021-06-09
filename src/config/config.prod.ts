@@ -16,6 +16,8 @@ export default (appInfo: EggAppInfo) => {
     synchronize: false,
     // 打印日志
     logging: false,
+    // 字符集
+    charset: 'utf8mb4',
   };
 
   config.logger = {

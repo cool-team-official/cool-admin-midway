@@ -7,15 +7,17 @@ export default (appInfo: EggAppInfo) => {
 
   config.orm = {
     type: 'mysql',
-    host: '127.0.0.1',
+    host: '10.211.55.7',
     port: 3306,
-    username: 'root',
+    username: 'midway',
     password: '123123',
-    database: 'cool',
+    database: 'midway',
     // 自动建表 注意：线上部署的时候不要使用，有可能导致数据丢失
     synchronize: true,
     // 打印日志
     logging: true,
+    // 字符集
+    charset: 'utf8mb4',
   };
 
   config.logger = {
