@@ -14,8 +14,10 @@
       "    name: 'xxx',",
       "    // 模块描述",
       "    description: 'xxx',",
-      "    // 中间件",
+      "    // 中间件，只对本模块有效",
       "    middlewares: [],",
+      "    // 中间件，全局有效",
+      "    globalMiddlewares: [],",
       "  } as ModuleConfig;",
       "};"
     ],
