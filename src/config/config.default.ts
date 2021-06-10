@@ -57,18 +57,7 @@ export default (appInfo: EggAppInfo) => {
     },
     // 单点登录
     sso: false,
-    // jwt 生成解密token的
-    jwt: {
-      // 注意： 最好重新修改，防止破解
-      secret: 'FOAPOFALOEQIPNNLQ',
-      // token
-      token: {
-        // 2小时过期，需要用刷新token
-        expire: 2 * 3600,
-        // 15天内，如果没操作过就需要重新登录
-        refreshExpire: 24 * 3600 * 15,
-      },
-    },
+
     // 分页配置
     page: {
       // 分页查询每页条数

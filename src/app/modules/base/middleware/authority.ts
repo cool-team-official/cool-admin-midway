@@ -17,6 +17,9 @@ export class BaseAuthorityMiddleware implements IWebMiddleware {
   @Config('cool')
   coolConfig: CoolConfig;
 
+  @Config('module.base')
+  jwtConfig: CoolConfig;
+
   coolCache;
 
   @App()
@@ -33,7 +36,7 @@ export class BaseAuthorityMiddleware implements IWebMiddleware {
       // 路由地址为 admin前缀的 需要权限校验
       if (_.startsWith(url, adminUrl)) {
         try {
-          ctx.admin = jwt.verify(token, this.coolConfig.jwt.secret);
+          ctx.admin = jwt.verify(token, this.jwtConfig.jwt.secret);
         } catch (err) {}
         // 不需要登录 无需权限校验
         if (new RegExp(`^${adminUrl}?.*/open/`).test(url)) {

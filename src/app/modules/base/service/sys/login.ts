@@ -44,7 +44,7 @@ export class BaseSysLoginService extends BaseService {
   @Inject()
   ctx: Context;
 
-  @Config('cool')
+  @Config('module.base')
   coolConfig: CoolConfig;
 
   /**
