@@ -49,4 +49,7 @@ export class BaseSysUserEntity extends BaseEntity {
   departmentName: string;
   // 角色ID列表
   roleIdList: number[];
+
+  @Column({ comment: 'socketId', nullable: true })
+  socketId: string;
 }
