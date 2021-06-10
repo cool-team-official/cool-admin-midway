@@ -1,6 +1,6 @@
 const WebFramework = require('@midwayjs/web').Framework;
 const web = new WebFramework().configure({
-  port: 8001,
+  port: 9001,
 });
 
 const { Bootstrap } = require('@midwayjs/bootstrap');

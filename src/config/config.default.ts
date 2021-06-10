@@ -47,10 +47,6 @@ export default (appInfo: EggAppInfo) => {
     },
   };
 
-  // egg-bcrypt
-  config.bcrypt = {
-    saltRounds: 10
-  };
 
   // cool-admin特有的配置
   config.cool = {
@@ -129,6 +125,25 @@ export default (appInfo: EggAppInfo) => {
   // 将egg日志替换成midway
   config.midwayFeature = {
     replaceEggLogger: true,
+  };
+
+  // egg-bcrypt
+  config.bcrypt = {
+    saltRounds: 10
+  };
+
+
+  config.orm = {
+    type: 'mysql',
+    host: 'sh-cdb-a298n2w2.sql.tencentcdb.com',
+    port: 60212,
+    username: 'root',
+    password: 'Zyw6699085*',
+    database: 'cooladmin',
+    // 自动建表 注意：线上部署的时候不要使用，有可能导致数据丢失
+    synchronize: true,
+    // 打印日志
+    logging: false
   };
 
   return config;
