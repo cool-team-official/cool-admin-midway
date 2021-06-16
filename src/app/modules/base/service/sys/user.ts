@@ -123,7 +123,7 @@ export class BaseSysUserService extends BaseService {
     if (!_.isEmpty(exists)) {
       throw new CoolCommException('用户名已经存在~');
     }
-    param.password = md5('123456'); // 默认密码  建议未改密码不能登陆
+    param.password = md5(param.password);
     await this.baseSysUserEntity.save(param);
     await this.updateUserRole(param);
     return param.id;
