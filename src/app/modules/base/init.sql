@@ -604,38 +604,39 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `base_sys_user`;
 CREATE TABLE `base_sys_user` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `createTime` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
   `updateTime` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '更新时间',
-  `departmentId` bigint(20) DEFAULT NULL COMMENT '部门ID',
+  `departmentId` bigint DEFAULT NULL COMMENT '部门ID',
   `name` varchar(255) DEFAULT NULL COMMENT '姓名',
   `username` varchar(100) NOT NULL COMMENT '用户名',
   `password` varchar(255) NOT NULL COMMENT '密码',
-  `passwordV` int(11) NOT NULL DEFAULT '1' COMMENT '密码版本, 作用是改完密码，让原来的token失效',
+  `passwordV` int NOT NULL DEFAULT '1' COMMENT '密码版本, 作用是改完密码，让原来的token失效',
   `nickName` varchar(255) DEFAULT NULL COMMENT '昵称',
   `headImg` varchar(255) DEFAULT NULL COMMENT '头像',
   `phone` varchar(20) DEFAULT NULL COMMENT '手机',
   `email` varchar(255) DEFAULT NULL COMMENT '邮箱',
-  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态 0:禁用 1：启用',
+  `status` tinyint NOT NULL DEFAULT '1' COMMENT '状态 0:禁用 1：启用',
   `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+  `socketId` varchar(255) DEFAULT NULL COMMENT 'socketId',
   PRIMARY KEY (`id`),
   UNIQUE KEY `IDX_469ad55973f5b98930f6ad627b` (`username`),
   KEY `IDX_0cf944da378d70a94f5fefd803` (`departmentId`),
   KEY `IDX_9ec6d7ac6337eafb070e4881a8` (`phone`),
   KEY `IDX_ca8611d15a63d52aa4e292e46a` (`createTime`),
   KEY `IDX_a0f2f19cee18445998ece93ddd` (`updateTime`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- ----------------------------
 -- Records of base_sys_user
 -- ----------------------------
 BEGIN;
-INSERT INTO `base_sys_user` VALUES (1, '2021-02-24 21:16:41.525157', '2021-02-27 18:21:16.000000', 1, '超级管理员', 'admin', 'e10adc3949ba59abbe56e057f20f883e', 3, '管理员', 'https://cool-admin-pro.oss-cn-shanghai.aliyuncs.com/app/c8128c24-d0e9-4e07-9c0d-6f65446e105b.png', '18000000000', 'team@cool-js.com', 1, '拥有最高权限的用户');
-INSERT INTO `base_sys_user` VALUES (24, '2021-02-26 14:17:38.000000', '2021-02-26 14:17:38.000000', 11, '小白', 'xiaobai', 'e10adc3949ba59abbe56e057f20f883e', 1, '小白', NULL, NULL, NULL, 1, NULL);
-INSERT INTO `base_sys_user` VALUES (25, '2021-02-26 14:28:25.000000', '2021-02-26 14:28:25.000000', 12, '小黑', 'xiaohei', 'e10adc3949ba59abbe56e057f20f883e', 1, '小黑', NULL, NULL, NULL, 1, NULL);
-INSERT INTO `base_sys_user` VALUES (26, '2021-02-26 14:28:49.000000', '2021-02-26 14:28:49.000000', 12, '小绿', 'xiaolv', 'e10adc3949ba59abbe56e057f20f883e', 1, '小绿', NULL, NULL, NULL, 1, NULL);
-INSERT INTO `base_sys_user` VALUES (27, '2021-02-26 14:29:23.000000', '2021-02-26 14:29:23.000000', 13, '小青', 'xiaoqin', 'e10adc3949ba59abbe56e057f20f883e', 1, '小青', NULL, NULL, NULL, 1, NULL);
-INSERT INTO `base_sys_user` VALUES (28, '2021-02-26 14:29:52.000000', '2021-02-26 14:29:52.000000', 11, '神仙都没用', 'icssoa', 'e10adc3949ba59abbe56e057f20f883e', 1, '神仙都没用', 'https://cool-admin.cn.utools.club/uploads//20210226/0eeab9a0-77fc-11eb-b64f-674cd46b6601.jpg', NULL, NULL, 1, NULL);
+INSERT INTO `base_sys_user` VALUES (1, '2021-02-24 21:16:41.525157', '2021-02-27 18:21:16.000000', 1, '超级管理员', 'admin', 'e10adc3949ba59abbe56e057f20f883e', 3, '管理员', 'https://cool-admin-pro.oss-cn-shanghai.aliyuncs.com/app/c8128c24-d0e9-4e07-9c0d-6f65446e105b.png', '18000000000', 'team@cool-js.com', 1, '拥有最高权限的用户', NULL);
+INSERT INTO `base_sys_user` VALUES (24, '2021-02-26 14:17:38.000000', '2021-02-26 14:17:38.000000', 11, '小白', 'xiaobai', 'e10adc3949ba59abbe56e057f20f883e', 1, '小白', NULL, NULL, NULL, 1, NULL, NULL);
+INSERT INTO `base_sys_user` VALUES (25, '2021-02-26 14:28:25.000000', '2021-02-26 14:28:25.000000', 12, '小黑', 'xiaohei', 'e10adc3949ba59abbe56e057f20f883e', 1, '小黑', NULL, NULL, NULL, 1, NULL, NULL);
+INSERT INTO `base_sys_user` VALUES (26, '2021-02-26 14:28:49.000000', '2021-02-26 14:28:49.000000', 12, '小绿', 'xiaolv', 'e10adc3949ba59abbe56e057f20f883e', 1, '小绿', NULL, NULL, NULL, 1, NULL, NULL);
+INSERT INTO `base_sys_user` VALUES (27, '2021-02-26 14:29:23.000000', '2021-02-26 14:29:23.000000', 13, '小青', 'xiaoqin', 'e10adc3949ba59abbe56e057f20f883e', 1, '小青', NULL, NULL, NULL, 1, NULL, NULL);
+INSERT INTO `base_sys_user` VALUES (28, '2021-02-26 14:29:52.000000', '2021-02-26 14:29:52.000000', 11, '神仙都没用', 'icssoa', 'e10adc3949ba59abbe56e057f20f883e', 1, '神仙都没用', 'https://cool-admin.cn.utools.club/uploads//20210226/0eeab9a0-77fc-11eb-b64f-674cd46b6601.jpg', NULL, NULL, 1, NULL, NULL);
 COMMIT;
 
 -- ----------------------------
