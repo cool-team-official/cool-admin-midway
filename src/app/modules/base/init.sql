@@ -625,7 +625,7 @@ CREATE TABLE `base_sys_user` (
   KEY `IDX_9ec6d7ac6337eafb070e4881a8` (`phone`),
   KEY `IDX_ca8611d15a63d52aa4e292e46a` (`createTime`),
   KEY `IDX_a0f2f19cee18445998ece93ddd` (`updateTime`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of base_sys_user
