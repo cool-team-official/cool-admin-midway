@@ -15,7 +15,7 @@
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "midwayjs-cool-alipay": "^1.0.8",
-    "midwayjs-cool-core": "^3.2.17",
+    "midwayjs-cool-core": "^3.2.18",
     "midwayjs-cool-oss": "^1.0.12",
     "midwayjs-cool-queue": "^1.0.8",
     "midwayjs-cool-redis": "^1.1.6",
