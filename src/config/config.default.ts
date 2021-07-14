@@ -74,40 +74,7 @@ export default (appInfo: EggAppInfo) => {
   config.multipart = {
     fileSize: '100mb',
     mode: 'file',
-    whitelist: [
-      // images
-      '.jpg',
-      '.jpeg', // image/jpeg
-      '.png', // image/png, image/x-png
-      '.gif', // image/gif
-      '.bmp', // image/bmp
-      '.wbmp', // image/vnd.wap.wbmp
-      '.webp',
-      '.tif',
-      '.psd',
-      // text
-      '.svg',
-      '.js',
-      '.jsx',
-      '.json',
-      '.css',
-      '.less',
-      '.html',
-      '.htm',
-      '.xml',
-      // tar
-      '.zip',
-      '.gz',
-      '.tgz',
-      '.gzip',
-      // video
-      '.mp3',
-      '.mp4',
-      '.avi',
-      // 证书
-      '.p12',
-      '.pem',
-    ],
+    whitelist: () => true,
   };
 
   // 将egg日志替换成midway
