@@ -32,6 +32,7 @@ export class BaseSysConfService extends BaseService {
     await this.baseSysConfEntity
       .createQueryBuilder()
       .update()
+      .where({ cKey })
       .set({ cKey, cValue })
       .execute();
   }
