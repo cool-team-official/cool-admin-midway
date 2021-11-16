@@ -7,4 +7,5 @@ export default {
     enable: true,
     package: 'egg-view-nunjucks',
   },
+  logrorator: false,
 } as EggPlugin;
