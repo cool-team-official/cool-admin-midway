@@ -7,5 +7,5 @@ export default {
     enable: true,
     package: 'egg-view-nunjucks',
   },
-  logrorator: false,
+  logrotator: false, // disable when use @midwayjs/logger
 } as EggPlugin;
