@@ -21,9 +21,9 @@
     "midwayjs-cool-redis": "^1.1.6",
     "midwayjs-cool-socket": "^1.0.8",
     "midwayjs-cool-wxpay": "^1.0.12",
+    "mini-svg-data-uri": "^1.4.3",
     "mysql2": "^2.3.0",
     "svg-captcha": "^1.4.0",
-    "svg-to-dataurl": "^1.0.0",
     "typeorm": "^0.2.37"
   },
   "devDependencies": {
