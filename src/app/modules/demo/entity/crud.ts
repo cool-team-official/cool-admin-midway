@@ -18,7 +18,7 @@ import { DemoGoodsEntity } from './goods';
         type: 'innerJoin',
       },
     ],
-    other: async (find: SelectQueryBuilder<DemoCrudEntity>) => {
+    extend: async (find: SelectQueryBuilder<DemoCrudEntity>) => {
       find.groupBy('a.id');
     },
   },
