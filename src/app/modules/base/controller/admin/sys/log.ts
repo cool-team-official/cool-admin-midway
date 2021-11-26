@@ -14,7 +14,7 @@ import { BaseSysLogService } from '../../../service/sys/log';
   entity: BaseSysLogEntity,
   pageQueryOp: {
     keyWordLikeFields: ['b.name', 'a.params', 'a.ipAddr'],
-    select: ['a.*, b.name'],
+    select: ['a.*', 'b.name'],
     leftJoin: [
       {
         entity: BaseSysUserEntity,

@@ -2,7 +2,7 @@ import { Get, Provide } from '@midwayjs/decorator';
 import { Context } from 'egg';
 import { CoolController, BaseController } from 'midwayjs-cool-core';
 import { BaseSysUserEntity } from '../../../base/entity/sys/user';
-import { DemoAppGoodsEntity } from '../../entity/goods';
+import { DemoGoodsEntity } from '../../entity/goods';
 
 /**
  * 商品
@@ -12,7 +12,7 @@ import { DemoAppGoodsEntity } from '../../entity/goods';
   // 添加通用CRUD接口
   api: ['add', 'delete', 'update', 'info', 'list', 'page'],
   // 设置表实体
-  entity: DemoAppGoodsEntity,
+  entity: DemoGoodsEntity,
   // 向表插入当前登录用户ID
   insertParam: async (ctx: Context) => {
     return {

@@ -1,4 +1,4 @@
-import { Inject, Provide } from '@midwayjs/decorator';
+import { Get, Inject, Provide } from '@midwayjs/decorator';
 import { CoolController, BaseController } from 'midwayjs-cool-core';
 import { BaseSysMenuEntity } from '../../../entity/sys/menu';
 import { BaseSysMenuService } from '../../../service/sys/menu';
@@ -15,4 +15,16 @@ import { BaseSysMenuService } from '../../../service/sys/menu';
 export class BaseSysMenuController extends BaseController {
   @Inject()
   baseSysMenuService: BaseSysMenuService;
+
+  @Inject('cool:eps')
+  eps;
+
+  /**
+   * 实体信息与路径
+   * @returns
+   */
+  @Get('/eps')
+  public async getEps() {
+    return this.ok(this.eps);
+  }
 }

@@ -5,8 +5,8 @@ import { Column } from 'typeorm';
 /**
  * 商品
  */
-@EntityModel('demo_app_goods')
-export class DemoAppGoodsEntity extends BaseEntity {
+@EntityModel('demo_goods')
+export class DemoGoodsEntity extends BaseEntity {
   @Column({ comment: '标题' })
   title: string;
 
