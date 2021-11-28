@@ -18,6 +18,8 @@ export default (appInfo: EggAppInfo) => {
     logging: false,
     // 字符集
     charset: 'utf8mb4',
+    // 驱动
+    driver: require('mysql2'),
   };
 
   config.logger = {

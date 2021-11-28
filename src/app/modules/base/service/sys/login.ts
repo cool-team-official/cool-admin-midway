@@ -19,7 +19,7 @@ import { BaseSysMenuService } from './menu';
 import { BaseSysDepartmentService } from './department';
 import * as jwt from 'jsonwebtoken';
 import { Context } from 'egg';
-import * as  svgToDataURL from 'mini-svg-data-uri';
+import * as svgToDataURL from 'mini-svg-data-uri';
 
 /**
  * 登录
