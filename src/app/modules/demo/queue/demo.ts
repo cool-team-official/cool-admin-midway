@@ -1,6 +1,6 @@
 import { App, Provide } from '@midwayjs/decorator';
 import { IMidwayWebApplication } from '@midwayjs/web';
-import { ICoolQueue, Queue } from 'midwayjs-cool-queue';
+import { ICoolQueue, Queue } from '@cool-midway/queue';
 
 /**
  * 任务

@@ -5,7 +5,7 @@ import {
   IMidwayWebApplication,
 } from '@midwayjs/web';
 import * as _ from 'lodash';
-import { CoolConfig, RESCODE } from 'midwayjs-cool-core';
+import { CoolConfig, RESCODE } from '@cool-midway/core';
 import * as jwt from 'jsonwebtoken';
 import { Context } from 'egg';
 

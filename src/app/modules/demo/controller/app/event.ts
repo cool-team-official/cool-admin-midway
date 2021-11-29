@@ -3,7 +3,7 @@ import {
   CoolController,
   BaseController,
   CoolEventManager,
-} from 'midwayjs-cool-core';
+} from '@cool-midway/core';
 
 /**
  * 事件

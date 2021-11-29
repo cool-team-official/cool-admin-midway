@@ -7,7 +7,7 @@ import {
   Provide,
   Query,
 } from '@midwayjs/decorator';
-import { CoolController, BaseController } from 'midwayjs-cool-core';
+import { CoolController, BaseController } from '@cool-midway/core';
 import { TaskInfoEntity } from '../../entity/info';
 import { TaskInfoService } from '../../service/info';
 

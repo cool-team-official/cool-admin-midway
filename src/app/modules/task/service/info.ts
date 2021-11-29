@@ -1,10 +1,10 @@
 import { App, Inject, Logger, Provide } from '@midwayjs/decorator';
-import { BaseService } from 'midwayjs-cool-core';
+import { BaseService } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/orm';
 import { Repository } from 'typeorm';
 import { TaskInfoEntity } from '../entity/info';
 import { TaskLogEntity } from '../entity/log';
-import { IQueue } from 'midwayjs-cool-queue';
+import { IQueue } from '@cool-midway/queue';
 import { ILogger } from '@midwayjs/logger';
 import { IMidwayWebApplication } from '@midwayjs/web';
 import * as _ from 'lodash';

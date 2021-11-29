@@ -1,5 +1,5 @@
 import { ALL, Body, Inject, Post, Provide } from '@midwayjs/decorator';
-import { CoolController, BaseController } from 'midwayjs-cool-core';
+import { CoolController, BaseController } from '@cool-midway/core';
 import { BaseSysDepartmentEntity } from '../../../entity/sys/department';
 import { BaseSysDepartmentService } from '../../../service/sys/department';
 

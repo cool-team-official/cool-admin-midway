@@ -1,5 +1,5 @@
 import { Inject, Provide } from '@midwayjs/decorator';
-import { BaseService, ICoolCache, CoolPlugin } from 'midwayjs-cool-core';
+import { BaseService, ICoolCache, CoolPlugin } from '@cool-midway/core';
 
 /**
  * 插件

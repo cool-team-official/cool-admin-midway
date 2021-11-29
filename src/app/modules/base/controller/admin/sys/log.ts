@@ -1,5 +1,5 @@
 import { Provide, Post, Inject, Body, Get } from '@midwayjs/decorator';
-import { CoolController, BaseController } from 'midwayjs-cool-core';
+import { CoolController, BaseController } from '@cool-midway/core';
 import { BaseSysLogEntity } from '../../../entity/sys/log';
 import { BaseSysUserEntity } from '../../../entity/sys/user';
 import { BaseSysConfService } from '../../../service/sys/conf';

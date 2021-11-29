@@ -1,5 +1,5 @@
 import { Application } from 'egg';
-import { ModuleConfig } from 'midwayjs-cool-core';
+import { ModuleConfig } from '@cool-midway/core';
 
 /**
  * 模块配置

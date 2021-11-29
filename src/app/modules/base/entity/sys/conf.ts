@@ -1,6 +1,6 @@
 import { Column, Index } from 'typeorm';
 import { EntityModel } from '@midwayjs/orm';
-import { BaseEntity } from 'midwayjs-cool-core';
+import { BaseEntity } from '@cool-midway/core';
 
 /**
  * 系统配置

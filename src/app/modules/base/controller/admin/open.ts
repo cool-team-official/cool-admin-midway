@@ -8,7 +8,7 @@ import {
   Query,
 } from '@midwayjs/decorator';
 import { Context } from 'egg';
-import { CoolController, BaseController } from 'midwayjs-cool-core';
+import { CoolController, BaseController } from '@cool-midway/core';
 import { LoginDTO } from '../../dto/login';
 import { BaseSysLoginService } from '../../service/sys/login';
 import { BaseSysParamService } from '../../service/sys/param';

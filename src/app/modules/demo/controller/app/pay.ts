@@ -1,8 +1,8 @@
 import { App, Inject, Post, Provide } from '@midwayjs/decorator';
 import { IMidwayWebApplication } from '@midwayjs/web';
 import { Context } from 'egg';
-import { CoolController, BaseController } from 'midwayjs-cool-core';
-import { ICoolWxPay } from 'midwayjs-cool-wxpay';
+import { CoolController, BaseController } from '@cool-midway/core';
+import { ICoolWxPay } from '@cool-midway/wxpay';
 import { parseString } from 'xml2js';
 
 /**

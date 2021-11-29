@@ -1,5 +1,5 @@
 import { Logger, Provide } from '@midwayjs/decorator';
-import { BaseService } from 'midwayjs-cool-core';
+import { BaseService } from '@cool-midway/core';
 import { ILogger } from '@midwayjs/logger';
 
 /**

@@ -1,6 +1,6 @@
 import { Get, Provide } from '@midwayjs/decorator';
 import { Context } from 'egg';
-import { CoolController, BaseController } from 'midwayjs-cool-core';
+import { CoolController, BaseController } from '@cool-midway/core';
 import { BaseSysUserEntity } from '../../../base/entity/sys/user';
 import { DemoGoodsEntity } from '../../entity/goods';
 

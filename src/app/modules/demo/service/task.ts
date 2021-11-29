@@ -1,5 +1,5 @@
 import { Provide } from '@midwayjs/decorator';
-import { BaseService } from 'midwayjs-cool-core';
+import { BaseService } from '@cool-midway/core';
 /**
  * 任务执行的demo示例
  */

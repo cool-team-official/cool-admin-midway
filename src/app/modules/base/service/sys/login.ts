@@ -5,7 +5,7 @@ import {
   CoolCommException,
   CoolConfig,
   RESCODE,
-} from 'midwayjs-cool-core';
+} from '@cool-midway/core';
 import { LoginDTO } from '../../dto/login';
 import * as svgCaptcha from 'svg-captcha';
 import { v1 as uuid } from 'uuid';

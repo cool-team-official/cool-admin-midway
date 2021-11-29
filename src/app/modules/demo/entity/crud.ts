@@ -1,5 +1,5 @@
 import { EntityModel } from '@midwayjs/orm';
-import { BaseEntity, CoolEntityCrud } from 'midwayjs-cool-core';
+import { BaseEntity, CoolEntityCrud } from '@cool-midway/core';
 import { Column, SelectQueryBuilder } from 'typeorm';
 import { DemoGoodsEntity } from './goods';
 

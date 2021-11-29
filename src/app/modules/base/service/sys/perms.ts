@@ -1,5 +1,5 @@
 import { Inject, Provide } from '@midwayjs/decorator';
-import { BaseService, ICoolCache } from 'midwayjs-cool-core';
+import { BaseService, ICoolCache } from '@cool-midway/core';
 import { BaseSysMenuService } from './menu';
 import { BaseSysRoleService } from './role';
 import { BaseSysDepartmentService } from './department';

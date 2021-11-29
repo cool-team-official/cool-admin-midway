@@ -82,7 +82,7 @@ $ open http://localhost:8001/
 
 ```ts
 import { EntityModel } from '@midwayjs/orm';
-import { BaseEntity } from 'midwayjs-cool-core';
+import { BaseEntity } from '@cool-midway/core';
 import { Column } from 'typeorm';
 
 /**
@@ -110,7 +110,7 @@ export class DemoAppGoodsEntity extends BaseEntity {
 
 ```ts
 import { Provide } from '@midwayjs/decorator';
-import { CoolController, BaseController } from 'midwayjs-cool-core';
+import { CoolController, BaseController } from '@cool-midway/core';
 import { DemoAppGoodsEntity } from '../../entity/goods';
 
 /**

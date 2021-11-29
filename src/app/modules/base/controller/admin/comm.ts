@@ -1,6 +1,6 @@
 import { Provide, Inject, Get, Post, Body, ALL } from '@midwayjs/decorator';
 import { Context } from 'egg';
-import { CoolController, BaseController, ICoolFile } from 'midwayjs-cool-core';
+import { CoolController, BaseController, ICoolFile } from '@cool-midway/core';
 import { BaseSysUserEntity } from '../../entity/sys/user';
 import { BaseSysLoginService } from '../../service/sys/login';
 import { BaseSysPermsService } from '../../service/sys/perms';

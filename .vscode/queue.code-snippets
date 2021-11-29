@@ -3,7 +3,7 @@
     "prefix": "queue",
     "body": [
       "import { Provide } from '@midwayjs/decorator';",
-      "import { ICoolQueue, Queue } from 'midwayjs-cool-queue';",
+      "import { ICoolQueue, Queue } from '@cool-midway/queue';",
       "",
       "/**",
       " * 队列",

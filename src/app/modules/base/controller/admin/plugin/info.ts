@@ -1,5 +1,5 @@
 import { Body, Get, Inject, Post, Provide, Query } from '@midwayjs/decorator';
-import { CoolController, BaseController } from 'midwayjs-cool-core';
+import { CoolController, BaseController } from '@cool-midway/core';
 import { BasePluginInfoService } from '../../../service/plugin/info';
 
 /**

@@ -1,9 +1,9 @@
 import { Inject, Provide } from '@midwayjs/decorator';
-import { BaseService, Cache, CoolTransaction } from 'midwayjs-cool-core';
+import { BaseService, Cache, CoolTransaction } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/orm';
 import { Repository, QueryRunner } from 'typeorm';
 import { DemoGoodsEntity } from '../entity/goods';
-import { ICoolCache } from 'midwayjs-cool-core';
+import { ICoolCache } from '@cool-midway/core';
 
 /**
  * 商品

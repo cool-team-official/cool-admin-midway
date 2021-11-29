@@ -1,5 +1,5 @@
 import { Get, Inject, Provide } from '@midwayjs/decorator';
-import { CoolController, BaseController } from 'midwayjs-cool-core';
+import { CoolController, BaseController } from '@cool-midway/core';
 import { BaseSysMenuEntity } from '../../../entity/sys/menu';
 import { BaseSysMenuService } from '../../../service/sys/menu';
 

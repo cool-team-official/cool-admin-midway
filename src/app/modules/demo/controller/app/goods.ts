@@ -1,6 +1,6 @@
 import { Get, Inject, Post, Provide } from '@midwayjs/decorator';
-import { CoolController, BaseController } from 'midwayjs-cool-core';
-import { IQueue } from 'midwayjs-cool-queue';
+import { CoolController, BaseController } from '@cool-midway/core';
+import { IQueue } from '@cool-midway/queue';
 import { DemoGoodsEntity } from '../../entity/goods';
 import { DemoGoodsService } from '../../service/goods';
 

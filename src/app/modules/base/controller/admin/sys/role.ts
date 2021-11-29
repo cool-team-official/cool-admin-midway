@@ -1,5 +1,5 @@
 import { Provide } from '@midwayjs/decorator';
-import { CoolController, BaseController } from 'midwayjs-cool-core';
+import { CoolController, BaseController } from '@cool-midway/core';
 import { Context } from 'vm';
 import { BaseSysRoleEntity } from '../../../entity/sys/role';
 import { BaseSysRoleService } from '../../../service/sys/role';

@@ -1,5 +1,5 @@
 import { Provide } from '@midwayjs/decorator';
-import { CoolSocket, SocketEnvent } from 'midwayjs-cool-socket';
+import { CoolSocket, SocketEnvent } from '@cool-midway/socket';
 import { Socket } from 'socket.io';
 
 /**
