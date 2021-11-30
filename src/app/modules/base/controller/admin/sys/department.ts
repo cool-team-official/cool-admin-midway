@@ -19,7 +19,7 @@ export class BaseDepartmentController extends BaseController {
   /**
    * 部门排序
    */
-  @Post('/order')
+  @Post('/order', { summary: '排序' })
   async order(@Body(ALL) params: any) {
     await this.baseDepartmentService.order(params);
     return this.ok();

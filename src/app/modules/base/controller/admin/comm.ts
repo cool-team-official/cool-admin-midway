@@ -34,7 +34,7 @@ export class BaseCommController extends BaseController {
    * 实体信息与路径
    * @returns
    */
-  @Get('/eps')
+  @Get('/eps', { summary: '实体信息与路径' })
   public async getEps() {
     return this.ok(this.eps);
   }
@@ -42,7 +42,7 @@ export class BaseCommController extends BaseController {
   /**
    * 获得个人信息
    */
-  @Get('/person')
+  @Get('/person', { summary: '个人信息' })
   async person() {
     return this.ok(await this.baseSysUserService.person());
   }
@@ -50,7 +50,7 @@ export class BaseCommController extends BaseController {
   /**
    * 修改个人信息
    */
-  @Post('/personUpdate')
+  @Post('/personUpdate', { summary: '修改个人信息' })
   async personUpdate(@Body(ALL) user: BaseSysUserEntity) {
     await this.baseSysUserService.personUpdate(user);
     return this.ok();
@@ -59,7 +59,7 @@ export class BaseCommController extends BaseController {
   /**
    * 权限菜单
    */
-  @Get('/permmenu')
+  @Get('/permmenu', { summary: '权限与菜单' })
   async permmenu() {
     return this.ok(
       await this.baseSysPermsService.permmenu(this.ctx.admin.roleIds)
@@ -69,7 +69,7 @@ export class BaseCommController extends BaseController {
   /**
    * 文件上传
    */
-  @Post('/upload')
+  @Post('/upload', { summary: '文件上传' })
   async upload() {
     return this.ok(await this.coolFile.upload(this.ctx));
   }
@@ -77,7 +77,7 @@ export class BaseCommController extends BaseController {
   /**
    * 文件上传模式，本地或者云存储
    */
-  @Get('/uploadMode')
+  @Get('/uploadMode', { summary: '文件上传模式' })
   async uploadMode() {
     return this.ok(this.coolFile.getMode());
   }
@@ -85,7 +85,7 @@ export class BaseCommController extends BaseController {
   /**
    * 退出
    */
-  @Post('/logout')
+  @Post('/logout', { summary: '退出' })
   async logout() {
     await this.baseSysLoginService.logout();
     return this.ok();

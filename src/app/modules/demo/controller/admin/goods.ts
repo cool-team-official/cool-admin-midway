@@ -1,7 +1,6 @@
 import { Get, Provide } from '@midwayjs/decorator';
 import { Context } from 'egg';
 import { CoolController, BaseController } from '@cool-midway/core';
-import { BaseSysUserEntity } from '../../../base/entity/sys/user';
 import { DemoGoodsEntity } from '../../entity/goods';
 
 /**
@@ -27,19 +26,6 @@ import { DemoGoodsEntity } from '../../entity/goods';
     keyWordLikeFields: ['title'],
     // 让type字段支持筛选
     fieldEq: ['type'],
-    // 指定返回字段
-    select: ['a.*', 'b.name'],
-    // 关联表用户表
-    leftJoin: [
-      {
-        // 管理的表
-        entity: BaseSysUserEntity,
-        // 别名
-        alias: 'b',
-        // 关联条件
-        condition: 'a.userId = b.id',
-      },
-    ],
     // 增加其他条件
     where: async (ctx: Context) => {
       return [

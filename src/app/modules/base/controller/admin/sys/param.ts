@@ -25,7 +25,7 @@ export class BaseSysParamController extends BaseController {
   /**
    * 根据配置参数key获得网页内容(富文本)
    */
-  @Get('/html')
+  @Get('/html', { summary: '获得网页内容的参数值' })
   async htmlByKey(@Query() key: string) {
     this.ctx.body = await this.baseSysParamService.htmlByKey(key);
   }

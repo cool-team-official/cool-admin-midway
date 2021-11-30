@@ -19,7 +19,7 @@ export class BaseSysUserController extends BaseController {
   /**
    * 移动部门
    */
-  @Post('/move')
+  @Post('/move', { summary: '移动部门' })
   async move(@Body() departmentId: number, @Body() userIds: []) {
     await this.baseSysUserService.move(departmentId, userIds);
     return this.ok();

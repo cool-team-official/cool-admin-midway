@@ -1,28 +1,11 @@
 import { EntityModel } from '@midwayjs/orm';
 import { BaseEntity, CoolEntityCrud } from '@cool-midway/core';
-import { Column, SelectQueryBuilder } from 'typeorm';
-import { DemoGoodsEntity } from './goods';
+import { Column } from 'typeorm';
 
 /**
  * 实体类crud demo
  */
-@CoolEntityCrud({
-  pageQueryOp: {
-    fieldEq: ['name'],
-    select: ['a.*', 'b.id as price'],
-    join: [
-      {
-        entity: DemoGoodsEntity,
-        alias: 'b',
-        condition: 'a.id = b.id',
-        type: 'innerJoin',
-      },
-    ],
-    extend: async (find: SelectQueryBuilder<DemoCrudEntity>) => {
-      find.groupBy('a.id');
-    },
-  },
-})
+@CoolEntityCrud()
 @EntityModel('demo_crud')
 export class DemoCrudEntity extends BaseEntity {
   @Column({ comment: '头像' })
