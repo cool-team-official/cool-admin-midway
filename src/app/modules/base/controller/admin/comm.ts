@@ -27,6 +27,18 @@ export class BaseCommController extends BaseController {
   @Inject('cool:file')
   coolFile: ICoolFile;
 
+  @Inject('cool:eps')
+  eps;
+
+  /**
+   * 实体信息与路径
+   * @returns
+   */
+  @Get('/eps')
+  public async getEps() {
+    return this.ok(this.eps);
+  }
+
   /**
    * 获得个人信息
    */
