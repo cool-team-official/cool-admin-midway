@@ -12,6 +12,10 @@ import { BaseSysLogService } from '../../../service/sys/log';
 @CoolController({
   api: ['page'],
   entity: BaseSysLogEntity,
+  urlTag: {
+    name: 'a',
+    url: ['add'],
+  },
   pageQueryOp: {
     keyWordLikeFields: ['b.name', 'a.params', 'a.ipAddr'],
     select: ['a.*', 'b.name'],

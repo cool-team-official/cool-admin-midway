@@ -13,6 +13,6 @@ export class WelcomeController extends BaseController {
 
   @Get('/')
   public async welcome() {
-    await this.ctx.render('welcome', { text: 'HELLO COOL-ADMIN' });
+    await this.ctx.render('welcome', { text: 'HELLO COOL-ADMIN 4.x' });
   }
 }

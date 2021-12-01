@@ -89,9 +89,9 @@ export class BaseSysUserService extends BaseService {
    */
   async person() {
     const info = await this.baseSysUserEntity.findOne({
-      id: this.ctx.admin.userId,
+      id: this.ctx.admin?.userId,
     });
-    delete info.password;
+    delete info?.password;
     return info;
   }
 
