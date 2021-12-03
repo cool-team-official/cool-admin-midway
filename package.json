@@ -26,6 +26,7 @@
     "md5": "^2.3.0",
     "mini-svg-data-uri": "^1.4.3",
     "mysql2": "^2.3.3",
+    "node-xlsx": "^0.17.2",
     "svg-captcha": "^1.4.0",
     "typeorm": "^0.2.41"
   },
