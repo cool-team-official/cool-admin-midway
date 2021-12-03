@@ -27,7 +27,7 @@ export class BaseCommController extends BaseController {
   @Inject('cool:file')
   coolFile: ICoolFile;
 
-  @Inject('cool:eps')
+  @Inject('cool:eps:admin')
   eps;
 
   /**

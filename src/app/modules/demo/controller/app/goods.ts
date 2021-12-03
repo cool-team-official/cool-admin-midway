@@ -1,5 +1,5 @@
 import { Get, Inject, Post, Provide } from '@midwayjs/decorator';
-import { CoolController, BaseController } from '@cool-midway/core';
+import { CoolController, BaseController, CoolUrlTag } from '@cool-midway/core';
 import { IQueue } from '@cool-midway/queue';
 import { DemoGoodsEntity } from '../../entity/goods';
 import { DemoGoodsService } from '../../service/goods';
@@ -12,6 +12,10 @@ import { DemoGoodsService } from '../../service/goods';
   {
     api: ['add', 'delete', 'update', 'info', 'list', 'page'],
     entity: DemoGoodsEntity,
+    urlTag: {
+      name: 'ignoreToken',
+      url: ['add'],
+    },
     listQueryOp: {
       keyWordLikeFields: ['title'],
     },
@@ -32,7 +36,8 @@ export class DemoAppGoodsController extends BaseController {
    * 请求所有数据
    * @returns
    */
-  @Get('/all')
+  @CoolUrlTag('ignoreToken')
+  @Get('/all', { summary: '获得所有' })
   async all() {
     return this.ok(await this.demoGoodsService.all());
   }
@@ -40,7 +45,7 @@ export class DemoAppGoodsController extends BaseController {
   /**
    * 发送数据到队列
    */
-  @Post('/queue')
+  @Post('/queue', { summary: '发送队列数据' })
   async queue() {
     this.demoQueue.queue.add(
       { a: 1 },

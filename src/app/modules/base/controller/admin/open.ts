@@ -28,6 +28,18 @@ export class BaseOpenController extends BaseController {
   @Inject()
   ctx: Context;
 
+  @Inject('cool:eps:open')
+  eps;
+
+  /**
+   * 实体信息与路径
+   * @returns
+   */
+  @Get('/eps', { summary: '实体信息与路径' })
+  public async getEps() {
+    return this.ok(this.eps);
+  }
+
   /**
    * 根据配置参数key获得网页内容(富文本)
    */
