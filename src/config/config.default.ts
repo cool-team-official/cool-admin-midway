@@ -66,7 +66,7 @@ export default (appInfo: EggAppInfo) => {
     // 文件上传
     file: {
       // 文件路径前缀 本地上传模式下 有效
-      domain: 'https://admin.cool-js.cool',
+      domain: 'http://127.0.0.1:8001',
     },
   } as CoolConfig;
 
