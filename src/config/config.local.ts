@@ -20,6 +20,8 @@ export default (appInfo: EggAppInfo) => {
     charset: 'utf8mb4',
     // 驱动
     driver: require('mysql2'),
+    // 设置时区
+    timezone: '+8:00',
   };
 
   config.logger = {
