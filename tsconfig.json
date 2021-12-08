@@ -11,6 +11,7 @@
     "noUnusedLocals": true,
     "stripInternal": true,
     "pretty": true,
+    "skipLibCheck": true,
     "declaration": true,
     "typeRoots": [ "./typings", "./node_modules/@types"],
     "outDir": "dist"

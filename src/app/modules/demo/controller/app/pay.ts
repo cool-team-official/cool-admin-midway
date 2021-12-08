@@ -1,9 +1,10 @@
-import { App, Inject, Post, Provide } from '@midwayjs/decorator';
+import { ALL, App, Body, Inject, Post, Provide } from '@midwayjs/decorator';
 import { IMidwayWebApplication } from '@midwayjs/web';
 import { Context } from 'egg';
 import { CoolController, BaseController } from '@cool-midway/core';
 import { ICoolWxPay } from '@cool-midway/wxpay';
 import { parseString } from 'xml2js';
+import { ICoolAliPay } from '@cool-midway/alipay';
 
 /**
  * 支付示例
@@ -15,6 +16,10 @@ export class DemoPayController extends BaseController {
   @Inject('wxpay:sdk')
   wxPay: ICoolWxPay;
 
+  // 支付宝支付
+  @Inject('alipay:sdk')
+  aliPay: ICoolAliPay;
+
   @Inject()
   ctx: Context;
 
@@ -22,12 +27,10 @@ export class DemoPayController extends BaseController {
   app: IMidwayWebApplication;
 
   /**
-   * 扫码支付
+   * 微信扫码支付
    */
   @Post('/wx')
   async wx() {
-    // const a = this.app.getApplicationContext().registry.keys();
-    // console.log(a);
     const orderNum = await this.wxPay.createOrderNum();
     const data = await this.wxPay.getInstance().unifiedOrder({
       out_trade_no: orderNum,
@@ -69,5 +72,38 @@ export class DemoPayController extends BaseController {
       this.ctx.body =
         '<xml><return_msg>OK</return_msg><return_code>SUCCESS</return_code></xml>';
     }
+  }
+
+  /**
+   * 支付宝app支付
+   * @returns
+   */
+  @Post('/alipay')
+  async alipay() {
+    const orderNum = await this.aliPay.createOrderNum();
+    // app支付
+    const params = await this.aliPay.getInstance().appPay({
+      subject: '测试商品',
+      body: '测试商品描述',
+      outTradeId: orderNum,
+      timeout: '10m',
+      amount: '10.00',
+      goodsType: '0',
+    });
+    return this.ok(params);
+  }
+
+  /**
+   * 支付宝支付回调
+   */
+  @Post('/aliNotify')
+  async aliNotify(@Body(ALL) body: any) {
+    const { trade_status, out_trade_no } = body;
+    const check = await this.aliPay.signVerify(body);
+    if (check && trade_status === 'TRADE_SUCCESS') {
+      // 处理逻辑
+      console.log('支付宝支付成功', out_trade_no);
+    }
+    this.ctx.body = 'success';
   }
 }
