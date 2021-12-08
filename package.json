@@ -8,7 +8,7 @@
     "@cool-midway/core": "^4.0.12",
     "@cool-midway/es": "^4.0.2",
     "@cool-midway/oss": "^4.0.2",
-    "@cool-midway/queue": "^4.0.3",
+    "@cool-midway/queue": "^4.0.4",
     "@cool-midway/redis": "^4.0.3",
     "@cool-midway/socket": "^4.0.2",
     "@cool-midway/wxpay": "^4.0.3",
