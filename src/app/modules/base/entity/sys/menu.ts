@@ -41,6 +41,6 @@ export class BaseSysMenuEntity extends BaseEntity {
   // 父菜单名称
   parentName: string;
 
-  @Column({ comment: '父菜单名称', default: true })
+  @Column({ comment: '是否显示', default: true })
   isShow: boolean;
 }
