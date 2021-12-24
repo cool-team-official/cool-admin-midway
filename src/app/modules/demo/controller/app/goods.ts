@@ -1,8 +1,8 @@
 import { Get, Inject, Post, Provide } from '@midwayjs/decorator';
 import { CoolController, BaseController, CoolUrlTag } from '@cool-midway/core';
-import { IQueue } from '@cool-midway/queue';
 import { DemoGoodsEntity } from '../../entity/goods';
 import { DemoGoodsService } from '../../service/goods';
+import { DemoQueue } from '../../queue/demo';
 
 /**
  * 商品
@@ -30,7 +30,7 @@ export class DemoAppGoodsController extends BaseController {
 
   // 队列
   @Inject()
-  demoQueue: IQueue;
+  demoQueue: DemoQueue;
 
   /**
    * 请求所有数据
@@ -47,12 +47,7 @@ export class DemoAppGoodsController extends BaseController {
    */
   @Post('/queue', { summary: '发送队列数据' })
   async queue() {
-    this.demoQueue.queue.add(
-      { a: 1 },
-      {
-        removeOnComplete: true,
-        removeOnFail: true,
-      }
-    );
+    console.log(111, this.demoQueue);
+    this.demoQueue.add({ a: 2 }, { delay: 2000 });
   }
 }

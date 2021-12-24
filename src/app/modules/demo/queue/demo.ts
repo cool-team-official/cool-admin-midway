@@ -1,13 +1,14 @@
-import { App, Provide } from '@midwayjs/decorator';
+import { App, Provide, Scope, ScopeEnum } from '@midwayjs/decorator';
 import { IMidwayWebApplication } from '@midwayjs/web';
-import { ICoolQueue, Queue } from '@cool-midway/queue';
+import { BaseCoolQueue, Queue } from '@cool-midway/queue';
 
 /**
  * 任务
  */
 @Queue()
+@Scope(ScopeEnum.Singleton)
 @Provide()
-export abstract class DemoQueue implements ICoolQueue {
+export class DemoQueue extends BaseCoolQueue {
   @App()
   app: IMidwayWebApplication;
 

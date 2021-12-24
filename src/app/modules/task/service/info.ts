@@ -4,11 +4,11 @@ import { InjectEntityModel } from '@midwayjs/orm';
 import { Repository } from 'typeorm';
 import { TaskInfoEntity } from '../entity/info';
 import { TaskLogEntity } from '../entity/log';
-import { IQueue } from '@cool-midway/queue';
 import { ILogger } from '@midwayjs/logger';
 import { IMidwayWebApplication } from '@midwayjs/web';
 import * as _ from 'lodash';
 import { Utils } from '../../../comm/utils';
+import { TaskInfoQueue } from '../queue/task';
 
 /**
  * 任务
@@ -25,7 +25,7 @@ export class TaskInfoService extends BaseService {
   taskLogEntity: Repository<TaskLogEntity>;
 
   @Inject()
-  taskInfoQueue: IQueue;
+  taskInfoQueue: TaskInfoQueue;
 
   @App()
   app: IMidwayWebApplication;
@@ -42,9 +42,7 @@ export class TaskInfoService extends BaseService {
     if (task) {
       const job = await this.exist(task.id);
       if (job) {
-        await this.taskInfoQueue.queue.removeRepeatable(
-          JSON.parse(task.repeatConf)
-        );
+        await this.taskInfoQueue.removeRepeatable(JSON.parse(task.repeatConf));
       }
       task.status = 0;
       await this.taskInfoEntity.update(task.id, task);
@@ -73,8 +71,8 @@ export class TaskInfoService extends BaseService {
   async once(id) {
     const task = await this.taskInfoEntity.findOne({ id });
     if (task) {
-      await this.taskInfoQueue.queue.add(task, {
-        jobId: task.id,
+      await this.taskInfoQueue.add(task, {
+        jobId: task.id.toString(),
         removeOnComplete: true,
         removeOnFail: true,
       });
@@ -86,8 +84,7 @@ export class TaskInfoService extends BaseService {
    * @param jobId
    */
   async exist(jobId) {
-    console.log(jobId);
-    const result = await this.taskInfoQueue.queue.getRepeatableJobs();
+    const result = await this.taskInfoQueue.getRepeatableJobs();
     const ids = result.map(e => {
       return e.id;
     });
@@ -112,26 +109,33 @@ export class TaskInfoService extends BaseService {
       if (params.status === 1) {
         const exist = await this.exist(params.id);
         if (exist) {
-          await this.taskInfoQueue.queue.removeRepeatable(
+          await this.taskInfoQueue.removeRepeatable(
             JSON.parse(params.repeatConf)
           );
         }
-        const jobOp = Object.assign(params);
-        await this.utils.removeEmptyP(jobOp);
-        delete jobOp.repeatConf;
-        const { opts } = await this.taskInfoQueue.queue.add(params, {
+        const { every, limit, startDate, endDate, cron } = params;
+        const repeat = {
+          every,
+          limit,
+          jobId: params.id,
+          startDate,
+          endDate,
+          cron,
+        };
+        await this.utils.removeEmptyP(repeat);
+        const result = await this.taskInfoQueue.add(params, {
           jobId: params.id,
           removeOnComplete: true,
           removeOnFail: true,
-          repeat: jobOp,
+          repeat,
         });
-        if (!opts) {
-          throw new Error('任务添加失败，可能由于格式不正确~');
+        if (!result) {
+          throw new Error('任务添加失败，请检查任务配置');
         }
         // await transactionalEntityManager.update(TaskInfoEntity, params.id, {
         //   jobId: opts.jobId,
         // });
-        repeatConf = opts;
+        repeatConf = result.opts;
       }
     });
     if (params.status === 1) {
@@ -159,9 +163,7 @@ export class TaskInfoService extends BaseService {
       const task = await this.taskInfoEntity.findOne({ id });
       const exist = await this.exist(task.id);
       if (exist) {
-        await this.taskInfoQueue.queue.removeRepeatable(
-          JSON.parse(task.repeatConf)
-        );
+        await this.taskInfoQueue.removeRepeatable(JSON.parse(task.repeatConf));
       }
       await this.taskInfoEntity.delete({ id });
       await this.taskLogEntity.delete({ taskId: id });
@@ -237,12 +239,10 @@ export class TaskInfoService extends BaseService {
    */
   async getNextRunTime(jobId) {
     let nextRunTime;
-    const result = await this.taskInfoQueue.queue.getRepeatableJobs();
-    for (const task of result) {
-      if (task.id === jobId.toString()) {
-        nextRunTime = new Date(task.next);
-        break;
-      }
+    const result = await this.taskInfoQueue.getRepeatableJobs();
+    const task = _.find(result, { id: jobId + '' });
+    if (task) {
+      nextRunTime = new Date(task.next);
     }
     return nextRunTime;
   }
@@ -261,25 +261,21 @@ export class TaskInfoService extends BaseService {
   /**
    * 刷新任务状态
    */
-  async updateStatus() {
-    const result = await this.taskInfoQueue.queue.getRepeatableJobs();
-    for (const job of result) {
-      const task = await this.taskInfoEntity.findOne({ id: job.id });
-      if (task) {
-        setTimeout(async () => {
-          // 2秒后清空任务
-          const nextTime = await this.getNextRunTime(task.id);
-          if (nextTime && nextTime.getTime() <= new Date().getTime() - 999) {
-            this.nativeQuery(
-              'update task_info a set a.status = ?, a.updateTime = ? where a.id = ?',
-              [0, new Date(), task.id]
-            );
-            this.taskInfoQueue.queue.removeRepeatable(
-              JSON.parse(task.repeatConf)
-            );
-          }
-        }, 2000);
+  async updateStatus(jobId) {
+    const result = await this.taskInfoQueue.getRepeatableJobs();
+    const job = _.find(result, { id: jobId + '' });
+    // @ts-ignore
+    const task = await this.taskInfoEntity.findOne({ id: job.id });
+    const nextTime = await this.getNextRunTime(task.id);
+    if (task) {
+      if (task.nextRunTime.getTime() == nextTime.getTime()) {
+        task.status = 0;
+        task.nextRunTime = nextTime;
+        this.taskInfoQueue.removeRepeatableByKey(job.key);
+      } else {
+        task.nextRunTime = nextTime;
       }
+      await this.taskInfoEntity.update(task.id, task);
     }
   }
 

@@ -11,8 +11,8 @@ export default (app: Application) => {
     // 模块描述
     description: '演示示例',
     // 中间件
-    middlewares: ['testMiddleware'],
+    middlewares: [],
     // 全局中间件
-    globalMiddlewares: ['demoUserMiddleware'],
+    globalMiddlewares: [],
   } as ModuleConfig;
 };
