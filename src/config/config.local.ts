@@ -15,7 +15,7 @@ export default (appInfo: EggAppInfo) => {
     // 自动建表 注意：线上部署的时候不要使用，有可能导致数据丢失
     synchronize: true,
     // 打印日志
-    logging: false,
+    logging: true,
     // 字符集
     charset: 'utf8mb4',
     // 驱动
