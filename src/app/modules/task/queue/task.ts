@@ -21,10 +21,12 @@ export abstract class TaskInfoQueue extends BaseCoolQueue {
       const result = await this.taskInfoService.invokeService(job.data.service);
       this.taskInfoService.record(job.data, 1, JSON.stringify(result));
     } catch (error) {
-      this.taskInfoService.record(job.data, 0, error);
+      this.taskInfoService.record(job.data, 0, error.message);
     }
-    this.taskInfoService.updateNextRunTime(job.data.id);
-    this.taskInfoService.updateStatus(job.data.id);
+    if (!job.data.isOnce) {
+      this.taskInfoService.updateNextRunTime(job.data.id);
+      this.taskInfoService.updateStatus(job.data.id);
+    }
     done();
   }
 }

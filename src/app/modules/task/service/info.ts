@@ -71,11 +71,17 @@ export class TaskInfoService extends BaseService {
   async once(id) {
     const task = await this.taskInfoEntity.findOne({ id });
     if (task) {
-      await this.taskInfoQueue.add(task, {
-        jobId: task.id.toString(),
-        removeOnComplete: true,
-        removeOnFail: true,
-      });
+      await this.taskInfoQueue.add(
+        {
+          ...task,
+          isOnce: true,
+        },
+        {
+          jobId: task.id.toString(),
+          removeOnComplete: true,
+          removeOnFail: true,
+        }
+      );
     }
   }
 
