@@ -11,7 +11,11 @@ export default (app: Application) => {
     // 模块描述
     description: '基础的权限管理功能，包括登录，权限校验',
     // 中间件
-    globalMiddlewares: ['baseAuthorityMiddleware', 'baseLogMiddleware'],
+    globalMiddlewares: [
+      'baseAuthorityMiddleware',
+      'baseLogMiddleware',
+      'baseSwaggerMiddleware',
+    ],
     // jwt 生成解密token的
     jwt: {
       // 注意： 最好重新修改，防止破解

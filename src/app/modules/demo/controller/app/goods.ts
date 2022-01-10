@@ -1,4 +1,4 @@
-import { Get, Inject, Provide } from '@midwayjs/decorator';
+import { Get, Inject, Provide, Query } from '@midwayjs/decorator';
 import { CoolController, BaseController, CoolUrlTag } from '@cool-midway/core';
 import { DemoGoodsEntity } from '../../entity/goods';
 import { DemoGoodsService } from '../../service/goods';
@@ -28,12 +28,13 @@ export class DemoAppGoodsController extends BaseController {
   demoGoodsService: DemoGoodsService;
 
   /**
-   * 请求所有数据
+   * 请求所有
+   * @param name 名称
    * @returns
    */
   @CoolUrlTag('ignoreToken')
   @Get('/all', { summary: '获得所有' })
-  async all() {
+  async all(@Query() name: string, @Query() age: number) {
     return this.ok(await this.demoGoodsService.all());
   }
 }
