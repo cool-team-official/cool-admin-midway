@@ -5,7 +5,7 @@
   "private": true,
   "dependencies": {
     "@cool-midway/alipay": "^4.0.4",
-    "@cool-midway/core": "^4.0.16",
+    "@cool-midway/core": "^4.0.17",
     "@cool-midway/es": "^4.0.2",
     "@cool-midway/oss": "^4.0.3",
     "@cool-midway/queue": "^4.1.2",
