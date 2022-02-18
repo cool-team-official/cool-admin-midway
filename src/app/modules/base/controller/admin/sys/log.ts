@@ -47,7 +47,7 @@ export class BaseSysLogController extends BaseController {
   /**
    * 设置日志保存时间
    */
-  @Post('/setKeep', { summary: '设置保存时间' })
+  @Post('/setKeep', { summary: '日志保存时间' })
   public async setKeep(@Body() value: number) {
     await this.baseSysConfService.updateVaule('logKeep', value);
     return this.ok();
@@ -56,7 +56,7 @@ export class BaseSysLogController extends BaseController {
   /**
    * 获得日志保存时间
    */
-  @Get('/getKeep', { summary: '获得设置保存时间' })
+  @Get('/getKeep', { summary: '获得日志保存时间' })
   public async getKeep() {
     return this.ok(await this.baseSysConfService.getValue('logKeep'));
   }

@@ -64,11 +64,9 @@ export class BaseSysLogService extends BaseService {
         .format('YYYY-MM-DD')} 00:00:00`;
       await this.baseSysLogEntity
         .createQueryBuilder()
-        .where('createTime < :createTime', { createTime: beforeDate });
-      await this.nativeQuery(
-        ' delete from base_sys_log where createTime < ? ',
-        [beforeDate]
-      );
+        .delete()
+        .where('createTime < :createTime', { createTime: beforeDate })
+        .execute();
     } else {
       await this.baseSysLogEntity.clear();
     }
