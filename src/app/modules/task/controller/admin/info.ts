@@ -19,6 +19,9 @@ import { TaskInfoService } from '../../service/info';
   api: ['add', 'delete', 'update', 'info', 'page'],
   entity: TaskInfoEntity,
   service: TaskInfoService,
+  before: ctx => {
+    ctx.request.body.limit = ctx.request.body.repeatCount;
+  },
   pageQueryOp: {
     fieldEq: ['status', 'type'],
   },

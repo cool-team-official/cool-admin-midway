@@ -264,6 +264,19 @@ export class TaskInfoService extends BaseService {
   }
 
   /**
+   * 详情
+   * @param id
+   * @returns
+   */
+  async info(id: any): Promise<any> {
+    const info = await this.taskInfoEntity.findOne({ id });
+    return {
+      ...info,
+      repeatCount: info.limit,
+    };
+  }
+
+  /**
    * 刷新任务状态
    */
   async updateStatus(jobId) {
