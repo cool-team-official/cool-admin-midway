@@ -1,0 +1,28 @@
+{
+    "extends": "./node_modules/mwts/",
+    "ignorePatterns": [
+        "node_modules",
+        "dist",
+        "test",
+        "jest.config.js",
+        "typings",
+        "public/**/**",
+        "view/**/**"
+    ],
+    "env": {
+        "jest": true
+    },
+    "rules": {
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
+        "node/no-extraneous-import": "off",
+        "no-empty": "off",
+        "node/no-extraneous-require": "off",
+        "eqeqeq": "off",
+        "node/no-unsupported-features/node-builtins": "off",
+        "@typescript-eslint/ban-types": "off",
+        "no-control-regex": "off",
+        "prefer-const": "off"
+    }
+}

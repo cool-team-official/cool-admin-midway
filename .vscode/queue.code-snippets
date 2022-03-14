@@ -1,0 +1,21 @@
+{
+  "queue": {
+    "prefix": "queue",
+    "body": [
+      "import { BaseCoolQueue, CoolQueue } from '@cool-midway/task';",
+      "",
+      "/**",
+      " * 队列",
+      " */",
+      "@CoolQueue()",
+      "export abstract class xxxQueue extends BaseCoolQueue {",
+      "  async data(job: any, done: any) {",
+      "    console.log('收到的数据', job.data);",
+      "    done();",
+      "  }",
+      "}",
+      ""
+    ],
+    "description": "cool-admin service代码片段"
+  }
+}

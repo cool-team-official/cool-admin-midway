@@ -1,0 +1,69 @@
+{
+  "name": "cool-admin",
+  "version": "5.0.0",
+  "description": "",
+  "private": true,
+  "dependencies": {
+    "@cool-midway/core": "^5.0.2",
+    "@cool-midway/es": "^5.0.0",
+    "@cool-midway/file": "^5.0.1",
+    "@cool-midway/pay": "^5.0.0",
+    "@cool-midway/rpc": "^5.0.0",
+    "@cool-midway/task": "^5.0.1",
+    "@midwayjs/bootstrap": "^3.1.1",
+    "@midwayjs/cache": "^3.1.1",
+    "@midwayjs/core": "^3.1.1",
+    "@midwayjs/decorator": "^3.0.0",
+    "@midwayjs/info": "^3.1.1",
+    "@midwayjs/koa": "^3.1.1",
+    "@midwayjs/logger": "^2.16.3",
+    "@midwayjs/orm": "^3.1.1",
+    "@midwayjs/static-file": "^3.1.1",
+    "@midwayjs/validate": "^3.1.1",
+    "@midwayjs/view-ejs": "^3.1.1",
+    "cache-manager-fs-hash": "^1.0.0",
+    "ipip-ipdb": "^0.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "midway-custom-component": "D:\\src\\cool\\admin\\midway-core\\pay\\",
+    "mini-svg-data-uri": "^1.4.4",
+    "mysql2": "^2.3.3",
+    "svg-captcha": "^1.4.0",
+    "typeorm": "^0.2.45"
+  },
+  "devDependencies": {
+    "@midwayjs/cli": "^1.3.0",
+    "@midwayjs/mock": "^3.1.1",
+    "@types/jest": "^27.4.1",
+    "@types/koa": "^2.13.4",
+    "@types/node": "17",
+    "cross-env": "^7.0.3",
+    "jest": "^27.5.1",
+    "mwts": "^1.3.0",
+    "swagger-ui-dist": "^4.6.1",
+    "ts-jest": "^27.1.3",
+    "typescript": "^4.6.2"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "scripts": {
+    "start": "NODE_ENV=prod node ./bootstrap.js",
+    "dev": "cross-env && cross-env NODE_ENV=local TS_NODE_TYPE_CHECK=false TS_NODE_TRANSPILE_ONLY=true midway-bin dev --ts",
+    "test": "midway-bin test --ts",
+    "cov": "midway-bin cov --ts",
+    "lint": "mwts check",
+    "lint:fix": "mwts fix",
+    "ci": "npm run cov",
+    "build": "midway-bin build -c"
+  },
+  "midway-bin-clean": [
+    ".vscode/.tsbuildinfo",
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "anonymous",
+  "license": "MIT"
+}

@@ -1,0 +1,24 @@
+{
+  "event": {
+    "prefix": "event",
+    "body": [
+      "import { Provide, Scope, ScopeEnum } from '@midwayjs/decorator';",
+      "import { CoolEvent, Event } from '@cool-midway/core';",
+      "",
+      "/**",
+      " * 接收事件",
+      " */",
+      "@Provide()",
+      "@Scope(ScopeEnum.Singleton)",
+      "@CoolEvent()",
+      "export class xxxEvent {",
+      "  @Event('updateUser')",
+      "  async updateUser(msg, a) {",
+      "    console.log('ImEvent', 'updateUser', msg, a);",
+      "  }",
+      "}",
+      ""
+    ],
+    "description": "cool-admin event代码片段"
+  }
+}

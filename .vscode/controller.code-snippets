@@ -1,0 +1,21 @@
+{
+  "controller": {
+    "prefix": "controller",
+    "body": [
+      "import { Provide } from '@midwayjs/decorator';",
+      "import { CoolController, BaseController } from '@cool-midway/core';",
+      "",
+      "/**",
+      " * 描述",
+      " */",
+      "@Provide()",
+      "@CoolController({",
+      "  api: ['add', 'delete', 'update', 'info', 'list', 'page'],",
+      "  entity: 实体,",
+      "})",
+      "export class XxxController extends BaseController {}",
+      ""
+    ],
+    "description": "cool-admin controller代码片段"
+  }
+}

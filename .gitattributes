@@ -1,0 +1,4 @@
+*.js text eol=lf
+*.json text eol=lf
+*.ts text eol=lf
+*.code-snippets text eol=lf
