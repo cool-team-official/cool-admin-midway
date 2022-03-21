@@ -5,8 +5,8 @@ import { Column } from 'typeorm';
 /**
  * 文件空间信息
  */
-@EntityModel('base_app_space_info')
-export class BaseAppSpaceInfoEntity extends BaseEntity {
+@EntityModel('space_info')
+export class SpaceInfoEntity extends BaseEntity {
   @Column({ comment: '地址' })
   url: string;
 

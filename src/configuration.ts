@@ -6,7 +6,6 @@ import { join } from 'path';
 import * as staticFile from '@midwayjs/static-file';
 import * as view from '@midwayjs/view-ejs';
 import * as orm from '@midwayjs/orm';
-import * as cache from '@midwayjs/cache';
 import * as cool from '@cool-midway/core';
 import * as file from '@cool-midway/file';
 // import * as task from '@cool-midway/task';
@@ -26,8 +25,6 @@ import * as file from '@cool-midway/file';
     staticFile,
     // typeorm https://typeorm.io  打不开？ https://typeorm.biunav.com/zh/
     orm,
-    // 缓存 http://midwayjs.org/docs/extensions/cache
-    cache,
     // cool-admin 官方组件 https://www.cool-js.com
     cool,
     // 文件上传 阿里云存储 腾讯云存储 七牛云存储
@@ -51,10 +48,5 @@ export class ContainerLifeCycle {
   @App()
   app: koa.Application;
 
-  async onReady() {
-    // add middleware
-    // this.app.useMiddleware([ReportMiddleware]);
-    // add filter
-    // this.app.useFilter([NotFoundFilter, DefaultErrorFilter]);
-  }
+  async onReady() {}
 }

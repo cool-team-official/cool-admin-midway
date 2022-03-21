@@ -15,12 +15,24 @@ export class AppDemoCacheController extends BaseController {
   @Inject()
   demoCacheService: DemoCacheService;
 
+  /**
+   * 设置缓存
+   * @returns
+   */
   @Post('/set')
   async set() {
-    this.cacheManager.set('a', 1);
+    await this.cacheManager.set('a', 1);
+    // 缓存10秒
+    await this.cacheManager.set('a', 1, {
+      ttl: 10,
+    });
     return this.ok(await this.cacheManager.get('a'));
   }
 
+  /**
+   * 获得缓存
+   * @returns
+   */
   @Get('/get')
   async get() {
     return this.ok(await this.demoCacheService.get());

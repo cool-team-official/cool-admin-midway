@@ -18,45 +18,6 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for base_app_space_info
--- ----------------------------
-DROP TABLE IF EXISTS `base_app_space_info`;
-CREATE TABLE `base_app_space_info` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `createTime` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
-  `updateTime` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '更新时间',
-  `url` varchar(255) NOT NULL COMMENT '地址',
-  `type` varchar(255) NOT NULL COMMENT '类型',
-  `classifyId` bigint(20) DEFAULT NULL COMMENT '分类ID',
-  PRIMARY KEY (`id`),
-  KEY `IDX_4aed04cbfa2ecdc01485b86e51` (`createTime`),
-  KEY `IDX_abd5de4a4895eb253a5cabb20f` (`updateTime`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
-
--- ----------------------------
--- Table structure for base_app_space_type
--- ----------------------------
-DROP TABLE IF EXISTS `base_app_space_type`;
-CREATE TABLE `base_app_space_type` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `createTime` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
-  `updateTime` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '更新时间',
-  `name` varchar(255) NOT NULL COMMENT '类别名称',
-  `parentId` tinyint(4) DEFAULT NULL COMMENT '父分类ID',
-  PRIMARY KEY (`id`),
-  KEY `IDX_5e8376603f89fdf3e7bb05103a` (`createTime`),
-  KEY `IDX_500ea9e8b2c5c08c9b86a0667e` (`updateTime`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
-
--- ----------------------------
--- Records of base_app_space_type
--- ----------------------------
-BEGIN;
-INSERT INTO `base_app_space_type` VALUES (1, '2021-02-26 14:07:48.867045', '2021-02-26 14:07:48.867045', 'a', NULL);
-INSERT INTO `base_app_space_type` VALUES (2, '2021-02-26 14:07:52.285531', '2021-02-26 14:07:52.285531', 'b', NULL);
-COMMIT;
-
--- ----------------------------
 -- Table structure for base_sys_conf
 -- ----------------------------
 DROP TABLE IF EXISTS `base_sys_conf`;
@@ -688,30 +649,6 @@ INSERT INTO `base_sys_user_role` VALUES (42, '2021-02-26 14:36:53.481478', '2021
 INSERT INTO `base_sys_user_role` VALUES (43, '2021-02-26 14:36:58.477817', '2021-02-26 14:36:58.477817', 28, 12);
 INSERT INTO `base_sys_user_role` VALUES (44, '2021-02-26 14:36:58.577114', '2021-02-26 14:36:58.577114', 28, 10);
 COMMIT;
-
--- ----------------------------
--- Table structure for demo_app_goods
--- ----------------------------
-DROP TABLE IF EXISTS `demo_app_goods`;
-CREATE TABLE `demo_app_goods` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `createTime` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
-  `updateTime` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '更新时间',
-  `title` varchar(255) NOT NULL COMMENT '标题',
-  `pic` varchar(255) NOT NULL COMMENT '图片',
-  `price` decimal(5,2) NOT NULL COMMENT '价格',
-  PRIMARY KEY (`id`),
-  KEY `IDX_de2b99b64158bb4030487d7475` (`createTime`),
-  KEY `IDX_f84cff6dc28b1a5dcc53856e66` (`updateTime`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
-
--- ----------------------------
--- Records of demo_app_goods
--- ----------------------------
-BEGIN;
-INSERT INTO `demo_app_goods` VALUES (1, '2021-03-02 17:22:10.687462', '2021-03-02 17:22:10.687462', 'cool-mall商城', 'https://docs.cool-js.com/mall/show05.jpeg', 20.00);
-COMMIT;
-
 
 
 SET FOREIGN_KEY_CHECKS = 1;

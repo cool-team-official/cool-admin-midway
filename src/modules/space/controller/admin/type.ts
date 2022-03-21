@@ -1,6 +1,6 @@
 import { Provide } from '@midwayjs/decorator';
 import { CoolController, BaseController } from '@cool-midway/core';
-import { BaseAppSpaceTypeEntity } from '../../entity/type';
+import { SpaceTypeEntity } from '../../entity/type';
 
 /**
  * 空间分类
@@ -8,6 +8,6 @@ import { BaseAppSpaceTypeEntity } from '../../entity/type';
 @Provide()
 @CoolController({
   api: ['add', 'delete', 'update', 'info', 'list', 'page'],
-  entity: BaseAppSpaceTypeEntity,
+  entity: SpaceTypeEntity,
 })
 export class BaseAppSpaceTypeController extends BaseController {}

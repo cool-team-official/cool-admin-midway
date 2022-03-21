@@ -1,3 +1,4 @@
+import { CoolConfig } from '@cool-midway/core';
 import { MidwayConfig } from '@midwayjs/core';
 
 /**
@@ -18,4 +19,8 @@ export default {
     // 字符集
     charset: 'utf8mb4',
   },
+  cool: {
+    // 是否自动导入数据库
+    initDB: true,
+  } as CoolConfig,
 } as MidwayConfig;

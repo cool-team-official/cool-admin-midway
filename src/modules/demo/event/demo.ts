@@ -1,11 +1,8 @@
-import { Provide, Scope, ScopeEnum } from '@midwayjs/decorator';
 import { CoolEvent, Event } from '@cool-midway/core';
 
 /**
  * 接收事件
  */
-@Provide()
-@Scope(ScopeEnum.Singleton)
 @CoolEvent()
 export class DemoEvent {
   /**

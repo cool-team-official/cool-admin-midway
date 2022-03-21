@@ -1,6 +1,6 @@
 import { Provide } from '@midwayjs/decorator';
 import { CoolController, BaseController } from '@cool-midway/core';
-import { BaseAppSpaceInfoEntity } from '../../entity/info';
+import { SpaceInfoEntity } from '../../entity/info';
 
 /**
  * 图片空间信息
@@ -8,7 +8,7 @@ import { BaseAppSpaceInfoEntity } from '../../entity/info';
 @Provide()
 @CoolController({
   api: ['add', 'delete', 'update', 'info', 'list', 'page'],
-  entity: BaseAppSpaceInfoEntity,
+  entity: SpaceInfoEntity,
   pageQueryOp: {
     fieldEq: ['type', 'classifyId'],
   },

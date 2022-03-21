@@ -1,3 +1,4 @@
+import { CoolConfig } from '@cool-midway/core';
 import { MidwayConfig } from '@midwayjs/core';
 
 /**
@@ -14,8 +15,12 @@ export default {
     // 自动建表 注意：线上部署的时候不要使用，有可能导致数据丢失
     synchronize: false,
     // 打印日志
-    logging: true,
+    logging: false,
     // 字符集
     charset: 'utf8mb4',
   },
+  cool: {
+    // 是否自动导入数据库
+    initDB: false,
+  } as CoolConfig,
 } as MidwayConfig;
