@@ -1,5 +1,5 @@
 import { Provide, Inject, Get, Post, Body, ALL } from '@midwayjs/decorator';
-import { CoolController, BaseController, CoolEps } from '@cool-midway/core';
+import { CoolController, BaseController } from '@cool-midway/core';
 import { BaseSysUserEntity } from '../../entity/sys/user';
 import { BaseSysLoginService } from '../../service/sys/login';
 import { BaseSysPermsService } from '../../service/sys/perms';
@@ -27,18 +27,6 @@ export class BaseCommController extends BaseController {
 
   @Inject()
   coolFile: CoolFile;
-
-  @Inject()
-  eps: CoolEps;
-
-  /**
-   * 实体信息与路径
-   * @returns
-   */
-  @Get('/eps', { summary: '实体信息与路径' })
-  public async getEps() {
-    return this.ok(this.eps.admin);
-  }
 
   /**
    * 获得个人信息

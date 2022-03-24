@@ -37,7 +37,7 @@ export class BaseOpenController extends BaseController {
    */
   @Get('/eps', { summary: '实体信息与路径' })
   public async getEps() {
-    return this.ok(this.eps.app);
+    return this.ok(this.eps.admin);
   }
 
   /**

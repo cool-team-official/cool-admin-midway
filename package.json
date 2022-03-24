@@ -4,7 +4,7 @@
   "description": "",
   "private": true,
   "dependencies": {
-    "@cool-midway/core": "^5.0.5",
+    "@cool-midway/core": "^5.0.6",
     "@cool-midway/es": "^5.0.1",
     "@cool-midway/file": "^5.0.1",
     "@cool-midway/pay": "^5.0.0",
