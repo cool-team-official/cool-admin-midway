@@ -16,6 +16,6 @@ export class LoginDTO {
   captchaId: string;
 
   // 验证码
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.required())
   verifyCode: number;
 }

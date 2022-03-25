@@ -12,6 +12,7 @@ import { LoginDTO } from '../../dto/login';
 import { BaseSysLoginService } from '../../service/sys/login';
 import { BaseSysParamService } from '../../service/sys/param';
 import { Context } from '@midwayjs/koa';
+import { Validate } from '@midwayjs/validate';
 
 /**
  * 不需要登录的后台接口
@@ -53,7 +54,8 @@ export class BaseOpenController extends BaseController {
    * @param login
    */
   @Post('/login', { summary: '登录' })
-  async login(@Body(ALL) login: LoginDTO) {
+  @Validate()
+  async login(@Body() login: LoginDTO) {
     return this.ok(await this.baseSysLoginService.login(login));
   }
 
