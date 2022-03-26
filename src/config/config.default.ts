@@ -19,7 +19,7 @@ export default {
     // 是否自动导入数据库
     file: {
       // 上传模式 本地上传或云存储
-      mode: MODETYPE.CLOUD,
+      mode: MODETYPE.LOCAL,
       // 本地上传 文件地址前缀
       domain: 'http://127.0.0.1:8001',
     },
