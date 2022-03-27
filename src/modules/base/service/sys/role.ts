@@ -30,6 +30,9 @@ export class BaseSysRoleService extends BaseService {
   @Inject()
   baseSysPermsService: BaseSysPermsService;
 
+  @Inject()
+  ctx;
+
   /**
    * 根据用户ID获得所有用户角色
    * @param userId
