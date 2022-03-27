@@ -1,12 +1,4 @@
-import {
-  Provide,
-  Body,
-  ALL,
-  Inject,
-  Post,
-  Get,
-  Query,
-} from '@midwayjs/decorator';
+import { Provide, Body, Inject, Post, Get, Query } from '@midwayjs/decorator';
 import { CoolController, BaseController, CoolEps } from '@cool-midway/core';
 import { LoginDTO } from '../../dto/login';
 import { BaseSysLoginService } from '../../service/sys/login';

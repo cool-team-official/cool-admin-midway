@@ -8,6 +8,7 @@ import * as view from '@midwayjs/view-ejs';
 import * as orm from '@midwayjs/orm';
 import * as cool from '@cool-midway/core';
 import * as file from '@cool-midway/file';
+// import * as socketio from '@midwayjs/socketio';
 // import * as task from '@cool-midway/task';
 // import * as pay from '@cool-midway/pay';
 // import * as es from '@cool-midway/es';
@@ -25,6 +26,8 @@ import * as file from '@cool-midway/file';
     staticFile,
     // typeorm https://typeorm.io  打不开？ https://typeorm.biunav.com/zh/
     orm,
+    // socketio http://www.midwayjs.org/docs/extensions/socketio
+    // socketio,
     // cool-admin 官方组件 https://www.cool-js.com
     cool,
     // 文件上传 阿里云存储 腾讯云存储 七牛云存储
