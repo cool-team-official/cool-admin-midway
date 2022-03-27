@@ -68,7 +68,7 @@ export class BaseSysPermsService extends BaseService {
       `admin:department:${userId}`
     );
     if (department) {
-      return JSON.parse(department);
+      return department;
     } else {
       return [];
     }

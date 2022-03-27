@@ -1,9 +1,10 @@
-import { App, Config, Middleware } from '@midwayjs/decorator';
+import { App, Config, Inject, Middleware } from '@midwayjs/decorator';
 import * as _ from 'lodash';
 import { RESCODE } from '@cool-midway/core';
 import * as jwt from 'jsonwebtoken';
 import { NextFunction, Context } from '@midwayjs/koa';
 import { IMiddleware, IMidwayApplication } from '@midwayjs/core';
+import { CacheManager } from '@midwayjs/cache';
 
 /**
  * 权限校验
@@ -18,7 +19,8 @@ export class BaseAuthorityMiddleware
   @Config('module.base')
   jwtConfig;
 
-  coolCache;
+  @Inject()
+  cacheManager: CacheManager;
 
   @App()
   app: IMidwayApplication;
@@ -60,10 +62,8 @@ export class BaseAuthorityMiddleware
             };
             return;
           }
-          // 需要动态获得缓存
-          this.coolCache = await ctx.requestContext.getAsync('cool:cache');
           // 判断密码版本是否正确
-          const passwordV = await this.coolCache.get(
+          const passwordV = await this.cacheManager.get(
             `admin:passwordVersion:${ctx.admin.userId}`
           );
           if (passwordV != ctx.admin.passwordVersion) {
@@ -74,7 +74,7 @@ export class BaseAuthorityMiddleware
             };
             return;
           }
-          const rToken = await this.coolCache.get(
+          const rToken = await this.cacheManager.get(
             `admin:token:${ctx.admin.userId}`
           );
           if (!rToken) {
@@ -88,11 +88,11 @@ export class BaseAuthorityMiddleware
           if (rToken !== token && this.jwtConfig.sso) {
             statusCode = 401;
           } else {
-            let perms = await this.coolCache.get(
+            let perms: string[] = await this.cacheManager.get(
               `admin:perms:${ctx.admin.userId}`
             );
             if (!_.isEmpty(perms)) {
-              perms = JSON.parse(perms).map(e => {
+              perms = perms.map(e => {
                 return e.replace(/:/g, '/');
               });
               if (!perms.includes(url.split('?')[0].replace('/admin/', ''))) {

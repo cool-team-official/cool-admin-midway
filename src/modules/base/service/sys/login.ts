@@ -87,14 +87,8 @@ export class BaseSysLoginService extends BaseService {
         roleIds,
         user.username === 'admin'
       );
-      await this.cacheManager.set(
-        `admin:department:${user.id}`,
-        JSON.stringify(departments)
-      );
-      await this.cacheManager.set(
-        `admin:perms:${user.id}`,
-        JSON.stringify(perms)
-      );
+      await this.cacheManager.set(`admin:department:${user.id}`, departments);
+      await this.cacheManager.set(`admin:perms:${user.id}`, perms);
       await this.cacheManager.set(`admin:token:${user.id}`, result.token);
       await this.cacheManager.set(
         `admin:token:refresh:${user.id}`,

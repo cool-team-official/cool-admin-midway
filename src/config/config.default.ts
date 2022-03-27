@@ -8,6 +8,10 @@ export default {
   koa: {
     port: 8001,
   },
+  // 文件上传
+  upload: {
+    fileSize: '200mb',
+  },
   // 模板渲染
   view: {
     mapping: {

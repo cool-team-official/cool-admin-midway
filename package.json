@@ -6,7 +6,7 @@
   "dependencies": {
     "@cool-midway/core": "^5.0.6",
     "@cool-midway/es": "^5.0.2",
-    "@cool-midway/file": "^5.0.2",
+    "@cool-midway/file": "^5.0.3",
     "@cool-midway/pay": "^5.0.0",
     "@cool-midway/rpc": "^5.0.1",
     "@cool-midway/task": "^5.0.1",
@@ -21,6 +21,7 @@
     "@midwayjs/static-file": "^3.2.0",
     "@midwayjs/validate": "^3.2.0",
     "@midwayjs/view-ejs": "^3.2.0",
+    "cfork": "^1.8.0",
     "ipip-ipdb": "^0.6.0",
     "jsonwebtoken": "^8.5.1",
     "mini-svg-data-uri": "^1.4.4",
@@ -45,7 +46,8 @@
     "node": ">=12.0.0"
   },
   "scripts": {
-    "start": "NODE_ENV=prod node ./bootstrap.js",
+    "start_single": "NODE_ENV=prod node ./bootstrap.js",
+    "start": "NODE_ENV=prod node ./server.js",
     "dev": "cross-env && cross-env NODE_ENV=local TS_NODE_TYPE_CHECK=false TS_NODE_TRANSPILE_ONLY=true midway-bin dev --ts",
     "test": "midway-bin test --ts",
     "cov": "midway-bin cov --ts",
