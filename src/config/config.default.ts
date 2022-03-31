@@ -1,6 +1,8 @@
 import { CoolConfig } from '@cool-midway/core';
 import { MODETYPE } from '@cool-midway/file';
 import { MidwayConfig } from '@midwayjs/core';
+// import * as redisStore from 'cache-manager-ioredis';
+import * as fsStore from 'cache-manager-fs-hash';
 
 export default {
   // 修改成你自己独有的key
@@ -18,6 +20,24 @@ export default {
       '.html': 'ejs',
     },
   },
+  // 本地缓存
+  cache: {
+    store: fsStore,
+    options: {
+      path: 'cache',
+      ttl: -1,
+    },
+  },
+  // redis缓存
+  //   cache: {
+  //     store: redisStore,
+  //     options: {
+  //       host: '127.0.0.1',
+  //       port: 6379,
+  //       password: '',
+  //       db: 1,
+  //     },
+  //   },
   // cool配置
   cool: {
     // 是否自动导入数据库
