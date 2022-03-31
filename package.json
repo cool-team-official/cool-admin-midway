@@ -19,6 +19,7 @@
     "@midwayjs/orm": "^3.2.0",
     "@midwayjs/socketio": "^3.2.0",
     "@midwayjs/static-file": "^3.2.0",
+    "@midwayjs/task": "^3.2.2",
     "@midwayjs/validate": "^3.2.0",
     "@midwayjs/view-ejs": "^3.2.0",
     "cfork": "^1.8.0",

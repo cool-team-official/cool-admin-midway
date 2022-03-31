@@ -8,6 +8,7 @@ import * as view from '@midwayjs/view-ejs';
 import * as orm from '@midwayjs/orm';
 import * as cool from '@cool-midway/core';
 import * as file from '@cool-midway/file';
+import * as localTask from '@midwayjs/task';
 // import * as socketio from '@midwayjs/socketio';
 // import * as task from '@cool-midway/task';
 // import * as pay from '@cool-midway/pay';
@@ -20,6 +21,8 @@ import * as file from '@cool-midway/file';
     koa,
     // 参数验证 http://midwayjs.org/docs/extensions/validate
     validate,
+    // 本地任务 http://midwayjs.org/docs/extensions/task
+    localTask,
     // 模板渲染 http://midwayjs.org/docs/extensions/render
     view,
     // 静态文件托管 http://midwayjs.org/docs/extensions/static_file
