@@ -16,6 +16,7 @@ export class HelloController {
   @OnWSConnection()
   async onConnectionMethod() {
     console.log('on client connect', this.ctx.id);
+    console.log('参数', this.ctx.handshake.query);
     this.ctx.emit('data', '连接成功');
   }
 
