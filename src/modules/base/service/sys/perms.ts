@@ -33,16 +33,13 @@ export class BaseSysPermsService extends BaseService {
   async refreshPerms(userId) {
     const roleIds = await this.baseSysRoleService.getByUser(userId);
     const perms = await this.baseSysMenuService.getPerms(roleIds);
-    await this.cacheManager.set(`admin:perms:${userId}`, JSON.stringify(perms));
+    await this.cacheManager.set(`admin:perms:${userId}`, perms);
     // 更新部门权限
     const departments = await this.baseSysDepartmentService.getByRoleIds(
       roleIds,
       this.ctx.admin.username === 'admin'
     );
-    await this.cacheManager.set(
-      `admin:department:${userId}`,
-      JSON.stringify(departments)
-    );
+    await this.cacheManager.set(`admin:department:${userId}`, departments);
   }
 
   /**

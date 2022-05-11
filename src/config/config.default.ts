@@ -36,6 +36,7 @@ export default {
   //       port: 6379,
   //       password: '',
   //       db: 1,
+  //       ttl: null,
   //     },
   //   },
   // cool配置
