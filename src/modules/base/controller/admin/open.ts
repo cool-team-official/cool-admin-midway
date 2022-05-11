@@ -67,7 +67,7 @@ export class BaseOpenController extends BaseController {
    * 刷新token
    */
   @Get('/refreshToken', { summary: '刷新token' })
-  async refreshToken(@Query() refreshToken: string) {
+  async refreshToken(@Query('refreshToken') refreshToken: string) {
     return this.ok(await this.baseSysLoginService.refreshToken(refreshToken));
   }
 }
