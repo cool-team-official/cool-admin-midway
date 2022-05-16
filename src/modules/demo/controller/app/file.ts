@@ -28,7 +28,7 @@ export class AppDemoFileController extends BaseController {
   @Post('/downAndUpload', { summary: '下载并上传' })
   async downAndUpload() {
     return this.ok(
-      await this.file.downAndUpload('https://cool-js.com/notice.png')
+      await this.file.downAndUpload('https://cool-js.com/admin/show.png')
     );
   }
 }
