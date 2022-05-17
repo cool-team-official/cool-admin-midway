@@ -104,6 +104,9 @@ export class BaseSysUserService extends BaseService {
    * @param user
    */
   async updateUserRole(user) {
+    if (_.isEmpty(user.roleIdList)) {
+      return;
+    }
     if (user.username === 'admin') {
       throw new CoolCommException('非法操作~');
     }
