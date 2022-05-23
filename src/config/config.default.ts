@@ -13,6 +13,7 @@ export default {
   // 文件上传
   upload: {
     fileSize: '200mb',
+    whitelist: () => true,
   },
   // 模板渲染
   view: {
@@ -45,7 +46,7 @@ export default {
     file: {
       // 上传模式 本地上传或云存储
       mode: MODETYPE.LOCAL,
-      // 本地上传 文件地址前缀
+      // 本地上传 文件地址前缀，当且仅当mode为LOCAL时生效
       domain: 'http://127.0.0.1:8001',
     },
   } as CoolConfig,
