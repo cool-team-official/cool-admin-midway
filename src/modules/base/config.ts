@@ -13,6 +13,8 @@ export default () => {
     description: '基础的权限管理功能，包括登录，权限校验',
     // 中间件
     globalMiddlewares: [BaseAuthorityMiddleware, BaseLogMiddleware],
+    // 模块加载顺序，默认为0，值越大越优先加载
+    order: 10,
     // jwt 生成解密token的
     jwt: {
       // 单点登录
