@@ -8,8 +8,6 @@
       "/**",
       " * 接收事件",
       " */",
-      "@Provide()",
-      "@Scope(ScopeEnum.Singleton)",
       "@CoolEvent()",
       "export class xxxEvent {",
       "  @Event('updateUser')",
