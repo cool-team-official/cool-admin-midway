@@ -43,10 +43,22 @@ export class BaseAuthorityMiddleware
           return;
         }
         if (ctx.admin) {
+          const rToken = await this.cacheManager.get(
+            `admin:token:${ctx.admin.userId}`
+          );
           // 超管拥有所有权限
           if (ctx.admin.username == 'admin' && !ctx.admin.isRefresh) {
-            await next();
-            return;
+            if (rToken !== token && this.jwtConfig.jwt.sso) {
+              ctx.status = 401;
+              ctx.body = {
+                code: RESCODE.COMMFAIL,
+                message: '登录失效~',
+              };
+              return;
+            } else {
+              await next();
+              return;
+            }
           }
           // 要登录每个人都有权限的接口
           if (new RegExp(`^${adminUrl}?.*/comm/`).test(url)) {
@@ -74,9 +86,7 @@ export class BaseAuthorityMiddleware
             };
             return;
           }
-          const rToken = await this.cacheManager.get(
-            `admin:token:${ctx.admin.userId}`
-          );
+
           if (!rToken) {
             ctx.status = 401;
             ctx.body = {
@@ -85,7 +95,7 @@ export class BaseAuthorityMiddleware
             };
             return;
           }
-          if (rToken !== token && this.jwtConfig.sso) {
+          if (rToken !== token && this.jwtConfig.jwt.sso) {
             statusCode = 401;
           } else {
             let perms: string[] = await this.cacheManager.get(
