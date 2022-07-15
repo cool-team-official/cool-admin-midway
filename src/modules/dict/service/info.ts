@@ -40,6 +40,7 @@ export class DictInfoService extends BaseService {
         }),
       })
       .orderBy('orderNum', 'ASC')
+      .addOrderBy('a.createTime', 'ASC')
       .getMany();
     for (const item of typeData) {
       result[item.key] = _.filter(data, { typeId: item.id });
