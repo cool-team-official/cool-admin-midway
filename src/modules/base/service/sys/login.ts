@@ -226,6 +226,10 @@ export class BaseSysLoginService extends BaseService {
           `admin:passwordVersion:${decoded['userId']}`,
           decoded['passwordVersion']
         );
+        await this.cacheManager.set(
+          `admin:token:${decoded['userId']}`,
+          result.token
+        );
         return result;
       }
     } catch (err) {
