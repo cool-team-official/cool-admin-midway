@@ -18,4 +18,7 @@ export class DictInfoEntity extends BaseEntity {
 
   @Column({ comment: '备注', nullable: true })
   remark: string;
+
+  @Column({ comment: '父ID', default: null })
+  parentId: number;
 }

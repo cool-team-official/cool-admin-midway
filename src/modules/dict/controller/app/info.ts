@@ -1,5 +1,10 @@
 import { Body, Inject, Post, Provide } from '@midwayjs/decorator';
-import { CoolController, BaseController } from '@cool-midway/core';
+import {
+  CoolController,
+  BaseController,
+  CoolUrlTag,
+  TagTypes,
+} from '@cool-midway/core';
 import { DictInfoService } from '../../service/info';
 
 /**
@@ -7,6 +12,10 @@ import { DictInfoService } from '../../service/info';
  */
 @Provide()
 @CoolController()
+@CoolUrlTag({
+  key: TagTypes.IGNORE_TOKEN,
+  value: ['data'],
+})
 export class AppDictInfoController extends BaseController {
   @Inject()
   dictInfoService: DictInfoService;

@@ -32,7 +32,8 @@ export class DictInfoService extends BaseService {
       return {};
     }
     const data = await this.dictInfoEntity
-      .createQueryBuilder()
+      .createQueryBuilder('a')
+      .select(['a.id', 'a.name', 'a.typeId', 'a.parentId'])
       .where('typeId in(:typeIds)', {
         typeIds: typeData.map(e => {
           return e.id;
