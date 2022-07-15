@@ -10,6 +10,7 @@ import { DictInfoService } from '../../service/info';
 @CoolController({
   api: ['add', 'delete', 'update', 'info', 'list', 'page'],
   entity: DictInfoEntity,
+  service: DictInfoService,
   listQueryOp: {
     fieldEq: ['typeId'],
     keyWordLikeFields: ['name'],
