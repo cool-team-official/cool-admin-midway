@@ -16,6 +16,6 @@ export class DemoGoodsEntity extends BaseEntity {
   @Column({ comment: '价格', type: 'decimal', precision: 5, scale: 2 })
   price: number;
 
-  @Column({ comment: '分类', type: 'tinyint', default: 0 })
+  @Column({ comment: '分类 0-鞋子 1-裤子 2-衣服', type: 'tinyint', default: 0 })
   type: number;
 }
