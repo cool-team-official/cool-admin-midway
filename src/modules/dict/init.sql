@@ -26,6 +26,7 @@ CREATE TABLE `dict_info` (
   `name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
   `orderNum` int NOT NULL DEFAULT '0' COMMENT '排序',
   `remark` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '备注',
+  `parentId` int COMMENT '父ID',
   PRIMARY KEY (`id`),
   KEY `IDX_5c311a4af30de1181a5d7a7cc2` (`createTime`),
   KEY `IDX_10362a62adbf120821fff209d8` (`updateTime`)
@@ -35,11 +36,11 @@ CREATE TABLE `dict_info` (
 -- Records of dict_info
 -- ----------------------------
 BEGIN;
-INSERT INTO `dict_info` VALUES (1, '2022-07-06 14:18:53.841000', '2022-07-06 14:19:10.954000', 1, '衣服', 2, NULL);
-INSERT INTO `dict_info` VALUES (2, '2022-07-06 14:18:59.834000', '2022-07-06 14:18:59.834000', 1, '裤子', 1, NULL);
-INSERT INTO `dict_info` VALUES (3, '2022-07-06 14:19:03.993000', '2022-07-06 14:19:15.251000', 1, '鞋子', 3, NULL);
-INSERT INTO `dict_info` VALUES (4, '2022-07-06 14:21:47.122000', '2022-07-06 14:22:26.131000', 2, '闪酷', 2, NULL);
-INSERT INTO `dict_info` VALUES (5, '2022-07-06 14:22:18.309000', '2022-07-06 14:22:18.309000', 2, 'COOL', 1, NULL);
+INSERT INTO `dict_info` VALUES (1, '2022-07-06 14:18:53.841000', '2022-07-06 14:19:10.954000', 1, '衣服', 2, NULL, NULL);
+INSERT INTO `dict_info` VALUES (2, '2022-07-06 14:18:59.834000', '2022-07-06 14:18:59.834000', 1, '裤子', 1, NULL, NULL);
+INSERT INTO `dict_info` VALUES (3, '2022-07-06 14:19:03.993000', '2022-07-06 14:19:15.251000', 1, '鞋子', 3, NULL, NULL);
+INSERT INTO `dict_info` VALUES (4, '2022-07-06 14:21:47.122000', '2022-07-06 14:22:26.131000', 2, '闪酷', 2, NULL, NULL);
+INSERT INTO `dict_info` VALUES (5, '2022-07-06 14:22:18.309000', '2022-07-06 14:22:18.309000', 2, 'COOL', 1, NULL, NULL);
 COMMIT;
 
 -- ----------------------------
