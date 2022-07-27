@@ -1,6 +1,5 @@
 import {
   App,
-  Init,
   Inject,
   Logger,
   Provide,
@@ -246,7 +245,6 @@ export class TaskInfoService extends BaseService {
   /**
    * 初始化任务
    */
-  @Init()
   async initTask() {
     setTimeout(async () => {
       const runningTasks = await this.taskInfoEntity.find({ status: 1 });
