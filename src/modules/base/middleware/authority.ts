@@ -32,13 +32,18 @@ export class BaseAuthorityMiddleware
       url = url.replace(this.prefix, '');
       const token = ctx.get('Authorization');
       const adminUrl = '/admin/';
+      //忽略token验证的url
+      const ignoreUrls = ['/admin/dict/info/data'];
       // 路由地址为 admin前缀的 需要权限校验
       if (_.startsWith(url, adminUrl)) {
         try {
           ctx.admin = jwt.verify(token, this.jwtConfig.jwt.secret);
         } catch (err) {}
         // 不需要登录 无需权限校验
-        if (new RegExp(`^${adminUrl}?.*/open/`).test(url)) {
+        if (
+          new RegExp(`^${adminUrl}?.*/open/`).test(url) ||
+          ignoreUrls.includes(url)
+        ) {
           await next();
           return;
         }
