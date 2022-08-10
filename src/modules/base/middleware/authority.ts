@@ -33,7 +33,7 @@ export class BaseAuthorityMiddleware
       const token = ctx.get('Authorization');
       const adminUrl = '/admin/';
       //忽略token验证的url
-      const ignoreUrls = ['/admin/dict/info/data'];
+      const ignoreUrls = [];
       // 路由地址为 admin前缀的 需要权限校验
       if (_.startsWith(url, adminUrl)) {
         try {
@@ -66,7 +66,11 @@ export class BaseAuthorityMiddleware
             }
           }
           // 要登录每个人都有权限的接口
-          if (new RegExp(`^${adminUrl}?.*/comm/`).test(url)) {
+          if (
+            new RegExp(`^${adminUrl}?.*/comm/`).test(url) ||
+            // 字典接口
+            url == '/admin/dict/info/data'
+          ) {
             await next();
             return;
           }
