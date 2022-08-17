@@ -6,7 +6,7 @@
   "dependencies": {
     "@cool-midway/core": "^5.1.4",
     "@cool-midway/es": "^5.0.2",
-    "@cool-midway/file": "^5.0.4",
+    "@cool-midway/file": "^5.0.7",
     "@cool-midway/pay": "^5.0.0",
     "@cool-midway/rpc": "^5.0.1",
     "@cool-midway/task": "^5.0.1",
