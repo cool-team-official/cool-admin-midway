@@ -12,21 +12,25 @@
 
 ## 技术栈
 
-* 后端：**`node.js` `midway.js` `egg.js` `mysql` `typescript`**
-* 前端：**`vue.js` `element-ui` `jsx` `vuex` `vue-router`**
+- 后端：**`node.js` `midway.js` `egg.js` `mysql` `typescript`**
+- 前端：**`vue.js` `element-ui` `jsx` `vuex` `vue-router`**
 
 如果你是前端，后端的这些技术选型对你是特别友好的，前端开发者可以较快速地上手。
-如果你是后端，Typescript的语法又跟java、php等特别类似，一切看起来也是那么得熟悉。
+如果你是后端，Typescript 的语法又跟 java、php 等特别类似，一切看起来也是那么得熟悉。
 
 <!-- 在此次添加使用文档 -->
+
 ## 演示
+
 [https://show.cool-admin.com](https://show.cool-admin.com)
 
-* 账户：admin
-* 密码：123456
+- 账户：admin
+- 密码：123456
 
 <img src="https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/home-mini.png" alt="Admin Home"></a>
+
 #### 文档
+
 [https://admin.cool-js.com](https://admin.cool-js.com)
 
 #### 项目前端
@@ -37,12 +41,11 @@
 
 <img width="260" src="https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/wechat.jpeg?v=1" alt="Admin Wechat"></a>
 
-
 ## 运行
 
 #### 修改数据库配置，配置文件位于`src/config/config.local.ts`
 
-数据库为mysql(`>=5.7版本`)，node版本(`>=12.x`)，首次启动会自动初始化并导入数据
+数据库为 mysql(`>=5.7版本`)，node 版本(`>=12.x`)，首次启动会自动初始化并导入数据
 
 ```ts
 orm: {
@@ -73,8 +76,7 @@ $ open http://localhost:8001/
 
 ## CURD(快速增删改查)
 
-大部分的后台管理系统，或者API服务都是对数据进行管理，所以可以看到大量的CRUD场景(增删改查)，cool-admin对此进行了大量地封装，让这块的编码量变得极其地少。
-
+大部分的后台管理系统，或者 API 服务都是对数据进行管理，所以可以看到大量的 CRUD 场景(增删改查)，cool-admin 对此进行了大量地封装，让这块的编码量变得极其地少。
 
 #### 新建一个数据表
 
@@ -90,23 +92,20 @@ import { Column } from 'typeorm';
  */
 @EntityModel('demo_app_goods')
 export class DemoAppGoodsEntity extends BaseEntity {
+  @Column({ comment: '标题' })
+  title: string;
 
-    @Column({ comment: '标题' })
-    title: string;
+  @Column({ comment: '图片' })
+  pic: string;
 
-    @Column({ comment: '图片' })
-    pic: string;
-
-    @Column({ comment: '价格', type: 'decimal', precision: 5, scale: 2 })
-    price: number;
-
+  @Column({ comment: '价格', type: 'decimal', precision: 5, scale: 2 })
+  price: number;
 }
-
 ```
 
-#### 编写api接口
+#### 编写 api 接口
 
-`src/modules/demo/controller/app/goods.ts`，快速编写6个api接口
+`src/modules/demo/controller/app/goods.ts`，快速编写 6 个 api 接口
 
 ```ts
 import { Provide } from '@midwayjs/decorator';
@@ -119,7 +118,7 @@ import { DemoAppGoodsEntity } from '../../entity/goods';
 @Provide()
 @CoolController({
   api: ['add', 'delete', 'update', 'info', 'list', 'page'],
-  entity: DemoAppGoodsEntity
+  entity: DemoAppGoodsEntity,
 })
 export class DemoAppGoodsController extends BaseController {
   /**
@@ -132,15 +131,14 @@ export class DemoAppGoodsController extends BaseController {
 }
 ```
 
-这样我们就完成了6个接口的编写，对应的接口如下：
+这样我们就完成了 6 个接口的编写，对应的接口如下：
 
 - `POST /app/demo/goods/add` 新增
 - `POST /app/demo/goods/delete` 删除
 - `POST /app/demo/goods/update` 更新
-- `GET  /app/demo/goods/info` 单个信息
+- `GET /app/demo/goods/info` 单个信息
 - `POST /app/demo/goods/list` 列表信息
 - `POST /app/demo/goods/page` 分页查询(包含模糊查询、字段全匹配等)
-
 
 ### 部署
 
@@ -154,33 +152,8 @@ $ npm stop
 - 使用 `npm run lint` 来做代码风格检查。
 - 使用 `npm test` 来执行单元测试。
 
-
 [midway]: https://midwayjs.org
 
+### 低价服务器
 
-### 服务器
-
-#### 腾讯云特供
-
-不限新老用户，注册过买过都可以享受
-
-|配置|价格|条件|备注|
-|---------|-------|-------|-------|
-|2核2g2M|一年240|个人企业限一台（不限新老用户）||
-|2核4g2M|一年260、两年380|个人企业限一台（不限新老用户）||
-|2核4g3M|一年260、三年600|企业（不限新老用户）||
-|2核4g5M|一年280、三年660|企业（不限新老用户）||
-|4核8g5M|一年320、三年720|企业（不限新老用户）||
-|4核8g10M|一年560、三年1520|企业（不限新老用户）||
-|8核16g5M|一年1800、三年3800|限企业新用户|送独立数据库|
-|8核16g10M|一年2200、三年6600|限企业新用户|送独立数据库|
-|16核32g5M|一年2600、三年6900|限企业新用户|送独立数据库|
-|16核32g10M|一年2900、三年9600|限企业新用户|送独立数据库|
-
-#### 购买咨询，数量有限！！！
-
-<img width="260" src="https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/wechat.jpeg?v=1" alt="Admin Wechat"></a>
-
-#### 阿里云
-
-[点击链接购买](https://www.aliyun.com/minisite/goods?userCode=pw6cig1f)
+[阿里云、腾讯云、华为云低价云服务器，不限新老](https://cool-js.com/ad/server.html)
