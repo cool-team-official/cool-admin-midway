@@ -31,9 +31,7 @@ export class Utils {
       if (!ip) {
         ip = await this.getReqIP(ctx);
       }
-      const bst = new ipdb.BaseStation(
-        `${this.baseDir}/app/comm/ipipfree.ipdb`
-      );
+      const bst = new ipdb.BaseStation(`${this.baseDir}/comm/ipipfree.ipdb`);
       const result = bst.findInfo(ip, 'CN');
       const addArr: any = [];
       if (result) {
