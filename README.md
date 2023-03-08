@@ -45,22 +45,30 @@
 
 #### 修改数据库配置，配置文件位于`src/config/config.local.ts`
 
-数据库为 mysql(`>=5.7版本`)，node 版本(`>=12.x`)，首次启动会自动初始化并导入数据
+数据库为 mysql(`>=5.7版本`)，建议 8.0，node 版本(`>=12.x`)，首次启动会自动初始化并导入数据
 
 ```ts
-orm: {
-    type: 'mysql',
-    host: '127.0.0.1',
-    port: 3306,
-    username: 'root',
-    password: '123456',
-    database: 'cool',
-    // 自动建表 注意：线上部署的时候不要使用，有可能导致数据丢失
-    synchronize: true,
-    // 打印日志
-    logging: true,
-    // 字符集
-    charset: 'utf8mb4',
+typeorm: {
+    dataSource: {
+      default: {
+        type: 'mysql',
+        host: '127.0.0.1',
+        port: 3306,
+        username: 'root',
+        password: '123456',
+        database: 'cool',
+        // 自动建表 注意：线上部署的时候不要使用，有可能导致数据丢失
+        synchronize: true,
+        // 打印日志
+        logging: false,
+        // 字符集
+        charset: 'utf8mb4',
+        // 是否开启缓存
+        cache: true,
+        // 实体路径
+        entities: ['**/modules/*/entity'],
+      },
+    },
   },
 ```
 
@@ -83,14 +91,13 @@ $ open http://localhost:8001/
 `src/modules/demo/entity/goods.ts`，项目启动数据库会自动创建该表，无需手动创建
 
 ```ts
-import { EntityModel } from '@midwayjs/orm';
 import { BaseEntity } from '@cool-midway/core';
-import { Column } from 'typeorm';
+import { Column, Entity, Index } from 'typeorm';
 
 /**
  * 商品
  */
-@EntityModel('demo_app_goods')
+@Entity('demo_app_goods')
 export class DemoAppGoodsEntity extends BaseEntity {
   @Column({ comment: '标题' })
   title: string;
@@ -108,14 +115,12 @@ export class DemoAppGoodsEntity extends BaseEntity {
 `src/modules/demo/controller/app/goods.ts`，快速编写 6 个 api 接口
 
 ```ts
-import { Provide } from '@midwayjs/decorator';
 import { CoolController, BaseController } from '@cool-midway/core';
 import { DemoAppGoodsEntity } from '../../entity/goods';
 
 /**
  * 商品
  */
-@Provide()
 @CoolController({
   api: ['add', 'delete', 'update', 'info', 'list', 'page'],
   entity: DemoAppGoodsEntity,
