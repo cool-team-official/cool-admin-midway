@@ -1,11 +1,10 @@
-import { EntityModel } from '@midwayjs/orm';
 import { BaseEntity } from '@cool-midway/core';
-import { Column } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
 /**
  * 菜单
  */
-@EntityModel('base_sys_menu')
+@Entity('base_sys_menu')
 export class BaseSysMenuEntity extends BaseEntity {
   @Column({ comment: '父菜单ID', type: 'bigint', nullable: true })
   parentId: number;
@@ -20,7 +19,7 @@ export class BaseSysMenuEntity extends BaseEntity {
   perms: string;
 
   @Column({
-    comment: '类型 0：目录 1：菜单 2：按钮',
+    comment: '类型 0-目录 1-菜单 2-按钮',
     default: 0,
     type: 'tinyint',
   })

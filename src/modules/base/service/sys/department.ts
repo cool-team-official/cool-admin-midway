@@ -1,6 +1,6 @@
 import { Inject, Provide } from '@midwayjs/decorator';
 import { BaseService } from '@cool-midway/core';
-import { InjectEntityModel } from '@midwayjs/orm';
+import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository } from 'typeorm';
 import { BaseSysDepartmentEntity } from '../../entity/sys/department';
 import * as _ from 'lodash';
@@ -101,7 +101,7 @@ export class BaseSysDepartmentService extends BaseService {
    */
   async delete(ids: number[]) {
     const { deleteUser } = this.ctx.request.body;
-    await this.baseSysDepartmentEntity.delete(ids);
+    await super.delete(ids);
     if (deleteUser) {
       await this.nativeQuery(
         'delete from base_sys_user where departmentId in (?)',

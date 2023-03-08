@@ -16,7 +16,7 @@ export class BaseLogMiddleware implements IMiddleware<Context, NextFunction> {
       );
       baseSysLogService.record(
         ctx,
-        ctx.url.split('?')[0],
+        ctx.url,
         ctx.req.method === 'GET' ? ctx.request.query : ctx.request.body,
         ctx.admin ? ctx.admin.userId : null
       );

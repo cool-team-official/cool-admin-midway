@@ -2,7 +2,7 @@ import { DictTypeEntity } from './../entity/type';
 import { DictInfoEntity } from './../entity/info';
 import { Provide } from '@midwayjs/decorator';
 import { BaseService } from '@cool-midway/core';
-import { InjectEntityModel } from '@midwayjs/orm';
+import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository, In } from 'typeorm';
 import * as _ from 'lodash';
 
@@ -33,7 +33,7 @@ export class DictInfoService extends BaseService {
     }
     const data = await this.dictInfoEntity
       .createQueryBuilder('a')
-      .select(['a.id', 'a.name', 'a.typeId', 'a.parentId'])
+      .select(['a.id', 'a.name', 'a.typeId', 'a.parentId', 'a.orderNum'])
       .where('typeId in(:typeIds)', {
         typeIds: typeData.map(e => {
           return e.id;
@@ -54,7 +54,7 @@ export class DictInfoService extends BaseService {
    * @returns
    */
   async value(infoId: number) {
-    const info = await this.dictInfoEntity.findOne({ id: infoId });
+    const info = await this.dictInfoEntity.findOneBy({ id: infoId });
     return info?.name;
   }
 
@@ -64,7 +64,7 @@ export class DictInfoService extends BaseService {
    * @returns
    */
   async values(infoIds: number[]) {
-    const infos = await this.dictInfoEntity.find({ id: In(infoIds) });
+    const infos = await this.dictInfoEntity.findBy({ id: In(infoIds) });
     return infos.map(e => {
       return e.name;
     });
@@ -88,7 +88,7 @@ export class DictInfoService extends BaseService {
    * @param id
    */
   private async delChildDict(id) {
-    const delDict = await this.dictInfoEntity.find({ parentId: id });
+    const delDict = await this.dictInfoEntity.findBy({ parentId: id });
     if (_.isEmpty(delDict)) {
       return;
     }

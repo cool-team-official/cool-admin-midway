@@ -18,6 +18,45 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
+-- Table structure for base_app_space_info
+-- ----------------------------
+DROP TABLE IF EXISTS `base_app_space_info`;
+CREATE TABLE `base_app_space_info` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `createTime` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
+  `updateTime` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '更新时间',
+  `url` varchar(255) NOT NULL COMMENT '地址',
+  `type` varchar(255) NOT NULL COMMENT '类型',
+  `classifyId` bigint(20) DEFAULT NULL COMMENT '分类ID',
+  PRIMARY KEY (`id`),
+  KEY `IDX_4aed04cbfa2ecdc01485b86e51` (`createTime`),
+  KEY `IDX_abd5de4a4895eb253a5cabb20f` (`updateTime`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for base_app_space_type
+-- ----------------------------
+DROP TABLE IF EXISTS `base_app_space_type`;
+CREATE TABLE `base_app_space_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `createTime` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
+  `updateTime` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '更新时间',
+  `name` varchar(255) NOT NULL COMMENT '类别名称',
+  `parentId` tinyint(4) DEFAULT NULL COMMENT '父分类ID',
+  PRIMARY KEY (`id`),
+  KEY `IDX_5e8376603f89fdf3e7bb05103a` (`createTime`),
+  KEY `IDX_500ea9e8b2c5c08c9b86a0667e` (`updateTime`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of base_app_space_type
+-- ----------------------------
+BEGIN;
+INSERT INTO `base_app_space_type` VALUES (1, '2021-02-26 14:07:48.867045', '2021-02-26 14:07:48.867045', 'a', NULL);
+INSERT INTO `base_app_space_type` VALUES (2, '2021-02-26 14:07:52.285531', '2021-02-26 14:07:52.285531', 'b', NULL);
+COMMIT;
+
+-- ----------------------------
 -- Table structure for base_sys_conf
 -- ----------------------------
 DROP TABLE IF EXISTS `base_sys_conf`;
@@ -133,7 +172,7 @@ INSERT INTO `base_sys_menu` VALUES (30, '2019-09-12 17:37:03.000000', '2021-03-0
 INSERT INTO `base_sys_menu` VALUES (43, '2019-11-07 14:22:34.000000', '2021-03-08 23:02:51.000000', 45, 'crud 示例', '/crud', NULL, 1, 'icon-favor', 1, 'cool/modules/demo/views/crud.vue', 1, 1);
 INSERT INTO `base_sys_menu` VALUES (45, '2019-11-07 22:36:57.000000', '2019-11-11 15:21:10.000000', 1, '组件库', '/ui-lib', NULL, 0, 'icon-common', 2, NULL, 1, 1);
 INSERT INTO `base_sys_menu` VALUES (47, '2019-11-08 09:35:08.000000', '2021-02-27 17:16:35.000000', NULL, '框架教程', '/tutorial', NULL, 0, 'icon-task', 4, NULL, 1, 1);
-INSERT INTO `base_sys_menu` VALUES (48, '2019-11-08 09:35:53.000000', '2021-03-03 11:03:21.000000', 47, '文档', '/tutorial/doc', NULL, 1, 'icon-log', 0, 'https://cool-js.com', 1, 1);
+INSERT INTO `base_sys_menu` VALUES (48, '2019-11-08 09:35:53.000000', '2021-03-03 11:03:21.000000', 47, '文档', '/tutorial/doc', NULL, 1, 'icon-log', 0, 'https://admin.cool-js.com', 1, 1);
 INSERT INTO `base_sys_menu` VALUES (49, '2019-11-09 22:11:13.000000', '2021-03-09 09:50:46.000000', 45, 'quill 富文本编辑器', '/editor-quill', NULL, 1, 'icon-favor', 2, 'cool/modules/demo/views/editor-quill.vue', 1, 1);
 INSERT INTO `base_sys_menu` VALUES (59, '2019-11-18 16:50:27.000000', '2019-11-18 16:50:27.000000', 97, '部门列表', NULL, 'base:sys:department:list', 2, NULL, 0, NULL, 1, 1);
 INSERT INTO `base_sys_menu` VALUES (60, '2019-11-18 16:50:45.000000', '2019-11-18 16:50:45.000000', 97, '新增部门', NULL, 'base:sys:department:add', 2, NULL, 0, NULL, 1, 1);
@@ -158,6 +197,14 @@ INSERT INTO `base_sys_menu` VALUES (99, '1900-01-20 14:14:22.823000', '1900-01-2
 INSERT INTO `base_sys_menu` VALUES (100, '1900-01-20 14:14:33.973000', '1900-01-20 14:14:33.973000', 97, '修改', NULL, 'base:sys:user:delete,base:sys:user:update', 2, NULL, 0, NULL, 1, 1);
 INSERT INTO `base_sys_menu` VALUES (101, '2021-01-12 14:14:51.000000', '2021-01-12 14:14:51.000000', 97, '查询', NULL, 'base:sys:user:page,base:sys:user:list,base:sys:user:info', 2, NULL, 0, NULL, 1, 1);
 INSERT INTO `base_sys_menu` VALUES (105, '2021-01-21 10:42:55.000000', '2021-01-21 10:42:55.000000', 2, '监控管理', NULL, NULL, 0, 'icon-rank', 6, NULL, 1, 1);
+INSERT INTO `base_sys_menu` VALUES (109, '2021-02-27 14:13:56.000000', '2021-02-27 17:09:19.000000', NULL, '插件管理', NULL, NULL, 0, 'icon-menu', 3, NULL, 1, 1);
+INSERT INTO `base_sys_menu` VALUES (110, '2021-02-27 14:14:13.000000', '2021-03-08 23:01:30.000000', 109, '插件列表', '/plugin', NULL, 1, 'icon-menu', 0, 'cool/modules/base/views/plugin.vue', 1, 1);
+INSERT INTO `base_sys_menu` VALUES (111, '2021-02-27 14:24:41.877000', '2021-02-27 14:24:41.877000', 110, '编辑', NULL, 'base:plugin:info:info,base:plugin:info:update', 2, NULL, 0, NULL, 1, 1);
+INSERT INTO `base_sys_menu` VALUES (112, '2021-02-27 14:24:52.159000', '2021-02-27 14:24:52.159000', 110, '列表', NULL, 'base:plugin:info:list', 2, NULL, 0, NULL, 1, 1);
+INSERT INTO `base_sys_menu` VALUES (113, '2021-02-27 14:25:02.066000', '2021-02-27 14:25:02.066000', 110, '删除', NULL, 'base:plugin:info:delete', 2, NULL, 0, NULL, 1, 1);
+INSERT INTO `base_sys_menu` VALUES (114, '2021-02-27 16:36:59.322000', '2021-02-27 16:36:59.322000', 110, '保存配置', NULL, 'base:plugin:info:config', 2, NULL, 0, NULL, 1, 1);
+INSERT INTO `base_sys_menu` VALUES (115, '2021-02-27 16:38:21.000000', '2021-02-27 18:18:22.000000', 110, '获取配置', NULL, 'base:plugin:info:getConfig', 2, NULL, 0, NULL, 1, 1);
+INSERT INTO `base_sys_menu` VALUES (116, '2021-02-27 17:57:42.000000', '2021-02-27 18:19:35.000000', 110, '开启、关闭', NULL, 'base:plugin:info:enable', 2, NULL, 0, NULL, 1, 1);
 INSERT INTO `base_sys_menu` VALUES (117, '2021-03-05 10:58:25.000000', '2021-03-05 10:58:25.000000', NULL, '任务管理', NULL, NULL, 0, 'icon-activity', 5, NULL, 1, 1);
 INSERT INTO `base_sys_menu` VALUES (118, '2021-03-05 10:59:42.000000', '2021-03-05 10:59:42.000000', 117, '任务列表', '/task', NULL, 1, 'icon-menu', 0, 'cool/modules/task/views/task.vue', 1, 1);
 INSERT INTO `base_sys_menu` VALUES (119, '2021-03-05 11:00:00.000000', '2021-03-05 11:00:00.000000', 118, '权限', NULL, 'task:info:page,task:info:list,task:info:info,task:info:add,task:info:delete,task:info:update,task:info:stop,task:info:start,task:info:once,task:info:log', 2, NULL, 0, NULL, 1, 1);

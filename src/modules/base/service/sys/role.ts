@@ -1,6 +1,6 @@
 import { Inject, Provide } from '@midwayjs/decorator';
 import { BaseService } from '@cool-midway/core';
-import { InjectEntityModel } from '@midwayjs/orm';
+import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository } from 'typeorm';
 import { BaseSysRoleEntity } from '../../entity/sys/role';
 import { BaseSysUserRoleEntity } from '../../entity/sys/user_role';
@@ -38,7 +38,7 @@ export class BaseSysRoleService extends BaseService {
    * @param userId
    */
   async getByUser(userId: number): Promise<number[]> {
-    const userRole = await this.baseSysUserRoleEntity.find({ userId });
+    const userRole = await this.baseSysUserRoleEntity.findBy({ userId });
     if (!_.isEmpty(userRole)) {
       return userRole.map(e => {
         return e.roleId;
@@ -75,7 +75,7 @@ export class BaseSysRoleService extends BaseService {
       await this.baseSysRoleDepartmentEntity.save({ roleId, departmentId });
     }
     // 刷新权限
-    const userRoles = await this.baseSysUserRoleEntity.find({ roleId });
+    const userRoles = await this.baseSysUserRoleEntity.findBy({ roleId });
     for (const userRole of userRoles) {
       await this.baseSysPermsService.refreshPerms(userRole.userId);
     }
@@ -86,15 +86,15 @@ export class BaseSysRoleService extends BaseService {
    * @param id
    */
   async info(id) {
-    const info = await this.baseSysRoleEntity.findOne({ id });
+    const info = await this.baseSysRoleEntity.findOneBy({ id });
     if (info) {
-      const menus = await this.baseSysRoleMenuEntity.find(
+      const menus = await this.baseSysRoleMenuEntity.findBy(
         id !== 1 ? { roleId: id } : {}
       );
       const menuIdList = menus.map(e => {
         return parseInt(e.menuId + '');
       });
-      const departments = await this.baseSysRoleDepartmentEntity.find(
+      const departments = await this.baseSysRoleDepartmentEntity.findBy(
         id !== 1 ? { roleId: id } : {}
       );
       const departmentIdList = departments.map(e => {

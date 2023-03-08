@@ -1,11 +1,10 @@
-import { EntityModel } from '@midwayjs/orm';
 import { BaseEntity } from '@cool-midway/core';
-import { Column, Index } from 'typeorm';
+import { Column, Index, Entity } from 'typeorm';
 
 /**
  * 参数配置
  */
-@EntityModel('base_sys_param')
+@Entity('base_sys_param')
 export class BaseSysParamEntity extends BaseEntity {
   @Index()
   @Column({ comment: '键位' })

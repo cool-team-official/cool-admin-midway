@@ -1,4 +1,5 @@
 logs/
+cache/
 npm-debug.log
 yarn-error.log
 node_modules/
@@ -9,11 +10,11 @@ dist/
 .idea/
 run/
 .DS_Store
+launch.json
 *.sw*
 *.un~
 .tsbuildinfo
 .tsbuildinfo.*
-.audit
-typings/
-public/uploads/
-cache/
+data/*
+pnpm-lock.yaml
+public/uploads/*

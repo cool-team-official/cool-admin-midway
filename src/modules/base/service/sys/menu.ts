@@ -1,11 +1,17 @@
-import { Inject, Provide } from '@midwayjs/decorator';
-import { BaseService } from '@cool-midway/core';
-import { InjectEntityModel } from '@midwayjs/orm';
+import { App, IMidwayApplication } from '@midwayjs/core';
+import { ALL, Config, Inject, Provide } from '@midwayjs/decorator';
+import { BaseService, CoolCommException } from '@cool-midway/core';
+import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository } from 'typeorm';
 import { BaseSysMenuEntity } from '../../entity/sys/menu';
 import * as _ from 'lodash';
 import { BaseSysPermsService } from './perms';
 import { Context } from '@midwayjs/koa';
+import { TempDataSource } from './data';
+// eslint-disable-next-line node/no-unpublished-import
+import * as ts from 'typescript';
+import * as fs from 'fs';
+import * as pathUtil from 'path';
 
 /**
  * 菜单
@@ -20,6 +26,12 @@ export class BaseSysMenuService extends BaseService {
 
   @Inject()
   baseSysPermsService: BaseSysPermsService;
+
+  @Config(ALL)
+  config;
+
+  @App()
+  app: IMidwayApplication;
 
   /**
    * 获得所有菜单
@@ -131,7 +143,7 @@ export class BaseSysMenuService extends BaseService {
    */
   private async delChildMenu(id) {
     await this.refreshPerms(id);
-    const delMenu = await this.baseSysMenuEntity.find({ parentId: id });
+    const delMenu = await this.baseSysMenuEntity.findBy({ parentId: id });
     if (_.isEmpty(delMenu)) {
       return;
     }
@@ -161,5 +173,140 @@ export class BaseSysMenuService extends BaseService {
         await this.baseSysPermsService.refreshPerms(user.userId);
       }
     }
+  }
+
+  /**
+   * 解析实体和Controller
+   * @param entityString
+   * @param controller
+   * @param module
+   */
+  async parse(entityString: string, controller: string, module: string) {
+    const tempDataSource = new TempDataSource({
+      ...this.config.typeorm.dataSource.default,
+      entities: [],
+    });
+    // 连接数据库
+    await tempDataSource.initialize();
+    const { newCode, className } = this.parseCode(entityString);
+    const code = ts.transpile(
+      `${newCode}
+        tempDataSource.options.entities.push(${className})
+        `,
+      {
+        emitDecoratorMetadata: true,
+        module: ts.ModuleKind.CommonJS,
+        target: ts.ScriptTarget.ES2018,
+        removeComments: true,
+      }
+    );
+    eval(code);
+    await tempDataSource.buildMetadatas();
+    const columns = tempDataSource.getMetadata(className).columns;
+    await tempDataSource.destroy();
+    const fileName = await this.fileName(controller);
+    return {
+      columns: columns.map(e => {
+        return {
+          propertyName: e.propertyName,
+          type: typeof e.type == 'string' ? e.type : e.type.name.toLowerCase(),
+          length: e.length,
+          comment: e.comment,
+          nullable: e.isNullable,
+        };
+      }),
+      path: `/admin/${module}/${fileName}`,
+    };
+  }
+
+  /**
+   * 解析Entity类名
+   * @param code
+   * @returns
+   */
+  parseCode(code: string) {
+    try {
+      const oldClassName = code
+        .match('class(.*)extends')[1]
+        .replace(/\s*/g, '');
+      const oldTableStart = code.indexOf('@Entity(');
+      const oldTableEnd = code.indexOf(')');
+
+      const oldTableName = code
+        .substring(oldTableStart + 9, oldTableEnd - 1)
+        .replace(/\s*/g, '')
+        // eslint-disable-next-line no-useless-escape
+        .replace(/\"/g, '')
+        // eslint-disable-next-line no-useless-escape
+        .replace(/\'/g, '');
+      const className = `${oldClassName}TEMP`;
+      return {
+        newCode: code
+          .replace(oldClassName, className)
+          .replace(oldTableName, `func_${oldTableName}`),
+        className,
+        tableName: `func_${oldTableName}`,
+      };
+    } catch (err) {
+      throw new CoolCommException('代码结构不正确，请检查');
+    }
+  }
+
+  /**
+   *  创建代码
+   * @param body body
+   */
+  async create(body) {
+    const { module, entity, controller } = body;
+    const basePath = this.app.getBaseDir();
+    const fileName = await this.fileName(controller);
+    // 生成Entity
+    const entityPath = pathUtil.join(
+      basePath,
+      'modules',
+      module,
+      'entity',
+      `${fileName}.ts`
+    );
+    this.createFile(entityPath, entity);
+    // // 生成Controller
+    const controllerPath = pathUtil.join(
+      basePath,
+      'modules',
+      module,
+      'controller',
+      'admin',
+      `${fileName}.ts`
+    );
+    this.createFile(controllerPath, controller);
+  }
+
+  /**
+   * 找到文件名
+   * @param controller
+   * @returns
+   */
+  async fileName(controller: string) {
+    const regex = /import\s*{\s*\w+\s*}\s*from\s*'[^']*\/([\w-]+)';/;
+    const match = regex.exec(controller);
+
+    if (match && match.length > 1) {
+      return match[1];
+    }
+
+    return null;
+  }
+
+  /**
+   * 创建文件
+   * @param filePath
+   * @param content
+   */
+  async createFile(filePath: string, content: string) {
+    const folderPath = pathUtil.dirname(filePath);
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath, { recursive: true });
+    }
+    fs.writeFileSync(filePath, content);
   }
 }

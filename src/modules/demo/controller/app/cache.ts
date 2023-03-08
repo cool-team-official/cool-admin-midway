@@ -24,7 +24,7 @@ export class AppDemoCacheController extends BaseController {
     await this.cacheManager.set('a', 1);
     // 缓存10秒
     await this.cacheManager.set('a', 1, {
-      ttl: 10,
+      ttl: 30,
     });
     return this.ok(await this.cacheManager.get('a'));
   }

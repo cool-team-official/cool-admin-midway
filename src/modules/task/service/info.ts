@@ -7,7 +7,7 @@ import {
   ScopeEnum,
 } from '@midwayjs/decorator';
 import { BaseService } from '@cool-midway/core';
-import { InjectEntityModel } from '@midwayjs/orm';
+import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository } from 'typeorm';
 import { TaskInfoEntity } from '../entity/info';
 import { TaskLogEntity } from '../entity/log';
@@ -46,7 +46,7 @@ export class TaskInfoService extends BaseService {
    * @param id
    */
   async stop(id) {
-    const task = await this.taskInfoEntity.findOne({ id });
+    const task = await this.taskInfoEntity.findOneBy({ id });
     if (task) {
       const result = await this.taskInfoQueue.getRepeatableJobs();
       const job = _.find(result, { id: task.id + '' });
@@ -75,7 +75,7 @@ export class TaskInfoService extends BaseService {
    * @param type
    */
   async start(id, type?) {
-    const task = await this.taskInfoEntity.findOne({ id });
+    const task = await this.taskInfoEntity.findOneBy({ id });
     task.status = 1;
     if (type || type == 0) {
       task.type = type;
@@ -88,7 +88,7 @@ export class TaskInfoService extends BaseService {
    * @param id
    */
   async once(id) {
-    const task = await this.taskInfoEntity.findOne({ id });
+    const task = await this.taskInfoEntity.findOneBy({ id });
     if (task) {
       await this.taskInfoQueue.add(
         {
@@ -185,7 +185,7 @@ export class TaskInfoService extends BaseService {
       idArr = ids.split(',');
     }
     for (const id of idArr) {
-      const task = await this.taskInfoEntity.findOne({ id });
+      const task = await this.taskInfoEntity.findOneBy({ id });
       const exist = await this.exist(task.id);
       if (exist) {
         this.stop(task.id);
@@ -247,7 +247,8 @@ export class TaskInfoService extends BaseService {
    */
   async initTask() {
     setTimeout(async () => {
-      const runningTasks = await this.taskInfoEntity.find({ status: 1 });
+      this.logger.info('init task....');
+      const runningTasks = await this.taskInfoEntity.findBy({ status: 1 });
       if (!_.isEmpty(runningTasks)) {
         for (const task of runningTasks) {
           const job = await this.exist(task.id); // 任务已存在就不添加
@@ -291,7 +292,7 @@ export class TaskInfoService extends BaseService {
    * @returns
    */
   async info(id: any): Promise<any> {
-    const info = await this.taskInfoEntity.findOne({ id });
+    const info = await this.taskInfoEntity.findOneBy({ id });
     return {
       ...info,
       repeatCount: info.limit,
@@ -307,17 +308,16 @@ export class TaskInfoService extends BaseService {
     if (!job) {
       return;
     }
-    // @ts-ignore
-    const task = await this.taskInfoEntity.findOne({ id: job.id });
+    const task = await this.taskInfoEntity.findOneBy({ id: job.id });
     const nextTime = await this.getNextRunTime(task.id);
     if (task) {
-      //   if (task.nextRunTime.getTime() == nextTime.getTime()) {
-      //     task.status = 0;
-      //     task.nextRunTime = nextTime;
-      //     this.taskInfoQueue.removeRepeatableByKey(job.key);
-      //   } else {
-      task.nextRunTime = nextTime;
-      //   }
+      if (task.nextRunTime.getTime() == nextTime.getTime()) {
+        task.status = 0;
+        task.nextRunTime = nextTime;
+        this.taskInfoQueue.removeRepeatableByKey(job.key);
+      } else {
+        task.nextRunTime = nextTime;
+      }
       await this.taskInfoEntity.update(task.id, task);
     }
   }

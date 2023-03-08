@@ -1,6 +1,6 @@
 import { Provide } from '@midwayjs/decorator';
 import { BaseService } from '@cool-midway/core';
-import { InjectEntityModel } from '@midwayjs/orm';
+import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository } from 'typeorm';
 import { BaseSysConfEntity } from '../../entity/sys/conf';
 
@@ -17,7 +17,7 @@ export class BaseSysConfService extends BaseService {
    * @param key
    */
   async getValue(key) {
-    const conf = await this.baseSysConfEntity.findOne({ cKey: key });
+    const conf = await this.baseSysConfEntity.findOneBy({ cKey: key });
     if (conf) {
       return conf.cValue;
     }

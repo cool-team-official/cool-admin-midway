@@ -1,4 +1,4 @@
-import { Inject, Post, Provide } from '@midwayjs/decorator';
+import { Inject, Post } from '@midwayjs/decorator';
 import {
   CoolController,
   BaseController,
@@ -8,7 +8,6 @@ import {
 /**
  * 事件
  */
-@Provide()
 @CoolController()
 export class AppDemoEventController extends BaseController {
   @Inject()

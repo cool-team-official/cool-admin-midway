@@ -1,11 +1,10 @@
-import { EntityModel } from '@midwayjs/orm';
 import { BaseEntity } from '@cool-midway/core';
-import { Column } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
 /**
  * 字典信息
  */
-@EntityModel('dict_info')
+@Entity('dict_info')
 export class DictInfoEntity extends BaseEntity {
   @Column({ comment: '类型ID' })
   typeId: number;

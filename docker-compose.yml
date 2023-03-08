@@ -1,0 +1,36 @@
+# 本地数据库环境
+# 数据存放在当前目录下的 data里
+# 推荐使用安装了docker扩展的vscode打开目录 在本文件上右键可以快速启动，停止
+# 如不需要相关容器开机自启动，可注释掉 restart: always
+# 如遇端口冲突 可调整ports下 :前面的端口号
+version: "3.1"
+
+services:
+  coolDB:
+    image: mysql
+    command:
+      --default-authentication-plugin=mysql_native_password
+      --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+      --group_concat_max_len=102400
+    restart: always
+    volumes:
+      - ./data/mysql/:/var/lib/mysql/
+    environment:
+      TZ: Asia/Shanghai # 指定时区
+      MYSQL_ROOT_PASSWORD: "123456" # 配置root用户密码
+      MYSQL_DATABASE: "cool" # 业务库名
+      MYSQL_USER: "root" # 业务库用户名
+      MYSQL_PASSWORD: "123456" # 业务库密码
+    ports:
+      - 3306:3306
+
+  coolRedis:
+    image: redis
+    #command: --requirepass "12345678" # redis库密码,不需要密码注释本行
+    restart: always
+    environment:
+      TZ: Asia/Shanghai # 指定时区
+    volumes:
+      - ./data/redis/:/data/
+    ports:
+      - 6379:6379

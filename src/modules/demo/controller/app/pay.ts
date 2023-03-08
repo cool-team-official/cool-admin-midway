@@ -1,16 +1,20 @@
-import { ALL, App, Body, Inject, Post, Provide } from '@midwayjs/decorator';
-import { CoolController, BaseController } from '@cool-midway/core';
-import { CoolWxPay, CoolAliPay } from '@cool-midway/pay';
-import { parseString } from 'xml2js';
-import { Context } from '@midwayjs/koa';
-import { IMidwayApplication } from '@midwayjs/core';
+import { Body, Config, Inject, Post, Provide } from '@midwayjs/decorator';
+import {
+  CoolController,
+  BaseController,
+  CoolWxPayConfig,
+  CoolAliPayConfig,
+} from '@cool-midway/core';
+import { CoolAliPay, CoolWxPay } from '@cool-midway/pay';
+import AlipayFormData from 'alipay-sdk/lib/form';
+import { sign } from 'alipay-sdk/lib/util';
 
 /**
- * 支付示例
+ * 微信支付
  */
 @Provide()
 @CoolController()
-export class DemoPayController extends BaseController {
+export class AppDemoPayController extends BaseController {
   // 微信支付
   @Inject()
   wxPay: CoolWxPay;
@@ -20,10 +24,13 @@ export class DemoPayController extends BaseController {
   aliPay: CoolAliPay;
 
   @Inject()
-  ctx: Context;
+  ctx;
 
-  @App()
-  app: IMidwayApplication;
+  @Config('cool.pay.wx')
+  wxPayConfig: CoolWxPayConfig;
+
+  @Config('cool.pay.ali')
+  aliPayConfig: CoolAliPayConfig;
 
   /**
    * 微信扫码支付
@@ -31,78 +38,92 @@ export class DemoPayController extends BaseController {
   @Post('/wx')
   async wx() {
     const orderNum = await this.wxPay.createOrderNum();
-    const data = await this.wxPay.getInstance().unifiedOrder({
+    const params = {
+      description: '测试',
       out_trade_no: orderNum,
-      body: '测试微信支付',
-      total_fee: 1,
-      trade_type: 'NATIVE',
-      product_id: 'test001',
-    });
-    return this.ok(data);
+      notify_url: this.wxPayConfig.notify_url,
+      amount: {
+        total: 1,
+      },
+      scene_info: {
+        payer_client_ip: 'ip',
+      },
+    };
+    const result = await this.wxPay.getInstance().transactions_native(params);
+    return this.ok(result);
   }
 
   /**
-   * 微信支付通知回调
+   * 微信支付回调通知
    */
   @Post('/wxNotify')
-  async wxNotify() {
-    let data = '';
-    this.ctx.req.setEncoding('utf8');
-    this.ctx.req.on('data', chunk => {
-      data += chunk;
-    });
-    const results = await new Promise((resolve, reject) => {
-      this.ctx.req.on('end', () => {
-        parseString(data, { explicitArray: false }, async (err, json) => {
-          if (err) {
-            return reject('success');
-          }
-          const checkSign = await this.wxPay.signVerify(json.xml);
-          if (checkSign && json.xml.result_code === 'SUCCESS') {
-            // 处理业务逻辑
-            console.log('微信支付成功', json.xml);
-            return resolve(true);
-          }
-          return resolve(false);
-        });
-      });
-    });
-    if (results) {
-      this.ctx.body =
-        '<xml><return_msg>OK</return_msg><return_code>SUCCESS</return_code></xml>';
+  async wxNotify(@Body() body) {
+    const check = await this.wxPay.signVerify(this.ctx);
+    // 验签通过，处理业务逻辑
+    if (check) {
     }
   }
 
   /**
-   * 支付宝app支付
+   * 支付宝PC网站支付
    * @returns
    */
-  @Post('/alipay')
-  async alipay() {
+  @Post('/aliPc')
+  async aliPc() {
     const orderNum = await this.aliPay.createOrderNum();
-    // app支付
-    const params = await this.aliPay.getInstance().appPay({
-      subject: '测试商品',
-      body: '测试商品描述',
-      outTradeId: orderNum,
-      timeout: '10m',
-      amount: '10.00',
-      goodsType: '0',
+    const formData = new AlipayFormData();
+    // 调用 setMethod 并传入 get，会返回可以跳转到支付页面的 url
+    formData.setMethod('get');
+    formData.addField('notifyUrl', this.aliPayConfig.notifyUrl);
+    formData.addField('bizContent', {
+      outTradeNo: orderNum,
+      productCode: 'FAST_INSTANT_TRADE_PAY',
+      totalAmount: '0.01',
+      subject: '商品',
+      body: '商品详情',
     });
-    return this.ok(params);
+    // 返回支付链接
+    const result = await this.aliPay
+      .getInstance()
+      .exec('alipay.trade.page.pay', {}, { formData });
+    return this.ok(result);
   }
 
   /**
-   * 支付宝支付回调
+   * 支付宝APP支付
+   * @returns
+   */
+  @Post('/aliApp')
+  async aliApp() {
+    const orderNum = await this.aliPay.createOrderNum();
+
+    // 返回支付链接
+    const data = sign(
+      'alipay.trade.app.pay',
+      {
+        notifyUrl: this.aliPayConfig.notifyUrl,
+        bizContent: {
+          subject: '商品标题',
+          totalAmount: '0.01',
+          outTradeNo: orderNum,
+          productCode: 'QUICK_MSECURITY_PAY',
+        },
+      },
+      this.aliPay.getInstance().config
+    );
+    const payInfo = new URLSearchParams(data).toString();
+    return this.ok(payInfo);
+  }
+
+  /**
+   * 微信支付回调通知
    */
   @Post('/aliNotify')
-  async aliNotify(@Body(ALL) body: any) {
-    const { trade_status, out_trade_no } = body;
+  async aliNotify(@Body() body) {
     const check = await this.aliPay.signVerify(body);
-    if (check && trade_status === 'TRADE_SUCCESS') {
-      // 处理逻辑
-      console.log('支付宝支付成功', out_trade_no);
+    // 验签通过，处理业务逻辑
+    if (check) {
     }
-    this.ctx.body = 'success';
+    return 'success';
   }
 }

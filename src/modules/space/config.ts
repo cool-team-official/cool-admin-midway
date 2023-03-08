@@ -15,5 +15,10 @@ export default () => {
     globalMiddlewares: [],
     // 模块加载顺序，默认为0，值越大越优先加载
     order: 0,
+    // wps的配置
+    wps: {
+      // 这是个测试的appId，会有水印
+      appId: 'SX20230111NDUAGQ',
+    },
   } as ModuleConfig;
 };

@@ -5,7 +5,7 @@ import * as svgCaptcha from 'svg-captcha';
 import { v1 as uuid } from 'uuid';
 import { BaseSysUserEntity } from '../../entity/sys/user';
 import { Repository } from 'typeorm';
-import { InjectEntityModel } from '@midwayjs/orm';
+import { InjectEntityModel } from '@midwayjs/typeorm';
 import * as md5 from 'md5';
 import { BaseSysRoleService } from './role';
 import * as _ from 'lodash';
@@ -51,7 +51,7 @@ export class BaseSysLoginService extends BaseService {
     // 校验验证码
     const checkV = await this.captchaCheck(captchaId, verifyCode);
     if (checkV) {
-      const user = await this.baseSysUserEntity.findOne({ username });
+      const user = await this.baseSysUserEntity.findOneBy({ username });
       // 校验用户
       if (user) {
         // 校验用户状态及密码

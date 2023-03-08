@@ -1,6 +1,6 @@
 import { Inject, Provide } from '@midwayjs/decorator';
 import { BaseService, CoolCommException } from '@cool-midway/core';
-import { InjectEntityModel } from '@midwayjs/orm';
+import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository } from 'typeorm';
 import { BaseSysUserEntity } from '../../entity/sys/user';
 import { BaseSysPermsService } from './perms';
@@ -92,7 +92,7 @@ export class BaseSysUserService extends BaseService {
    * 获得个人信息
    */
   async person() {
-    const info = await this.baseSysUserEntity.findOne({
+    const info = await this.baseSysUserEntity.findOneBy({
       id: this.ctx.admin?.userId,
     });
     delete info?.password;
@@ -124,7 +124,7 @@ export class BaseSysUserService extends BaseService {
    * @param param
    */
   async add(param) {
-    const exists = await this.baseSysUserEntity.findOne({
+    const exists = await this.baseSysUserEntity.findOneBy({
       username: param.username,
     });
     if (!_.isEmpty(exists)) {
@@ -141,12 +141,12 @@ export class BaseSysUserService extends BaseService {
    * @param id
    */
   public async info(id) {
-    const info = await this.baseSysUserEntity.findOne({ id });
+    const info = await this.baseSysUserEntity.findOneBy({ id });
     const userRoles = await this.nativeQuery(
       'select a.roleId from base_sys_user_role a where a.userId = ?',
       [id]
     );
-    const department = await this.baseSysDepartmentEntity.findOne({
+    const department = await this.baseSysDepartmentEntity.findOneBy({
       id: info.departmentId,
     });
     if (info) {
@@ -172,7 +172,7 @@ export class BaseSysUserService extends BaseService {
     param.id = this.ctx.admin.userId;
     if (!_.isEmpty(param.password)) {
       param.password = md5(param.password);
-      const userInfo = await this.baseSysUserEntity.findOne({ id: param.id });
+      const userInfo = await this.baseSysUserEntity.findOneBy({ id: param.id });
       if (!userInfo) {
         throw new CoolCommException('用户不存在');
       }
@@ -197,7 +197,7 @@ export class BaseSysUserService extends BaseService {
     }
     if (!_.isEmpty(param.password)) {
       param.password = md5(param.password);
-      const userInfo = await this.baseSysUserEntity.findOne({ id: param.id });
+      const userInfo = await this.baseSysUserEntity.findOneBy({ id: param.id });
       if (!userInfo) {
         throw new CoolCommException('用户不存在');
       }

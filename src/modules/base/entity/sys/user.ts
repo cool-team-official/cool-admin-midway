@@ -1,11 +1,10 @@
-import { EntityModel } from '@midwayjs/orm';
 import { BaseEntity } from '@cool-midway/core';
-import { Column, Index } from 'typeorm';
+import { Column, Index, Entity } from 'typeorm';
 
 /**
  * 系统用户
  */
-@EntityModel('base_sys_user')
+@Entity('base_sys_user')
 export class BaseSysUserEntity extends BaseEntity {
   @Index()
   @Column({ comment: '部门ID', type: 'bigint', nullable: true })

@@ -1,11 +1,10 @@
-import { EntityModel } from '@midwayjs/orm';
 import { BaseEntity } from '@cool-midway/core';
-import { Column } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
 /**
  * 任务信息
  */
-@EntityModel('task_info')
+@Entity('task_info')
 export class TaskInfoEntity extends BaseEntity {
   @Column({ comment: '任务ID', nullable: true })
   jobId: string;

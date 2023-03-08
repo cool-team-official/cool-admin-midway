@@ -1,6 +1,6 @@
-import { App, Inject, Provide } from '@midwayjs/decorator';
+import { App, Provide } from '@midwayjs/decorator';
 import { DemoGoodsEntity } from '../entity/goods';
-import { IMidwayApplication } from '@midwayjs/core';
+import { IMidwayApplication, Inject } from '@midwayjs/core';
 import {
   BaseRpcService,
   CoolRpc,
@@ -22,12 +22,34 @@ export class DemoRpcService extends BaseRpcService {
   rpc: CoolRpc;
 
   /**
-   * 分布式事务
-   * @param params 方法参数
-   * @param rpcTransactionId 无需调用者传参， 本次事务的ID，ID会自动注入无需调用者传参
-   * @param queryRunner 无需调用者传参，操作数据库，需要用queryRunner操作数据库，才能统一提交或回滚事务
+   * 远程调用
+   * @returns
    */
-  // 注解启用分布式事务，参数可以指定事务类型
+  async call() {
+    return await this.rpc.call('goods', 'demoGoodsService', 'test', {
+      a: 1,
+    });
+  }
+
+  /**
+   * 集群事件
+   */
+  async event() {
+    this.rpc.event('test', { a: 1 });
+  }
+
+  async info(params) {
+    return params;
+  }
+  async getUser() {
+    return {
+      uid: '123',
+      username: 'mockedName',
+      phone: '12345678901',
+      email: 'xxx.xxx@xxx.com',
+    };
+  }
+
   @CoolRpcTransaction()
   async transaction(params, rpcTransactionId?, queryRunner?: QueryRunner) {
     console.log('获得的参数', params);
@@ -42,18 +64,7 @@ export class DemoRpcService extends BaseRpcService {
     // 将事务id传给调用的远程服务方法
     await this.rpc.call('goods', 'demoGoodsService', 'transaction', {
       rpcTransactionId,
+      ...params,
     });
-  }
-
-  async info(params) {
-    return params;
-  }
-  async getUser() {
-    return {
-      uid: '123',
-      username: 'mockedName',
-      phone: '12345678901',
-      email: 'xxx.xxx@xxx.com',
-    };
   }
 }

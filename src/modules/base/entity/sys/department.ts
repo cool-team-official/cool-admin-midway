@@ -1,11 +1,10 @@
-import { EntityModel } from '@midwayjs/orm';
 import { BaseEntity } from '@cool-midway/core';
-import { Column } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
 /**
  * 部门
  */
-@EntityModel('base_sys_department')
+@Entity('base_sys_department')
 export class BaseSysDepartmentEntity extends BaseEntity {
   @Column({ comment: '部门名称' })
   name: string;

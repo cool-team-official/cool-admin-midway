@@ -1,19 +1,12 @@
-import { CoolConfig } from '@cool-midway/core';
-import { MODETYPE } from '@cool-midway/file';
+import { CoolConfig, MODETYPE } from '@cool-midway/core';
 import { MidwayConfig } from '@midwayjs/core';
-// import * as redisStore from 'cache-manager-ioredis';
 import * as fsStore from 'cache-manager-fs-hash';
 
 export default {
-  // 修改成你自己独有的key
+  // use for cookie sign key, should change to your own and keep security
   keys: 'cool-admin for node',
   koa: {
     port: 8001,
-  },
-  // 文件上传
-  upload: {
-    fileSize: '200mb',
-    whitelist: null,
   },
   // 模板渲染
   view: {
@@ -21,7 +14,12 @@ export default {
       '.html': 'ejs',
     },
   },
-  // 本地缓存
+  // 文件上传
+  upload: {
+    fileSize: '200mb',
+    whitelist: null,
+  },
+  // 缓存 可切换成其他缓存如：redis http://midwayjs.org/docs/extensions/cache
   cache: {
     store: fsStore,
     options: {
@@ -29,34 +27,12 @@ export default {
       ttl: -1,
     },
   },
-  // redis缓存
-  //   cache: {
-  //     store: redisStore,
-  //     options: {
-  //       host: '127.0.0.1',
-  //       port: 6379,
-  //       password: '',
-  //       db: 1,
-  //       ttl: null,
-  //     },
-  //   },
-  // cool配置
   cool: {
-    // redis: {
-    //   host: '127.0.0.1',
-    //   port: 6379,
-    //   db: 0,
-    // },
-    // 是否自动导入数据库
     file: {
       // 上传模式 本地上传或云存储
       mode: MODETYPE.LOCAL,
-      // 本地上传 文件地址前缀，当且仅当mode为LOCAL时生效
+      // 本地上传 文件地址前缀
       domain: 'http://127.0.0.1:8001',
     },
   } as CoolConfig,
-} as
-  | MidwayConfig
-  | {
-      cache: any;
-    };
+} as MidwayConfig;

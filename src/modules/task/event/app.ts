@@ -1,6 +1,6 @@
+import { Inject } from '@midwayjs/core';
 import { TaskInfoService } from './../service/info';
 import { CoolEvent, Event } from '@cool-midway/core';
-import { Inject } from '@midwayjs/decorator';
 
 /**
  * 应用事件
@@ -12,6 +12,6 @@ export class AppEvent {
 
   @Event('onServerReady')
   async onServerReady() {
-    this.taskInfoService.initTask();
+    await this.taskInfoService.initTask();
   }
 }

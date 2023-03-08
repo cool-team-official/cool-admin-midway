@@ -8,7 +8,6 @@
       "/**",
       " * 描述",
       " */",
-      "@Provide()",
       "@CoolController({",
       "  api: ['add', 'delete', 'update', 'info', 'list', 'page'],",
       "  entity: 实体,",

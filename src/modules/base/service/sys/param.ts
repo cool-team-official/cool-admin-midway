@@ -1,6 +1,6 @@
 import { Inject, Provide } from '@midwayjs/decorator';
 import { BaseService } from '@cool-midway/core';
-import { InjectEntityModel } from '@midwayjs/orm';
+import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository } from 'typeorm';
 import { BaseSysParamEntity } from '../../entity/sys/param';
 import { CacheManager } from '@midwayjs/cache';
@@ -23,7 +23,7 @@ export class BaseSysParamService extends BaseService {
   async dataByKey(key) {
     let result: any = await this.cacheManager.get(`param:${key}`);
     if (!result) {
-      result = await this.baseSysParamEntity.findOne({ keyName: key });
+      result = await this.baseSysParamEntity.findOneBy({ keyName: key });
     }
     if (result) {
       if (typeof result == 'string') {

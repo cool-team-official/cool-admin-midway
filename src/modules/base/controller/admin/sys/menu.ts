@@ -1,4 +1,4 @@
-import { Inject, Provide } from '@midwayjs/decorator';
+import { Body, Inject, Post, Provide } from '@midwayjs/decorator';
 import { CoolController, BaseController } from '@cool-midway/core';
 import { BaseSysMenuEntity } from '../../../entity/sys/menu';
 import { BaseSysMenuService } from '../../../service/sys/menu';
@@ -15,4 +15,21 @@ import { BaseSysMenuService } from '../../../service/sys/menu';
 export class BaseSysMenuController extends BaseController {
   @Inject()
   baseSysMenuService: BaseSysMenuService;
+
+  @Post('/parse', { summary: '解析' })
+  async parse(
+    @Body('entity') entity: string,
+    @Body('controller') controller: string,
+    @Body('module') module: string
+  ) {
+    return this.ok(
+      await this.baseSysMenuService.parse(entity, controller, module)
+    );
+  }
+
+  @Post('/create', { summary: '创建代码' })
+  async create(@Body() body) {
+    await this.baseSysMenuService.create(body);
+    return this.ok();
+  }
 }

@@ -1,21 +1,32 @@
-import { EntityModel } from '@midwayjs/orm';
 import { BaseEntity } from '@cool-midway/core';
-import { Column } from 'typeorm';
+import { Column, Entity, Index } from 'typeorm';
 
 /**
- * 商品
+ * 商品模块-商品信息
  */
-@EntityModel('demo_goods')
+@Entity('demo_goods')
 export class DemoGoodsEntity extends BaseEntity {
-  @Column({ comment: '标题' })
+  @Index()
+  @Column({ comment: '标题', length: 50 })
   title: string;
 
-  @Column({ comment: '图片' })
-  pic: string;
-
-  @Column({ comment: '价格', type: 'decimal', precision: 5, scale: 2 })
+  @Column({
+    comment: '价格',
+    type: 'decimal',
+    precision: 5,
+    scale: 2,
+  })
   price: number;
 
-  @Column({ comment: '分类 0-衣服 1-鞋子 2-裤子', type: 'tinyint', default: 0 })
-  type: number;
+  @Column({ comment: '描述', nullable: true })
+  description: string;
+
+  @Column({ comment: '主图', nullable: true })
+  mainImage: string;
+
+  @Column({ comment: '示例图', nullable: true, type: 'json' })
+  exampleImages: string[];
+
+  @Column({ comment: '库存', default: 0 })
+  stock: number;
 }

@@ -2,7 +2,6 @@
   "event": {
     "prefix": "event",
     "body": [
-      "import { Provide, Scope, ScopeEnum } from '@midwayjs/decorator';",
       "import { CoolEvent, Event } from '@cool-midway/core';",
       "",
       "/**",
