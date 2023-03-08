@@ -11,8 +11,12 @@ export class AppEvent {
   @App()
   app: IMidwayApplication;
 
-  @Event('onServerReady')
-  async onServerReady() {
+  @Event('onDBInit')
+  async onDBInit() {
+    this.initEntity();
+  }
+
+  async initEntity() {
     const cloudDBService = await this.app
       .getApplicationContext()
       .getAsync(CloudDBService);

@@ -4,8 +4,8 @@
   "description": "一个项目用COOL就够了",
   "private": true,
   "dependencies": {
+    "@cool-midway/core": "^6.0.1",
     "@cool-midway/cloud": "^6.0.0",
-    "@cool-midway/core": "^6.0.0",
     "@cool-midway/file": "^6.0.0",
     "@cool-midway/iot": "^6.0.0",
     "@cool-midway/pay": "^6.0.0",
