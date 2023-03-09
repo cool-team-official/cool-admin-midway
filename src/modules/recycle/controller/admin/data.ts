@@ -12,6 +12,7 @@ import { RecycleDataService } from '../../service/data';
   api: ['info', 'page'],
   entity: RecycleDataEntity,
   pageQueryOp: {
+    keyWordLikeFields: ['b.name', 'a.url'],
     select: ['a.*', 'b.name as userName'],
     join: [
       {
