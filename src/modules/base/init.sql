@@ -288,6 +288,7 @@ INSERT INTO `base_sys_menu` VALUES (449, '2023-03-07 10:27:54.079000', '2023-03-
 INSERT INTO `base_sys_menu` VALUES (450, '2023-03-07 10:28:17.692000', '2023-03-07 10:28:17.692000', 449, 'crud 示例', '/demo/crud', NULL, 1, 'icon-favor', 1, 'modules/demo/views/crud.vue', 1, 1);
 INSERT INTO `base_sys_menu` VALUES (451, '2023-03-07 10:28:44.322000', '2023-03-07 10:28:44.322000', 449, '编辑器', '/demo/editor', NULL, 1, 'icon-favor', 2, 'modules/demo/views/editor.vue', 1, 1);
 INSERT INTO `base_sys_menu` VALUES (452, '2023-03-07 10:29:06.344000', '2023-03-07 10:29:06.344000', 449, '文件上传', '/demo/upload', NULL, 1, 'icon-favor', 3, 'modules/demo/views/upload.vue', 1, 1);
+INSERT INTO `base_sys_menu` VALUES (453, '2023-03-15 10:38:43.677000', '2023-03-15 10:38:43.677000', 8, '编辑', NULL, 'base:sys:menu:info,base:sys:menu:update', 2, NULL, 0, NULL, 1, 1);
 COMMIT;
 
 -- ----------------------------
