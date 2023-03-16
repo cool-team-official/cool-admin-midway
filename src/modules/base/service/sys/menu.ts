@@ -268,8 +268,7 @@ export class BaseSysMenuService extends BaseService {
       'entity',
       `${fileName}.ts`
     );
-    this.createFile(entityPath, entity);
-    // // 生成Controller
+    // 生成Controller
     const controllerPath = pathUtil.join(
       basePath,
       'modules',
@@ -278,7 +277,46 @@ export class BaseSysMenuService extends BaseService {
       'admin',
       `${fileName}.ts`
     );
+    this.createConfigFile(module);
+    this.createFile(entityPath, entity);
     this.createFile(controllerPath, controller);
+  }
+
+  /**
+   * 创建配置文件
+   * @param module
+   */
+  async createConfigFile(module: string) {
+    const basePath = this.app.getBaseDir();
+    const configFilePath = pathUtil.join(
+      basePath,
+      'modules',
+      module,
+      'config.ts'
+    );
+    if (!fs.existsSync(configFilePath)) {
+      const data = `import { ModuleConfig } from '@cool-midway/core';
+
+/**
+ * 模块配置
+ */
+export default () => {
+  return {
+    // 模块名称
+    name: 'xxx',
+    // 模块描述
+    description: 'xxx',
+    // 中间件，只对本模块有效
+    middlewares: [],
+    // 中间件，全局有效
+    globalMiddlewares: [],
+    // 模块加载顺序，默认为0，值越大越优先加载
+    order: 0,
+  } as ModuleConfig;
+};
+`;
+      await this.createFile(configFilePath, data);
+    }
   }
 
   /**
