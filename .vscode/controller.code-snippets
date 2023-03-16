@@ -2,7 +2,6 @@
   "controller": {
     "prefix": "controller",
     "body": [
-      "import { Provide } from '@midwayjs/decorator';",
       "import { CoolController, BaseController } from '@cool-midway/core';",
       "",
       "/**",
