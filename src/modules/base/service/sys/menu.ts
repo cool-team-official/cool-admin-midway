@@ -202,11 +202,12 @@ export class BaseSysMenuService extends BaseService {
     );
     eval(code);
     await tempDataSource.buildMetadatas();
-    const columns = tempDataSource.getMetadata(className).columns;
+    const columnArr = tempDataSource.getMetadata(className).columns;
     await tempDataSource.destroy();
     const fileName = await this.fileName(controller);
-    return {
-      columns: columns.map(e => {
+    const commColums = [];
+    const columns = _.filter(
+      columnArr.map(e => {
         return {
           propertyName: e.propertyName,
           type: typeof e.type == 'string' ? e.type : e.type.name.toLowerCase(),
@@ -215,6 +216,15 @@ export class BaseSysMenuService extends BaseService {
           nullable: e.isNullable,
         };
       }),
+      o => {
+        if (['createTime', 'updateTime'].includes(o.propertyName)) {
+          commColums.push(o);
+        }
+        return o && !['createTime', 'updateTime'].includes(o.propertyName);
+      }
+    ).concat(commColums);
+    return {
+      columns,
       path: `/admin/${module}/${fileName}`,
     };
   }
