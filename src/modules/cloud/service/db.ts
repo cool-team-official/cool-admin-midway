@@ -132,7 +132,7 @@ export class CloudDBService extends BaseService {
         "SELECT table_name from information_schema.columns where table_name like 'func_%' group by table_name"
       )
     ).map(e => {
-      return e.TABLE_NAME;
+      return e.TABLE_NAME || e.table_name;
     });
     // 需要删除的云函数表
     const deleteTables = allTables.filter(e => {
