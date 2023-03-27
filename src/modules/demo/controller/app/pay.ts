@@ -6,7 +6,9 @@ import {
   CoolAliPayConfig,
 } from '@cool-midway/core';
 import { CoolAliPay, CoolWxPay } from '@cool-midway/pay';
+// @ts-ignore
 import AlipayFormData from 'alipay-sdk/lib/form';
+// @ts-ignore
 import { sign } from 'alipay-sdk/lib/util';
 
 /**
