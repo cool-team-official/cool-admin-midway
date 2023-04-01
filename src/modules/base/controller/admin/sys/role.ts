@@ -21,7 +21,7 @@ import { BaseSysRoleService } from '../../../service/sys/role';
   pageQueryOp: {
     keyWordLikeFields: ['name', 'label'],
     where: async (ctx: Context) => {
-      const { userId, roleIds, role } = ctx.admin;
+      const { userId, roleIds, username } = ctx.admin;
       return [
         // 超级管理员的角色不展示
         ['label != :label', { label: 'admin' }],
@@ -29,7 +29,7 @@ import { BaseSysRoleService } from '../../../service/sys/role';
         [
           '(userId=:userId or id in (:roleIds))',
           { userId, roleIds },
-          role !== 'admin',
+          username !== 'admin',
         ],
       ];
     },
