@@ -118,7 +118,7 @@ export class AppDemoPayController extends BaseController {
   }
 
   /**
-   * 微信支付回调通知
+   * 支付宝支付回调通知
    */
   @Post('/aliNotify')
   async aliNotify(@Body() body) {
