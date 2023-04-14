@@ -66,14 +66,18 @@ export class BaseSysRoleService extends BaseService {
   async updatePerms(roleId, menuIdList?, departmentIds = []) {
     // 更新菜单权限
     await this.baseSysRoleMenuEntity.delete({ roleId });
-    for (const e of menuIdList) {
-      await this.baseSysRoleMenuEntity.save({ roleId, menuId: e });
-    }
+    await Promise.all(
+      menuIdList.map(async e => {
+        return await this.baseSysRoleMenuEntity.save({ roleId, menuId: e });
+      })
+    );
     // 更新部门权限
     await this.baseSysRoleDepartmentEntity.delete({ roleId });
-    for (const departmentId of departmentIds) {
-      await this.baseSysRoleDepartmentEntity.save({ roleId, departmentId });
-    }
+    await Promise.all(
+      departmentIds.map(async e => {
+        return await this.baseSysRoleMenuEntity.save({ roleId, departmentId: e });
+      })
+    );
     // 刷新权限
     const userRoles = await this.baseSysUserRoleEntity.findBy({ roleId });
     for (const userRole of userRoles) {
