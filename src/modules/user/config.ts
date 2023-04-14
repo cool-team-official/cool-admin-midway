@@ -36,5 +36,14 @@ export default () => {
         secret: 'xxx',
       },
     },
+    // jwt
+    jwt: {
+      // token 过期时间，单位秒
+      expire: 60 * 60 * 2,
+      // 刷新token 过期时间，单位秒
+      refreshExpire: 60 * 60 * 24 * 30,
+      // jwt 秘钥
+      secret: '093243e6ce8',
+    },
   } as ModuleConfig;
 };

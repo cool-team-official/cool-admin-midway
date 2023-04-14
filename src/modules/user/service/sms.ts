@@ -31,6 +31,20 @@ export class UserSmsService extends BaseService {
   }
 
   /**
+   * 验证验证码
+   * @param phone
+   * @param code
+   * @returns
+   */
+  async checkCode(phone, code) {
+    const cacheCode = await this.cacheManager.get(`sms:${phone}`);
+    if (cacheCode === code) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
    * 发送短信
    * @param phone
    * @param templateCode
