@@ -1,6 +1,6 @@
 import { App, Config, Inject, Middleware } from '@midwayjs/decorator';
 import * as _ from 'lodash';
-import { RESCODE } from '@cool-midway/core';
+import { CoolCommException, RESCODE } from '@cool-midway/core';
 import * as jwt from 'jsonwebtoken';
 import { NextFunction, Context } from '@midwayjs/koa';
 import { IMiddleware, IMidwayApplication } from '@midwayjs/core';
@@ -38,7 +38,10 @@ export class BaseAuthorityMiddleware
       if (_.startsWith(url, adminUrl)) {
         try {
           ctx.admin = jwt.verify(token, this.jwtConfig.jwt.secret);
-        } catch (err) {}
+        } catch (err) {
+          throw new CoolCommException('登录失效~');
+        }
+        if (ctx.admin.isRefresh) throw new CoolCommException('登录失效~');
         // 不需要登录 无需权限校验
         if (
           new RegExp(`^${adminUrl}?.*/open/`).test(url) ||

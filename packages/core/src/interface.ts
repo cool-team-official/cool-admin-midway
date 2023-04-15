@@ -63,7 +63,7 @@ export interface CoolConfig {
     qiniu?: QINIUConfig;
   };
   /** IOT 配置 */
-  iot: CoolIotConfig;
+  iot?: CoolIotConfig;
 }
 
 export interface CoolRpcConfig {
