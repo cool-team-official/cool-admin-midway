@@ -15,6 +15,9 @@ import * as jwt from 'jsonwebtoken';
 import * as svgToDataURL from 'mini-svg-data-uri';
 import { Context } from '@midwayjs/koa';
 import { CacheManager } from '@midwayjs/cache';
+import { readFileSync } from 'fs';
+const { svg2png, initialize } = require('svg2png-wasm');
+initialize(readFileSync('./node_modules/svg2png-wasm/svg2png_wasm_bg.wasm'));
 
 /**
  * 登录
@@ -107,7 +110,7 @@ export class BaseSysLoginService extends BaseService {
    * @param width 宽
    * @param height 高
    */
-  async captcha(type: string, width = 150, height = 50) {
+  async captcha(type: string, width = 150, height = 50, color = '#fff') {
     const svg = svgCaptcha.create({
       ignoreChars: 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM',
       width,
@@ -130,10 +133,21 @@ export class BaseSysLoginService extends BaseService {
       '#999',
     ];
     rpList.forEach(rp => {
-      result.data = result.data['replaceAll'](rp, '#fff');
+      result.data = result.data['replaceAll'](rp, color);
     });
     if (type === 'base64') {
       result.data = svgToDataURL(result.data);
+    }
+    if (type === 'png') {
+      result.data = await svg2png(result.data, {
+        scale: 2, // optional
+        width, // optional
+        height, // optional
+        backgroundColor: 'white', // optional
+      });
+      result.data =
+        'data:image/png;base64,' +
+        Buffer.from(result.data, 'binary').toString('base64');
     }
     // 半小时过期
     await this.cacheManager.set(

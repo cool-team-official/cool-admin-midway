@@ -1,4 +1,9 @@
-import { CoolController, BaseController } from '@cool-midway/core';
+import {
+  CoolController,
+  BaseController,
+  CoolUrlTag,
+  TagTypes,
+} from '@cool-midway/core';
 import { Body, Get, Inject, Post, Query } from '@midwayjs/core';
 import { UserLoginService } from '../../service/login';
 import { BaseSysLoginService } from '../../../base/service/sys/login';
@@ -6,6 +11,10 @@ import { BaseSysLoginService } from '../../../base/service/sys/login';
 /**
  * 登录
  */
+@CoolUrlTag({
+  key: TagTypes.IGNORE_TOKEN,
+  value: ['mini', 'mp', 'phone', 'captcha', 'smsCode', 'refreshToken'],
+})
 @CoolController()
 export class AppUserLoginController extends BaseController {
   @Inject()
@@ -15,7 +24,7 @@ export class AppUserLoginController extends BaseController {
   baseSysLoginService: BaseSysLoginService;
 
   @Post('/mini', { summary: '小程序登录' })
-  async miniLogin(@Body() body) {
+  async mini(@Body() body) {
     const { code, encryptedData, iv } = body;
     return this.ok(await this.userLoginService.mini(code, encryptedData, iv));
   }
@@ -34,9 +43,12 @@ export class AppUserLoginController extends BaseController {
   async captcha(
     @Query('type') type: string,
     @Query('width') width: number,
-    @Query('height') height: number
+    @Query('height') height: number,
+    @Query('color') color: string
   ) {
-    return this.ok(await this.baseSysLoginService.captcha(type, width, height));
+    return this.ok(
+      await this.baseSysLoginService.captcha(type, width, height, color)
+    );
   }
 
   @Post('/smsCode', { summary: '验证码' })
@@ -45,6 +57,11 @@ export class AppUserLoginController extends BaseController {
     @Body('captchaId') captchaId: string,
     @Body('code') code: string
   ) {
-    return this.ok();
+    return this.ok(await this.userLoginService.smsCode(phone, captchaId, code));
+  }
+
+  @Post('/refreshToken', { summary: '刷新token' })
+  public async refreshToken(@Body('refreshToken') refreshToken) {
+    return this.ok(await this.userLoginService.refreshToken(refreshToken));
   }
 }

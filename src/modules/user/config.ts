@@ -1,4 +1,5 @@
 import { ModuleConfig } from '@cool-midway/core';
+import { UserMiddleware } from './middleware/app';
 
 /**
  * 模块配置
@@ -12,7 +13,7 @@ export default () => {
     // 中间件，只对本模块有效
     middlewares: [],
     // 中间件，全局有效
-    globalMiddlewares: [],
+    globalMiddlewares: [UserMiddleware],
     // 模块加载顺序，默认为0，值越大越优先加载
     order: 0,
     // 阿里云短信
@@ -28,22 +29,23 @@ export default () => {
     wx: {
       // 小程序
       mini: {
-        appid: 'xxx',
-        secret: 'xxx',
+        appid: '',
+        secret: '',
       },
+      // 公众号
       mp: {
-        appid: 'xxx',
-        secret: 'xxx',
+        appid: '',
+        secret: '',
       },
     },
     // jwt
     jwt: {
       // token 过期时间，单位秒
-      expire: 60 * 60 * 2,
+      expire: 60 * 60 * 24,
       // 刷新token 过期时间，单位秒
       refreshExpire: 60 * 60 * 24 * 30,
       // jwt 秘钥
-      secret: '093243e6ce8',
+      secret: 'AOUJDFOPF',
     },
   } as ModuleConfig;
 };

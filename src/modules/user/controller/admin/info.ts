@@ -7,5 +7,9 @@ import { UserInfoEntity } from '../../entity/info';
 @CoolController({
   api: ['add', 'delete', 'update', 'info', 'list', 'page'],
   entity: UserInfoEntity,
+  pageQueryOp: {
+    fieldEq: ['status'],
+    keyWordLikeFields: ['nickName', 'phone'],
+  },
 })
 export class AdminUserInfoController extends BaseController {}

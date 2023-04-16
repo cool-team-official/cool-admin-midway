@@ -1,5 +1,5 @@
 import { Provide, Config, Inject } from '@midwayjs/decorator';
-import { BaseService } from '@cool-midway/core';
+import { BaseService, CoolCommException } from '@cool-midway/core';
 import * as _ from 'lodash';
 import * as Core from '@alicloud/pop-core';
 import { CacheManager } from '@midwayjs/cache';
@@ -21,13 +21,17 @@ export class UserSmsService extends BaseService {
    * @param phone
    */
   async sendSms(phone) {
-    const TemplateParam = { code: _.random(1000, 9999) };
-    await this.send(phone, TemplateParam);
-    this.cacheManager.set(
-      `sms:${phone}`,
-      TemplateParam.code,
-      this.config.sms.timeout
-    );
+    try {
+      const TemplateParam = { code: _.random(1000, 9999) };
+      await this.send(phone, TemplateParam);
+      this.cacheManager.set(
+        `sms:${phone}`,
+        TemplateParam.code,
+        this.config.timeout
+      );
+    } catch (error) {
+      throw new CoolCommException('发送过于频繁，请稍后再试');
+    }
   }
 
   /**

@@ -15,7 +15,7 @@ export class UserWxEntity extends BaseEntity {
   openid: string;
 
   @Column({ comment: '头像', nullable: true })
-  avatarUrl: number;
+  avatarUrl: string;
 
   @Column({ comment: '昵称', nullable: true })
   nickName: string;
@@ -24,14 +24,17 @@ export class UserWxEntity extends BaseEntity {
   gender: number;
 
   @Column({ comment: '语言', nullable: true })
-  language: number;
+  language: string;
 
   @Column({ comment: '城市', nullable: true })
-  city: number;
+  city: string;
 
   @Column({ comment: '省份', nullable: true })
-  province: number;
+  province: string;
 
   @Column({ comment: '国家', nullable: true })
-  country: number;
+  country: string;
+
+  @Column({ comment: '类型 0-小程序 1-公众号 2-H5 3-APP', default: 0 })
+  type: number;
 }

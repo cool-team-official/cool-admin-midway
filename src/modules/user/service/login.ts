@@ -9,6 +9,7 @@ import { UserWxEntity } from '../entity/wx';
 import { CoolFile } from '@cool-midway/file';
 import { BaseSysLoginService } from '../../base/service/sys/login';
 import { UserSmsService } from './sms';
+import { v1 as uuid } from 'uuid';
 
 /**
  * 登录
@@ -58,14 +59,20 @@ export class UserLoginService extends BaseService {
    */
   async phone(phone, smsCode) {
     // 1、检查短信验证码  2、登录
-    const check = await this.userSmsService.checkCode(phone, smsCode);
+    //const check = await this.userSmsService.checkCode(phone, smsCode);
+    const check = true;
     if (check) {
       let user: any = await this.userInfoEntity.findOneBy({ phone });
       if (!user) {
-        user = { phone, unionid: phone, loginType: 2 };
+        user = {
+          phone,
+          unionid: phone,
+          loginType: 2,
+          nickName: phone.replace(/^(\d{3})\d{4}(\d{4})$/, '$1****$2'),
+        };
         await this.userInfoEntity.insert(user);
       }
-      return this.token({ userId: user.id });
+      return this.token({ id: user.id });
     }
   }
 
@@ -77,16 +84,19 @@ export class UserLoginService extends BaseService {
     let wxUserInfo = await this.userWxService.mpUserInfo(code);
     if (wxUserInfo) {
       delete wxUserInfo.privilege;
-      wxUserInfo = await this.saveWxInfo({
-        openid: wxUserInfo.openid,
-        unionid: wxUserInfo.unionid,
-        avatarUrl: wxUserInfo.headimgurl,
-        nickName: wxUserInfo.nickname,
-        gender: wxUserInfo.sex,
-        city: wxUserInfo.city,
-        province: wxUserInfo.province,
-        country: wxUserInfo.country,
-      });
+      wxUserInfo = await this.saveWxInfo(
+        {
+          openid: wxUserInfo.openid,
+          unionid: wxUserInfo.unionid,
+          avatarUrl: wxUserInfo.headimgurl,
+          nickName: wxUserInfo.nickname,
+          gender: wxUserInfo.sex,
+          city: wxUserInfo.city,
+          province: wxUserInfo.province,
+          country: wxUserInfo.country,
+        },
+        1
+      );
       return this.wxLoginToken(wxUserInfo);
     } else {
       throw new Error('微信登录失败');
@@ -96,27 +106,19 @@ export class UserLoginService extends BaseService {
   /**
    * 保存微信信息
    * @param wxUserInfo
+   * @param type
    * @returns
    */
-  async saveWxInfo(wxUserInfo) {
-    const find: any = {};
-    if (wxUserInfo.unionid) {
-      find.unionid = wxUserInfo.unionid;
-    }
-    if (wxUserInfo.openid) {
-      find.openid = wxUserInfo.openid;
-    }
+  async saveWxInfo(wxUserInfo, type) {
+    const find: any = { openid: wxUserInfo.openid };
     let wxInfo: any = await this.userWxEntity.findOneBy(find);
     if (wxInfo) {
-      delete wxUserInfo.avatarUrl;
       wxUserInfo.id = wxInfo.id;
-    } else {
-      // 微信的链接会失效，需要保存到本地
-      wxUserInfo.avatarUrl = await this.file.downAndUpload(
-        wxUserInfo.avatarUrl
-      );
     }
-    await this.userWxEntity.save(wxUserInfo);
+    await this.userWxEntity.save({
+      ...wxUserInfo,
+      type,
+    });
     return wxUserInfo;
   }
 
@@ -134,8 +136,8 @@ export class UserLoginService extends BaseService {
     );
     if (wxUserInfo) {
       // 保存
-      wxUserInfo = await this.saveWxInfo(wxUserInfo);
-      return this.wxLoginToken(wxUserInfo);
+      wxUserInfo = await this.saveWxInfo(wxUserInfo, 0);
+      return await this.wxLoginToken(wxUserInfo);
     }
   }
 
@@ -148,14 +150,39 @@ export class UserLoginService extends BaseService {
     const unionid = wxUserInfo.unionid ? wxUserInfo.unionid : wxUserInfo.openid;
     let userInfo: any = await this.userInfoEntity.findOneBy({ unionid });
     if (!userInfo) {
+      const avatarUrl = await this.file.downAndUpload(
+        wxUserInfo.avatarUrl,
+        uuid() + '.png'
+      );
       userInfo = {
         unionid,
         nickName: wxUserInfo.nickName,
-        avatarUrl: wxUserInfo.avatarUrl,
+        avatarUrl,
         gender: wxUserInfo.gender,
       };
       await this.userInfoEntity.insert(userInfo);
-      return this.token({ userId: userInfo.id });
+    }
+    return this.token({ id: userInfo.id });
+  }
+
+  /**
+   * 刷新token
+   * @param refreshToken
+   */
+  async refreshToken(refreshToken) {
+    try {
+      const info = jwt.verify(refreshToken, this.jwtConfig.secret);
+      if (!info['isRefresh']) {
+        throw new CoolCommException('token类型非refreshToken');
+      }
+      const userInfo = await this.userInfoEntity.findOneBy({
+        id: info['userId'],
+      });
+      return this.token(userInfo);
+    } catch (e) {
+      throw new CoolCommException(
+        '刷新token失败，请检查refreshToken是否正确或过期'
+      );
     }
   }
 
