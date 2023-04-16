@@ -1,5 +1,5 @@
 import { Inject, Provide } from '@midwayjs/decorator';
-import { BaseService } from '@cool-midway/core';
+import { BaseService, CoolCommException } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserInfoEntity } from '../entity/info';
@@ -27,14 +27,18 @@ export class UserInfoService extends BaseService {
   }
 
   async updatePerson(id, param) {
-    const info = await this.person(id);
-    // 修改了头像要重新处理
-    if (param.avatarUrl && info.avatarUrl != param.avatarUrl) {
-      param.avatarUrl = await this.file.downAndUpload(
-        param.avatarUrl,
-        uuid() + '.png'
-      );
+    try {
+      const info = await this.person(id);
+      // 修改了头像要重新处理
+      if (param.avatarUrl && info.avatarUrl != param.avatarUrl) {
+        param.avatarUrl = await this.file.downAndUpload(
+          param.avatarUrl,
+          uuid() + '.png'
+        );
+      }
+      return await this.userInfoEntity.update({ id }, param);
+    } catch (err) {
+      throw new CoolCommException('更新失败，参数错误或者手机号已存在');
     }
-    return await this.userInfoEntity.update({ id }, param);
   }
 }
