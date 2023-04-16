@@ -11,6 +11,7 @@ import { Context } from '@midwayjs/koa';
 @CoolController({
   api: ['add', 'delete', 'update', 'info', 'page'],
   entity: BaseSysParamEntity,
+  service: BaseSysParamService,
   pageQueryOp: {
     keyWordLikeFields: ['name', 'keyName'],
   },
