@@ -1,11 +1,21 @@
 import { Provide, Inject, Get, Post } from '@midwayjs/decorator';
-import { CoolController, BaseController, CoolEps } from '@cool-midway/core';
+import {
+  CoolController,
+  BaseController,
+  CoolEps,
+  TagTypes,
+  CoolUrlTag,
+} from '@cool-midway/core';
 import { Context } from '@midwayjs/koa';
 import { CoolFile } from '@cool-midway/file';
 
 /**
  * 不需要登录的后台接口
  */
+@CoolUrlTag({
+  key: TagTypes.IGNORE_TOKEN,
+  value: ['eps'],
+})
 @Provide()
 @CoolController()
 export class BaseAppCommController extends BaseController {
