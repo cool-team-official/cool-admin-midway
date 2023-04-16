@@ -15,7 +15,7 @@ export class UserWxEntity extends BaseEntity {
   openid: string;
 
   @Column({ comment: '头像', nullable: true })
-  avatarUrl: number;
+  avatarUrl: string;
 
   @Column({ comment: '昵称', nullable: true })
   nickName: string;

@@ -87,37 +87,24 @@ export class UserLoginService extends BaseService {
         province: wxUserInfo.province,
         country: wxUserInfo.country,
       });
-      return this.wxLoginToken(wxUserInfo);
+      return this.wxLoginToken(wxUserInfo, 1);
     } else {
-      throw new Error('微信登录失败');
+      throw new CoolCommException('微信登录失败');
     }
   }
 
   /**
-   * 保存微信信息
-   * @param wxUserInfo
+   * 保存/更新 微信信息(根据微信规则，用户头像昵称无法在此获取，需要通过chooseAvatar进行获取)
+   * @param wxUserInfo 微信里的用户信息
    * @returns
    */
   async saveWxInfo(wxUserInfo) {
-    const find: any = {};
-    if (wxUserInfo.unionid) {
-      find.unionid = wxUserInfo.unionid;
+    const wxInfo = await this.userWxEntity.findOneBy({ openid: wxUserInfo.openid });
+    if (!wxInfo) {
+      await this.userWxEntity.insert(wxInfo);
     }
-    if (wxUserInfo.openid) {
-      find.openid = wxUserInfo.openid;
-    }
-    let wxInfo: any = await this.userWxEntity.findOneBy(find);
-    if (wxInfo) {
-      delete wxUserInfo.avatarUrl;
-      wxUserInfo.id = wxInfo.id;
-    } else {
-      // 微信的链接会失效，需要保存到本地
-      wxUserInfo.avatarUrl = await this.file.downAndUpload(
-        wxUserInfo.avatarUrl
-      );
-    }
-    await this.userWxEntity.save(wxUserInfo);
-    return wxUserInfo;
+    await this.userWxEntity.save(Object.assign(wxInfo, wxUserInfo));
+    return wxInfo;
   }
 
   /**
@@ -133,30 +120,35 @@ export class UserLoginService extends BaseService {
       iv
     );
     if (wxUserInfo) {
-      // 保存
       wxUserInfo = await this.saveWxInfo(wxUserInfo);
-      return this.wxLoginToken(wxUserInfo);
+      return this.wxLoginToken(wxUserInfo, 0);
     }
   }
 
   /**
    * 微信登录 获得token
    * @param wxUserInfo 微信用户信息
+   * @param loginType 登录方式 0-小程序 1-公众号 2-H5
    * @returns
    */
-  async wxLoginToken(wxUserInfo) {
+  async wxLoginToken(wxUserInfo, loginType) {
     const unionid = wxUserInfo.unionid ? wxUserInfo.unionid : wxUserInfo.openid;
-    let userInfo: any = await this.userInfoEntity.findOneBy({ unionid });
+    let userInfo: UserInfoEntity = await this.userInfoEntity.findOneBy({ unionid });
     if (!userInfo) {
-      userInfo = {
+      userInfo = new UserInfoEntity();
+      Object.assign(userInfo, {
         unionid,
-        nickName: wxUserInfo.nickName,
-        avatarUrl: wxUserInfo.avatarUrl,
-        gender: wxUserInfo.gender,
-      };
+        loginType,
+        ...wxUserInfo
+      });
       await this.userInfoEntity.insert(userInfo);
-      return this.token({ userId: userInfo.id });
     }
+    if (userInfo.status === 0) {
+      throw new CoolCommException('您已违规被禁用');
+    }
+    // 更新登录时间
+    await this.userInfoEntity.save(Object.assign(userInfo, wxUserInfo));
+    return this.token({ userId: userInfo.id });
   }
 
   /**

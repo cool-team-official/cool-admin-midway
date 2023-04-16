@@ -26,6 +26,9 @@ export class UserInfoEntity extends BaseEntity {
   @Column({ comment: '状态 0-禁用 1-正常', default: 1 })
   status: number;
 
-  @Column({ comment: '登录方式 0-小程序 1-公众号 2-H5', default: 0 })
+  @Column({ comment: '登录方式 0-小程序 1-公众号 2-H5 3-APP', default: 0 })
   loginType: number;
+
+  @Column({ comment: '标签，多个标签按“,”隔开', nullable: true })
+  labels: string;
 }
