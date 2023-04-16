@@ -7,7 +7,8 @@
         "jest.config.js",
         "typings",
         "public/**/**",
-        "view/**/**"
+        "view/**/**",
+        "packages"
     ],
     "env": {
         "jest": true
