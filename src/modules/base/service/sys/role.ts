@@ -75,7 +75,10 @@ export class BaseSysRoleService extends BaseService {
     await this.baseSysRoleDepartmentEntity.delete({ roleId });
     await Promise.all(
       departmentIds.map(async e => {
-        return await this.baseSysRoleMenuEntity.save({ roleId, departmentId: e });
+        return await this.baseSysRoleMenuEntity.save({
+          roleId,
+          departmentId: e,
+        });
       })
     );
     // 刷新权限
