@@ -2,10 +2,6 @@ import { Config, Provide } from '@midwayjs/decorator';
 import { BaseService, CoolCommException } from '@cool-midway/core';
 import axios from 'axios';
 import * as crypto from 'crypto';
-import * as _ from 'lodash';
-
-// 微信请求域名
-const wxBaseUrl = 'https://api.weixin.qq.com';
 
 /**
  * 微信
@@ -30,8 +26,9 @@ export class UserWxService extends BaseService {
    * @param secret
    */
   public async getWxToken(type = 'mp') {
+    //@ts-ignore
     const conf = this.config.wx[type];
-    return await axios.get(wxBaseUrl + '/cgi-bin/token', {
+    return await axios.get('https://api.weixin.qq.com/cgi-bin/token', {
       params: {
         grant_type: 'client_credential',
         appid: conf.appid,
@@ -46,7 +43,7 @@ export class UserWxService extends BaseService {
    */
   async openOrMpUserInfo(token) {
     return await axios
-      .get(wxBaseUrl + '/sns/userinfo', {
+      .get('https://api.weixin.qq.com/sns/userinfo', {
         params: {
           access_token: token.access_token,
           openid: token.openid,
@@ -59,13 +56,13 @@ export class UserWxService extends BaseService {
   }
 
   /**
-   * 获得token
+   * 获得token嗯
    * @param code
    * @param conf
    */
   async openOrMpToken(code, conf) {
     const result = await axios.get(
-      wxBaseUrl + '/sns/oauth2/access_token',
+      'https://api.weixin.qq.com/sns/oauth2/access_token',
       {
         params: {
           appid: conf.appid,
@@ -86,7 +83,7 @@ export class UserWxService extends BaseService {
   async miniSession(code) {
     const { appid, secret } = this.config.wx.mini;
     const result = await axios.get(
-      wxBaseUrl + '/sns/jscode2session',
+      'https://api.weixin.qq.com/sns/jscode2session',
       {
         params: {
           appid,
@@ -116,10 +113,15 @@ export class UserWxService extends BaseService {
       iv,
       session.session_key
     );
-    delete info['watermark'];
-    info.openid = session['openid'];
-    info.unionid = session['unionid'];
-    return _.pickBy({ ...info });
+    if (info) {
+      delete info['watermark'];
+      return {
+        ...info,
+        openid: session['openid'],
+        unionid: session['unionid'],
+      };
+    }
+    return null;
   }
 
   /**
@@ -147,11 +149,17 @@ export class UserWxService extends BaseService {
     encryptedData = Buffer.from(encryptedData, 'base64');
     iv = Buffer.from(iv, 'base64');
     try {
+      // 解密
       const decipher = crypto.createDecipheriv('aes-128-cbc', sessionKey, iv);
+      // 设置自动 padding 为 true，删除填充补位
       decipher.setAutoPadding(true);
+      // @ts-ignore
       let decoded = decipher.update(encryptedData, 'binary', 'utf8');
+      // @ts-ignore
       decoded += decipher.final('utf8');
-      return JSON.parse(decoded);
+      // @ts-ignore
+      decoded = JSON.parse(decoded);
+      return decoded;
     } catch (err) {
       throw new CoolCommException('获得信息失败');
     }
