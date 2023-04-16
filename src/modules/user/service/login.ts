@@ -99,11 +99,12 @@ export class UserLoginService extends BaseService {
       );
       return this.wxLoginToken(wxUserInfo);
     } else {
-      throw new Error('微信登录失败');
+      throw new CoolCommException('微信登录失败');
     }
   }
 
   /**
+<<<<<<< HEAD
    * 保存微信信息
    * @param wxUserInfo
    * @param type
@@ -120,6 +121,19 @@ export class UserLoginService extends BaseService {
       type,
     });
     return wxUserInfo;
+=======
+   * 保存/更新 微信信息(根据微信规则，用户头像昵称无法在此获取，需要通过chooseAvatar进行获取)
+   * @param wxUserInfo 微信里的用户信息
+   * @returns
+   */
+  async saveWxInfo(wxUserInfo) {
+    const wxInfo = await this.userWxEntity.findOneBy({ openid: wxUserInfo.openid });
+    if (!wxInfo) {
+      await this.userWxEntity.insert(wxInfo);
+    }
+    await this.userWxEntity.save(Object.assign(wxInfo, wxUserInfo));
+    return wxInfo;
+>>>>>>> 6a9a421c61366184f92aea3f742a577d944d2879
   }
 
   /**
@@ -135,21 +149,28 @@ export class UserLoginService extends BaseService {
       iv
     );
     if (wxUserInfo) {
+<<<<<<< HEAD
       // 保存
       wxUserInfo = await this.saveWxInfo(wxUserInfo, 0);
       return await this.wxLoginToken(wxUserInfo);
+=======
+      wxUserInfo = await this.saveWxInfo(wxUserInfo);
+      return this.wxLoginToken(wxUserInfo, 0);
+>>>>>>> 6a9a421c61366184f92aea3f742a577d944d2879
     }
   }
 
   /**
    * 微信登录 获得token
    * @param wxUserInfo 微信用户信息
+   * @param loginType 登录方式 0-小程序 1-公众号 2-H5
    * @returns
    */
-  async wxLoginToken(wxUserInfo) {
+  async wxLoginToken(wxUserInfo, loginType) {
     const unionid = wxUserInfo.unionid ? wxUserInfo.unionid : wxUserInfo.openid;
-    let userInfo: any = await this.userInfoEntity.findOneBy({ unionid });
+    let userInfo: UserInfoEntity = await this.userInfoEntity.findOneBy({ unionid });
     if (!userInfo) {
+<<<<<<< HEAD
       const avatarUrl = await this.file.downAndUpload(
         wxUserInfo.avatarUrl,
         uuid() + '.png'
@@ -183,7 +204,22 @@ export class UserLoginService extends BaseService {
       throw new CoolCommException(
         '刷新token失败，请检查refreshToken是否正确或过期'
       );
+=======
+      userInfo = new UserInfoEntity();
+      Object.assign(userInfo, {
+        unionid,
+        loginType,
+        ...wxUserInfo
+      });
+      await this.userInfoEntity.insert(userInfo);
+>>>>>>> 6a9a421c61366184f92aea3f742a577d944d2879
     }
+    if (userInfo.status === 0) {
+      throw new CoolCommException('您已违规被禁用');
+    }
+    // 更新登录时间
+    await this.userInfoEntity.save(Object.assign(userInfo, wxUserInfo));
+    return this.token({ userId: userInfo.id });
   }
 
   /**
