@@ -9,6 +9,7 @@ import {
   ScopeEnum,
 } from '@midwayjs/decorator';
 import { COOL_URL_TAG_KEY } from '../decorator/tag';
+import * as _ from 'lodash';
 
 /**
  * URL标签
@@ -27,10 +28,10 @@ export class CoolUrlTagData {
         controller
       );
       const data: string[] = this.data[tagOption.key] || [];
-      this.data[tagOption.key] = data.concat(
+      this.data[tagOption.key] = _.uniq(data.concat(
         tagOption.value.map(e => {
           return controllerOption.prefix + '/' + e;
-        })
+        }))
       );
     }
   }

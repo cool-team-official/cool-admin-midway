@@ -66,6 +66,7 @@ export abstract class BaseController {
       return;
     }
     this.baseCtx.request.body = {
+      // @ts-ignore
       ...this.baseCtx.request.body,
       ...(await curdOption.insertParam(this.baseCtx, this.baseApp)),
     };
@@ -115,6 +116,7 @@ export abstract class BaseController {
    * @returns
    */
   async delete() {
+    // @ts-ignore
     const { ids } = this.baseCtx.request.body;
     return this.ok(await this.service.delete(ids));
   }

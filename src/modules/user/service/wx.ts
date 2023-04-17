@@ -2,6 +2,8 @@ import { Config, Provide } from '@midwayjs/decorator';
 import { BaseService, CoolCommException } from '@cool-midway/core';
 import axios from 'axios';
 import * as crypto from 'crypto';
+import { v1 as uuid } from 'uuid';
+import * as moment from 'moment';
 
 /**
  * 微信
@@ -10,6 +12,45 @@ import * as crypto from 'crypto';
 export class UserWxService extends BaseService {
   @Config('module.user')
   config;
+
+  /**
+   * 获得微信配置
+   * @param appId
+   * @param appSecret
+   * @param url 当前网页的URL，不包含#及其后面部分(必须是调用JS接口页面的完整URL)
+   */
+  public async getWxMpConfig(url: string) {
+    const access_token = await this.getWxToken();
+    const ticket = await axios.get(
+      'https://api.weixin.qq.com/cgi-bin/ticket/getticket',
+      {
+        params: {
+          access_token: access_token.data.access_token,
+          type: 'jsapi',
+        },
+      }
+    );
+    const { appid } = this.config.wx.mp;
+    // 返回结果集
+    const result = {
+      timestamp: parseInt(moment().valueOf() / 1000 + ''),
+      nonceStr: uuid(),
+      appId: appid, //appid
+      signature: '',
+    };
+    const signArr = [];
+    signArr.push('jsapi_ticket=' + ticket.data.ticket);
+    signArr.push('noncestr=' + result.nonceStr);
+    signArr.push('timestamp=' + result.timestamp);
+    signArr.push('url=' + decodeURI(url));
+    // 敏感信息加密处理
+    result.signature = crypto
+      .createHash('sha1')
+      .update(signArr.join('&'))
+      .digest('hex')
+      .toUpperCase();
+    return result;
+  }
 
   /**
    * 获得公众号用户信息

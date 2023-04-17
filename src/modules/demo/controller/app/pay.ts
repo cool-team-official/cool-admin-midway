@@ -122,6 +122,12 @@ export class AppDemoPayController extends BaseController {
    */
   @Post('/aliNotify')
   async aliNotify(@Body() body) {
+    const { ciphertext, associated_data, nonce } = body.resource;
+    // 解密数据
+    const data = this.wxPay
+      .getInstance()
+      .decipher_gcm(ciphertext, associated_data, nonce);
+    console.log(data);
     const check = await this.aliPay.signVerify(body);
     // 验签通过，处理业务逻辑
     if (check) {

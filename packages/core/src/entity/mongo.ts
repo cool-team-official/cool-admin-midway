@@ -2,6 +2,7 @@ import {
   Index,
   UpdateDateColumn,
   CreateDateColumn,
+  // @ts-ignore
   ObjectID,
   ObjectIdColumn,
 } from "typeorm";
