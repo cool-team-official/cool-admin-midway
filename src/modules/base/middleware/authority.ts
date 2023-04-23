@@ -59,6 +59,18 @@ export class BaseAuthorityMiddleware
           const rToken = await this.cacheManager.get(
             `admin:token:${ctx.admin.userId}`
           );
+          // 判断密码版本是否正确
+          const passwordV = await this.cacheManager.get(
+            `admin:passwordVersion:${ctx.admin.userId}`
+          );
+          if (passwordV != ctx.admin.passwordVersion) {
+            ctx.status = 401;
+            ctx.body = {
+              code: RESCODE.COMMFAIL,
+              message: '登录失效~',
+            };
+            return;
+          }
           // 超管拥有所有权限
           if (ctx.admin.username == 'admin' && !ctx.admin.isRefresh) {
             if (rToken !== token && this.jwtConfig.jwt.sso) {
@@ -91,19 +103,6 @@ export class BaseAuthorityMiddleware
             };
             return;
           }
-          // 判断密码版本是否正确
-          const passwordV = await this.cacheManager.get(
-            `admin:passwordVersion:${ctx.admin.userId}`
-          );
-          if (passwordV != ctx.admin.passwordVersion) {
-            ctx.status = 401;
-            ctx.body = {
-              code: RESCODE.COMMFAIL,
-              message: '登录失效~',
-            };
-            return;
-          }
-
           if (!rToken) {
             ctx.status = 401;
             ctx.body = {
