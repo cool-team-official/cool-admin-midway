@@ -311,13 +311,13 @@ export class TaskInfoService extends BaseService {
     const task = await this.taskInfoEntity.findOneBy({ id: job.id });
     const nextTime = await this.getNextRunTime(task.id);
     if (task) {
-      if (task.nextRunTime.getTime() == nextTime.getTime()) {
-        task.status = 0;
-        task.nextRunTime = nextTime;
-        this.taskInfoQueue.removeRepeatableByKey(job.key);
-      } else {
-        task.nextRunTime = nextTime;
-      }
+      // if (task.nextRunTime.getTime() == nextTime.getTime()) {
+      //   task.status = 0;
+      //   task.nextRunTime = nextTime;
+      //   this.taskInfoQueue.removeRepeatableByKey(job.key);
+      // } else {
+      task.nextRunTime = nextTime;
+      // }
       await this.taskInfoEntity.update(task.id, task);
     }
   }
