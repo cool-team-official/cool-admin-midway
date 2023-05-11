@@ -1,6 +1,6 @@
 {
   "name": "@cool-midway/core",
-  "version": "6.0.4",
+  "version": "6.0.5",
   "description": "",
   "main": "index.js",
   "typings": "index.d.ts",

@@ -308,6 +308,7 @@ export class CoolFile {
       endpoint,
       expAfter = 300000,
       maxSize = 200 * 1024 * 1024,
+      host,
     } = this.config.oss;
     const oss = {
       bucket,
@@ -317,7 +318,7 @@ export class CoolFile {
       expAfter, // 签名失效时间，毫秒
       maxSize, // 文件最大的 size
     };
-    const host = `https://${bucket}.${endpoint}`;
+    const newHost = host ? host : `https://${bucket}.${endpoint}`;
     const expireTime = new Date().getTime() + oss.expAfter;
     const expiration = new Date(expireTime).toISOString();
     const policyString = JSON.stringify({
@@ -336,7 +337,7 @@ export class CoolFile {
     return {
       signature,
       policy,
-      host,
+      host: newHost,
       OSSAccessKeyId: accessKeyId,
       success_action_status: 200,
     };

@@ -147,6 +147,8 @@ export interface OSSConfig {
   expAfter?: number;
   /** 文件最大的 size */
   maxSize?: number;
+  // host
+  host?: string;
 }
 
 /**
