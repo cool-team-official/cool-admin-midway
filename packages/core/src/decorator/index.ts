@@ -57,7 +57,7 @@ export class CoolDecorator {
             // 执行原始方法
             data = await joinPoint.proceed(...joinPoint.args);
             await this.cacheManager.set(key, JSON.stringify(data), {
-              ttl: options.metadata.ttl,
+              ttl: options.metadata,
             });
           }
           return data;
