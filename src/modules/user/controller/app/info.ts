@@ -22,7 +22,7 @@ export class AppUserInfoController extends BaseController {
     return this.ok(await this.userInfoService.person(this.ctx.user.id));
   }
 
-  @Post('/updatePerson', { summary: '获取用户信息' })
+  @Post('/updatePerson', { summary: '更新用户信息' })
   async updatePerson(@Body() body) {
     return this.ok(
       await this.userInfoService.updatePerson(this.ctx.user.id, body)

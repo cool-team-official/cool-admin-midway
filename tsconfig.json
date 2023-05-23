@@ -13,6 +13,7 @@
     "skipLibCheck": true,
     "pretty": true,
     "declaration": true,
+    "noImplicitAny": false,
     "typeRoots": [ "./typings", "./node_modules/@types"],
     "outDir": "dist"
   },
