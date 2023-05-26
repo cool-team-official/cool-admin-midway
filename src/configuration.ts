@@ -11,6 +11,7 @@ import * as localTask from '@midwayjs/task';
 import * as cool from '@cool-midway/core';
 import * as cloud from '@cool-midway/cloud';
 import * as file from '@cool-midway/file';
+// import * as sms from '@cool-midway/sms';
 // import * as rpc from '@cool-midway/rpc';
 // import * as task from '@cool-midway/task';
 // import * as pay from '@cool-midway/pay';
@@ -46,6 +47,8 @@ import * as file from '@cool-midway/file';
     // pay,
     // 物联网开发，如MQTT支持等
     // iot,
+    // 短信
+    // sms
     {
       component: info,
       enabledEnvironment: ['local'],
