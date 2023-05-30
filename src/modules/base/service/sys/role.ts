@@ -75,7 +75,7 @@ export class BaseSysRoleService extends BaseService {
     await this.baseSysRoleDepartmentEntity.delete({ roleId });
     await Promise.all(
       departmentIds.map(async e => {
-        return await this.baseSysRoleMenuEntity.save({
+        return await this.baseSysRoleDepartmentEntity.save({
           roleId,
           departmentId: e,
         });
