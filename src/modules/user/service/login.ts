@@ -59,8 +59,7 @@ export class UserLoginService extends BaseService {
    */
   async phone(phone, smsCode) {
     // 1、检查短信验证码  2、登录
-    //const check = await this.userSmsService.checkCode(phone, smsCode);
-    const check = true;
+    const check = await this.userSmsService.checkCode(phone, smsCode);
     if (check) {
       let user: any = await this.userInfoEntity.findOneBy({ phone });
       if (!user) {
