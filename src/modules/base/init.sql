@@ -303,28 +303,28 @@ COMMIT;
 -- Table structure for base_sys_param
 -- ----------------------------
 DROP TABLE IF EXISTS `base_sys_param`;
-CREATE TABLE `base_sys_param` (
+CREATE TABLE `base_sys_param`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `createTime` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
   `updateTime` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '更新时间',
-  `keyName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '键位',
+  `keyName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '键',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
   `data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '数据',
-  `dataType` tinyint NOT NULL DEFAULT '0' COMMENT '数据类型 0:字符串 1：数组 2：键值对',
-  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '备注',
+  `dataType` tinyint NOT NULL DEFAULT 0 COMMENT '数据类型 0-字符串 1-富文本 2-文件 ',
+  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE,
-  KEY `IDX_cf19b5e52d8c71caa9c4534454` (`keyName`) USING BTREE,
-  KEY `IDX_7bcb57371b481d8e2d66ddeaea` (`createTime`) USING BTREE,
-  KEY `IDX_479122e3bf464112f7a7253dac` (`updateTime`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  UNIQUE INDEX `IDX_cf19b5e52d8c71caa9c4534454`(`keyName` ASC) USING BTREE,
+  INDEX `IDX_7bcb57371b481d8e2d66ddeaea`(`createTime` ASC) USING BTREE,
+  INDEX `IDX_479122e3bf464112f7a7253dac`(`updateTime` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of base_sys_param
 -- ----------------------------
-BEGIN;
-INSERT INTO `base_sys_param` VALUES (1, '2021-02-26 13:53:05.000000', '2021-03-03 17:50:04.000000', 'text', '富文本参数', '<p><strong class=\"ql-size-huge\">111xxxxx2222<span class=\"ql-cursor\">﻿﻿</span></strong></p>', 0, NULL);
-INSERT INTO `base_sys_param` VALUES (2, '2021-02-26 13:53:18.000000', '2023-03-06 12:18:12.329000', 'json', 'JSON参数', '{\n  \"code\": 111233\n}', 0, NULL);
-COMMIT;
+INSERT INTO `base_sys_param` VALUES (1, '2021-02-26 13:53:05.000000', '2023-05-31 10:43:23.312000', 'rich', '富文本参数', '<h3><strong>这是一个富文本</strong></h3><p>xxx</p><p>xxxxxxxxxx</p><p><br></p>', 1, NULL);
+INSERT INTO `base_sys_param` VALUES (2, '2021-02-26 13:53:18.000000', '2023-05-30 18:46:28.282000', 'json', 'JSON参数', '{\n  \"code\": 111233\n}', 0, NULL);
+INSERT INTO `base_sys_param` VALUES (6, '2023-05-30 18:48:25.371000', '2023-05-31 10:44:25.612000', 'file', '文件', '', 2, NULL);
+INSERT INTO `base_sys_param` VALUES (8, '2023-05-31 10:07:53.295000', '2023-05-31 10:46:27.960000', 'text', '测试', '这是一段字符串', 0, NULL);
 
 -- ----------------------------
 -- Table structure for base_sys_role

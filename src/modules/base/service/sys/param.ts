@@ -1,7 +1,7 @@
 import { Inject, Provide } from '@midwayjs/decorator';
-import { BaseService } from '@cool-midway/core';
+import { BaseService, CoolCommException } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { BaseSysParamEntity } from '../../entity/sys/param';
 import { CacheManager } from '@midwayjs/cache';
 
@@ -24,15 +24,21 @@ export class BaseSysParamService extends BaseService {
     let result: any = await this.cacheManager.get(`param:${key}`);
     if (!result) {
       result = await this.baseSysParamEntity.findOneBy({ keyName: key });
+      this.cacheManager.set(`param:${key}`, result);
     }
     if (result) {
-      if (typeof result == 'string') {
-        result = JSON.parse(result);
+      if (result.dataType == 0) {
+        try {
+          return JSON.parse(result.data);
+        } catch (error) {
+          return result.data;
+        }
       }
-      if (result.dataType !== 0) {
-        return JSON.parse(result.data);
-      } else {
+      if (result.dataType == 1) {
         return result.data;
+      }
+      if (result.dataType == 2) {
+        return result.data.split(',');
       }
     }
     return;
@@ -55,15 +61,30 @@ export class BaseSysParamService extends BaseService {
   }
 
   /**
+   * 添加或者修改
+   * @param param
+   */
+  async addOrUpdate(param: any): Promise<void> {
+    const find = {
+      keyName: param.keyName,
+    };
+    if (param.id) {
+      find['id'] = Not(param.id);
+    }
+    const check = await this.baseSysParamEntity.findOneBy(find);
+    if (check) {
+      throw new CoolCommException('存在相同的keyName');
+    }
+    await super.addOrUpdate(param);
+  }
+
+  /**
    * 重新初始化缓存
    */
   async modifyAfter() {
     const params = await this.baseSysParamEntity.find();
     for (const param of params) {
-      await this.cacheManager.set(
-        `param:${param.keyName}`,
-        JSON.stringify(param)
-      );
+      await this.cacheManager.set(`param:${param.keyName}`, param);
     }
   }
 }
