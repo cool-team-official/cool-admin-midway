@@ -167,6 +167,7 @@ export class BaseSysLoginService extends BaseService {
     await this.cacheManager.del(`admin:perms:${userId}`);
     await this.cacheManager.del(`admin:token:${userId}`);
     await this.cacheManager.del(`admin:token:refresh:${userId}`);
+    await this.cacheManager.del(`admin:passwordVersion:${userId}`);
   }
 
   /**
