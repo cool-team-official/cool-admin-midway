@@ -45,7 +45,7 @@ export default () => {
       // 刷新token 过期时间，单位秒
       refreshExpire: 60 * 60 * 24 * 30,
       // jwt 秘钥
-      secret: 'DJKPASKDPA',
+      secret: 'cool-app-xxxxxx',
     },
   } as ModuleConfig;
 };

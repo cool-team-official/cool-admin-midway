@@ -20,7 +20,7 @@ export default () => {
       // 单点登录
       sso: false,
       // 注意： 最好重新修改，防止破解
-      secret: 'FJPOJSFPAFKPA',
+      secret: 'cool-admin-xxxxxx',
       // token
       token: {
         // 2小时过期，需要用刷新token

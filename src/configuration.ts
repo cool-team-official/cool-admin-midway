@@ -1,5 +1,5 @@
 import * as orm from '@midwayjs/typeorm';
-import { Configuration, App } from '@midwayjs/decorator';
+import { Configuration, App, Config, Inject } from '@midwayjs/decorator';
 import * as koa from '@midwayjs/koa';
 import * as validate from '@midwayjs/validate';
 import * as info from '@midwayjs/info';
@@ -12,6 +12,7 @@ import * as cool from '@cool-midway/core';
 import * as cloud from '@cool-midway/cloud';
 import * as file from '@cool-midway/file';
 import * as sms from '@cool-midway/sms';
+import { ILogger } from '@midwayjs/logger';
 // import * as rpc from '@cool-midway/rpc';
 // import * as task from '@cool-midway/task';
 // import * as pay from '@cool-midway/pay';
@@ -60,5 +61,30 @@ export class ContainerLifeCycle {
   @App()
   app: koa.Application;
 
-  async onReady() {}
+  @Inject()
+  logger: ILogger;
+
+  @Config('module')
+  config;
+
+  async onReady() {
+    // 检查配置
+    await this.checkConfig();
+  }
+
+  /**
+   * 检查配置
+   */
+  async checkConfig() {
+    if (this.config.base.jwt.secret === 'cool-admin-xxxxxx') {
+      this.logger.warn(
+        '安全起见，请修改[base]模块配置文件 config.ts 中的 jwt.secret 为随机字符串'
+      );
+    }
+    if (this.config.user.jwt.secret == 'cool-app-xxxxxx') {
+      this.logger.warn(
+        '安全起见，请修改[user]模块配置文件 config.ts 中的 jwt.secret 为随机字符串'
+      );
+    }
+  }
 }
