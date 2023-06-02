@@ -1,7 +1,6 @@
 import { App, Inject } from '@midwayjs/decorator';
 import { BaseCoolQueue, CoolQueue } from '@cool-midway/task';
 import { TaskInfoService } from '../service/info';
-import { Job } from 'bullmq';
 import { IMidwayApplication } from '@midwayjs/core';
 
 /**
@@ -15,7 +14,7 @@ export abstract class TaskInfoQueue extends BaseCoolQueue {
   @Inject()
   taskInfoService: TaskInfoService;
 
-  async data(job: Job, done: any): Promise<void> {
+  async data(job, done: any): Promise<void> {
     try {
       const result = await this.taskInfoService.invokeService(job.data.service);
       this.taskInfoService.record(job.data, 1, JSON.stringify(result));
