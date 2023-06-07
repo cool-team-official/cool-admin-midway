@@ -72,6 +72,8 @@ export class UserLoginService extends BaseService {
         await this.userInfoEntity.insert(user);
       }
       return this.token({ id: user.id });
+    }else{
+      throw new CoolCommException('验证码错误');
     }
   }
 
