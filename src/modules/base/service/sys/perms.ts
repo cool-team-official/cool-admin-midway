@@ -5,6 +5,9 @@ import { BaseSysRoleService } from './role';
 import { BaseSysDepartmentService } from './department';
 import { Context } from '@midwayjs/koa';
 import { CacheManager } from '@midwayjs/cache';
+import { BaseSysRoleEntity } from '../../entity/sys/role';
+import { In, Repository } from 'typeorm';
+import { InjectEntityModel } from '@midwayjs/typeorm';
 
 /**
  * 权限
@@ -23,8 +26,12 @@ export class BaseSysPermsService extends BaseService {
   @Inject()
   baseSysDepartmentService: BaseSysDepartmentService;
 
+  @InjectEntityModel(BaseSysRoleEntity)
+  baseSysRoleEntity: Repository<BaseSysRoleEntity>;
+
   @Inject()
   ctx: Context;
+  base: any;
 
   /**
    * 刷新权限
@@ -37,9 +44,19 @@ export class BaseSysPermsService extends BaseService {
     // 更新部门权限
     const departments = await this.baseSysDepartmentService.getByRoleIds(
       roleIds,
-      this.ctx.admin.username === 'admin'
+      await this.isAdmin(roleIds)
     );
     await this.cacheManager.set(`admin:department:${userId}`, departments);
+  }
+
+  /**
+   * 根据角色判断是不是超管
+   * @param roleIds
+   */
+  async isAdmin(roleIds: number[]) {
+    const roles = await this.baseSysRoleEntity.findBy({ id: In(roleIds) });
+    const roleLabels = roles.map(item => item.label);
+    return roleLabels.includes('admin');
   }
 
   /**
