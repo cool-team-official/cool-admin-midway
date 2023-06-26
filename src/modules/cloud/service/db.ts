@@ -127,9 +127,10 @@ export class CloudDBService extends BaseService {
       await this.coolCloudDb.createTable(table.content, true);
     }
     // 所有云函数表
+    const { database } = this.coolCloudDb.coolDataSource.options;
     const allTables = (
       await this.coolCloudDb.coolDataSource.query(
-        "SELECT table_name from information_schema.columns where table_name like 'func_%' group by table_name"
+        `SELECT table_name from information_schema.columns where table_schema like '${database}' and table_name like 'func_%' group by table_name`
       )
     ).map(e => {
       return e.TABLE_NAME || e.table_name;
