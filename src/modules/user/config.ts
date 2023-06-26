@@ -16,12 +16,8 @@ export default () => {
     globalMiddlewares: [UserMiddleware],
     // 模块加载顺序，默认为0，值越大越优先加载
     order: 0,
-    // 阿里云短信
+    // 短信
     sms: {
-      signName: '',
-      templateCode: ' ',
-      accessKeyId: '',
-      accessKeySecret: '',
       // 验证码有效期，单位秒
       timeout: 60 * 3,
     },

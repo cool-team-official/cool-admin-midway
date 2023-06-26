@@ -52,7 +52,6 @@ export class BaseSysParamService extends BaseService {
     let html = '<html><body>@content</body></html>';
     let result: any = await this.cacheManager.get(`param:${key}`);
     if (result) {
-      result = JSON.parse(result);
       html = html.replace('@content', result.data);
     } else {
       html = html.replace('@content', 'key notfound');
