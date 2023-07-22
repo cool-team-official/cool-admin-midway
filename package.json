@@ -6,7 +6,7 @@
   "dependencies": {
     "@cool-midway/cache-manager-fs-hash": "^6.0.0",
     "@cool-midway/cloud": "^6.0.0",
-    "@cool-midway/core": "^6.0.6",
+    "@cool-midway/core": "^6.0.7",
     "@cool-midway/file": "^6.0.2",
     "@cool-midway/iot": "^6.0.0",
     "@cool-midway/pay": "^6.0.0",
