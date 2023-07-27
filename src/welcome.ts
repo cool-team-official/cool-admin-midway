@@ -1,7 +1,5 @@
-import { CoolCloudDb } from '@cool-midway/cloud';
 import { App, Controller, Get, Inject } from '@midwayjs/decorator';
 import { Context, Application } from '@midwayjs/koa';
-import { TypeORMDataSourceManager } from '@midwayjs/typeorm';
 
 /**
  * 欢迎界面
@@ -13,12 +11,6 @@ export class WelcomeController {
 
   @App()
   app: Application;
-
-  @Inject()
-  typeORMDataSourceManager: TypeORMDataSourceManager;
-
-  @Inject()
-  coolCloudDb: CoolCloudDb;
 
   @Get('/')
   public async welcome() {
