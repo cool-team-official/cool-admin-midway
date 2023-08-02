@@ -236,7 +236,7 @@ export class CoolFile {
                 throw respErr;
               }
               if (respInfo.statusCode == 200) {
-                resolve(qiniu.publicDomain + '/' + name);
+                resolve(qiniu.publicDomain + '/' + key);
               }
             }
           );
