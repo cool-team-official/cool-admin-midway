@@ -72,7 +72,7 @@ export class UserLoginService extends BaseService {
         await this.userInfoEntity.insert(user);
       }
       return this.token({ id: user.id });
-    }else{
+    } else {
       throw new CoolCommException('验证码错误');
     }
   }
@@ -177,9 +177,9 @@ export class UserLoginService extends BaseService {
         throw new CoolCommException('token类型非refreshToken');
       }
       const userInfo = await this.userInfoEntity.findOneBy({
-        id: info['userId'],
+        id: info['id'],
       });
-      return this.token(userInfo);
+      return this.token({ id: userInfo.id });
     } catch (e) {
       throw new CoolCommException(
         '刷新token失败，请检查refreshToken是否正确或过期'
