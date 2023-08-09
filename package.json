@@ -36,7 +36,6 @@
     "mysql2": "^3.3.3",
     "svg-captcha": "^1.4.0",
     "svg2png-wasm": "^1.4.0",
-    "tencentcloud-sdk-nodejs": "^4.0.612",
     "typeorm": "^0.3.16",
     "uuid": "^9.0.0"
   },
