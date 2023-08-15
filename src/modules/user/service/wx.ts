@@ -1,5 +1,5 @@
 import { Config, Provide } from '@midwayjs/decorator';
-import { BaseService, CoolCommException } from '@cool-midway/core';
+import { BaseService, CoolCache, CoolCommException } from '@cool-midway/core';
 import axios from 'axios';
 import * as crypto from 'crypto';
 import { v1 as uuid } from 'uuid';
@@ -20,12 +20,12 @@ export class UserWxService extends BaseService {
    * @param url 当前网页的URL，不包含#及其后面部分(必须是调用JS接口页面的完整URL)
    */
   public async getWxMpConfig(url: string) {
-    const access_token = await this.getWxToken();
+    const token = await this.getWxToken();
     const ticket = await axios.get(
       'https://api.weixin.qq.com/cgi-bin/ticket/getticket',
       {
         params: {
-          access_token: access_token.data.access_token,
+          access_token: token.access_token,
           type: 'jsapi',
         },
       }
@@ -66,16 +66,18 @@ export class UserWxService extends BaseService {
    * @param appid
    * @param secret
    */
+  @CoolCache(3600)
   public async getWxToken(type = 'mp') {
     //@ts-ignore
     const conf = this.config.wx[type];
-    return await axios.get('https://api.weixin.qq.com/cgi-bin/token', {
+    const result = await axios.get('https://api.weixin.qq.com/cgi-bin/token', {
       params: {
         grant_type: 'client_credential',
         appid: conf.appid,
         secret: conf.secret,
       },
     });
+    return result.data;
   }
 
   /**
