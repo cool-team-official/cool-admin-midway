@@ -12,15 +12,16 @@
 
 ## 技术栈
 
-- 后端：**`node.js` `midway.js` `egg.js` `mysql` `typescript`**
+- 后端：**`node.js` `midway.js` `koa.js` `mysql` `typescript`**
 - 前端：**`vue.js` `element-plus` `jsx` `pinia` `vue-router`**
 
 如果你是前端，后端的这些技术选型对你是特别友好的，前端开发者可以较快速地上手。
 如果你是后端，Typescript 的语法又跟 java、php 等特别类似，一切看起来也是那么得熟悉。
 
 <!-- 在此次添加使用文档 -->
-
 ## 演示
+
+[AI极速编码](https://www.bilibili.com/video/BV1K84y137z1)
 
 [https://show.cool-admin.com](https://show.cool-admin.com)
 
@@ -31,7 +32,7 @@
 
 #### 文档
 
-[https://admin.cool-js.com](https://admin.cool-js.com)
+[https://cool-js.com](https://cool-js.com)
 
 #### 项目前端
 
@@ -45,7 +46,7 @@
 
 #### 修改数据库配置，配置文件位于`src/config/config.local.ts`
 
-数据库为 mysql(`>=5.7版本`)，建议 8.0，node 版本(`>=12.x`)，首次启动会自动初始化并导入数据
+数据库为 mysql(`>=5.7版本`)，建议 8.0，node 版本(`>=16.x`)，建议 18.x，首次启动会自动初始化并导入数据
 
 ```ts
 typeorm: {
