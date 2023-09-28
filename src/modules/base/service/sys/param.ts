@@ -63,7 +63,7 @@ export class BaseSysParamService extends BaseService {
    * 添加或者修改
    * @param param
    */
-  async addOrUpdate(param: any): Promise<void> {
+  async addOrUpdate(param: any, type): Promise<void> {
     const find = {
       keyName: param.keyName,
     };
@@ -74,7 +74,7 @@ export class BaseSysParamService extends BaseService {
     if (check) {
       throw new CoolCommException('存在相同的keyName');
     }
-    await super.addOrUpdate(param);
+    await super.addOrUpdate(param, type);
   }
 
   /**

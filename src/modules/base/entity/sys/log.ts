@@ -11,7 +11,7 @@ export class BaseSysLogEntity extends BaseEntity {
   userId: number;
 
   @Index()
-  @Column({ comment: '行为', length: 100 })
+  @Column({ comment: '行为' })
   action: string;
 
   @Index()

@@ -81,7 +81,7 @@ export class CloudDBService extends BaseService {
    * @param param
    * @returns
    */
-  async addOrUpdate(param) {
+  async addOrUpdate(param, type) {
     const { tableName, className } = this.coolCloudDb.parseCode(param.content);
     // 更新
     if (param.id) {
@@ -108,11 +108,14 @@ export class CloudDBService extends BaseService {
         throw new CoolCommException('已存在相同的类名');
       }
     }
-    await super.addOrUpdate({
-      ...param,
-      tableName,
-      className: className.replace('CLOUD', ''),
-    });
+    await super.addOrUpdate(
+      {
+        ...param,
+        tableName,
+        className: className.replace('CLOUD', ''),
+      },
+      type
+    );
   }
 
   /**
