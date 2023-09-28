@@ -14,6 +14,7 @@ import { Context } from '@midwayjs/koa';
   service: BaseSysParamService,
   pageQueryOp: {
     keyWordLikeFields: ['name', 'keyName'],
+    fieldEq: ['dataType'],
   },
 })
 export class BaseSysParamController extends BaseController {
