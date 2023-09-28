@@ -7,6 +7,31 @@ body {
     background: #222;
 }
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.footer-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    color: #6ee1f5;
+    padding: 10px 0 20px 0;
+    text-align: center;
+    opacity: 0; /* 开始时隐藏 */
+    animation: fadeIn 5s forwards;  /* 应用动画 */
+}
+
+.link {
+    color: #6ee1f5;
+}
+
 .reveal {
     position: relative;
     display: flex;

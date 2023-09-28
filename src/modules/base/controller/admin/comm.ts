@@ -1,10 +1,5 @@
 import { Provide, Inject, Get, Post, Body, ALL } from '@midwayjs/decorator';
-import {
-  CoolController,
-  BaseController,
-  CoolUrlTag,
-  TagTypes,
-} from '@cool-midway/core';
+import { CoolController, BaseController } from '@cool-midway/core';
 import { BaseSysUserEntity } from '../../entity/sys/user';
 import { BaseSysLoginService } from '../../service/sys/login';
 import { BaseSysPermsService } from '../../service/sys/perms';
@@ -15,10 +10,6 @@ import { CoolFile } from '@cool-midway/file';
 /**
  * Base 通用接口 一般写不需要权限过滤的接口
  */
-@CoolUrlTag({
-  key: TagTypes.IGNORE_TOKEN,
-  value: ['eps'],
-})
 @Provide()
 @CoolController()
 export class BaseCommController extends BaseController {

@@ -49,7 +49,7 @@ export class UserLoginService extends BaseService {
     if (!check) {
       throw new CoolCommException('图片验证码错误');
     }
-    this.userSmsService.sendSms(phone);
+    await this.userSmsService.sendSms(phone);
   }
 
   /**

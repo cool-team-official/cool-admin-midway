@@ -32,4 +32,15 @@ export class BaseSysMenuController extends BaseController {
     await this.baseSysMenuService.create(body);
     return this.ok();
   }
+
+  @Post('/export', { summary: '导出' })
+  async export(@Body('ids') ids: number[]) {
+    return this.ok(await this.baseSysMenuService.export(ids));
+  }
+
+  @Post('/import', { summary: '导入' })
+  async import(@Body('menus') menus: any[]) {
+    await this.baseSysMenuService.import(menus);
+    return this.ok();
+  }
 }

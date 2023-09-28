@@ -246,7 +246,8 @@ export class TaskInfoService extends BaseService {
    * 初始化任务
    */
   async initTask() {
-    setTimeout(async () => {
+    try {
+      await this.utils.sleep(3000);
       this.logger.info('init task....');
       const runningTasks = await this.taskInfoEntity.findBy({ status: 1 });
       if (!_.isEmpty(runningTasks)) {
@@ -258,7 +259,7 @@ export class TaskInfoService extends BaseService {
           }
         }
       }
-    }, 3000);
+    } catch (e) {}
   }
 
   /**

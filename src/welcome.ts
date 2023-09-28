@@ -15,7 +15,7 @@ export class WelcomeController {
   @Get('/')
   public async welcome() {
     await this.ctx.render('welcome', {
-      text: 'HELLO COOL-ADMIN 6.x 一个项目用COOL就够了！！！',
+      text: 'HELLO COOL-ADMIN v7.0 一个项目用COOL就够了！！！',
     });
   }
 }

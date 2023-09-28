@@ -4,6 +4,7 @@ import {
   BaseController,
   CoolUrlTag,
   TagTypes,
+  CoolTag,
 } from '@cool-midway/core';
 import { DictInfoService } from '../../service/info';
 
@@ -12,14 +13,12 @@ import { DictInfoService } from '../../service/info';
  */
 @Provide()
 @CoolController()
-@CoolUrlTag({
-  key: TagTypes.IGNORE_TOKEN,
-  value: ['data'],
-})
+@CoolUrlTag()
 export class AppDictInfoController extends BaseController {
   @Inject()
   dictInfoService: DictInfoService;
 
+  @CoolTag(TagTypes.IGNORE_TOKEN)
   @Post('/data', { summary: '获得字典数据' })
   async data(@Body('types') types: string[] = []) {
     return this.ok(await this.dictInfoService.data(types));

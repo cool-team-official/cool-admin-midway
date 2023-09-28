@@ -67,24 +67,5 @@ export class ContainerLifeCycle {
   @Config('module')
   config;
 
-  async onReady() {
-    // 检查配置
-    await this.checkConfig();
-  }
-
-  /**
-   * 检查配置
-   */
-  async checkConfig() {
-    if (this.config.base.jwt.secret === 'cool-admin-xxxxxx') {
-      this.logger.warn(
-        '安全起见，请修改[base]模块配置文件 config.ts 中的 jwt.secret 为随机字符串'
-      );
-    }
-    if (this.config.user.jwt.secret == 'cool-app-xxxxxx') {
-      this.logger.warn(
-        '安全起见，请修改[user]模块配置文件 config.ts 中的 jwt.secret 为随机字符串'
-      );
-    }
-  }
+  async onReady() {}
 }

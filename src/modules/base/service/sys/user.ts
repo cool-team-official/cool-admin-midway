@@ -172,9 +172,13 @@ export class BaseSysUserService extends BaseService {
     param.id = this.ctx.admin.userId;
     if (!_.isEmpty(param.password)) {
       param.password = md5(param.password);
+      const oldPassword = md5(param.oldPassword);
       const userInfo = await this.baseSysUserEntity.findOneBy({ id: param.id });
       if (!userInfo) {
         throw new CoolCommException('用户不存在');
+      }
+      if (oldPassword !== userInfo.password) {
+        throw new CoolCommException('原密码错误');
       }
       param.passwordV = userInfo.passwordV + 1;
       await this.cacheManager.set(

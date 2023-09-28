@@ -1,8 +1,8 @@
-import { App, IMidwayApplication } from '@midwayjs/core';
+import { App, IMidwayApplication, Scope, ScopeEnum } from '@midwayjs/core';
 import { ALL, Config, Inject, Provide } from '@midwayjs/decorator';
 import { BaseService, CoolCommException } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { BaseSysMenuEntity } from '../../entity/sys/menu';
 import * as _ from 'lodash';
 import { BaseSysPermsService } from './perms';
@@ -16,6 +16,7 @@ import * as pathUtil from 'path';
 /**
  * 菜单
  */
+@Scope(ScopeEnum.Request, { allowDowngrade: true })
 @Provide()
 export class BaseSysMenuService extends BaseService {
   @Inject()
@@ -188,7 +189,7 @@ export class BaseSysMenuService extends BaseService {
     });
     // 连接数据库
     await tempDataSource.initialize();
-    const { newCode, className } = this.parseCode(entityString);
+    const { newCode, className, oldTableName } = this.parseCode(entityString);
     const code = ts.transpile(
       `${newCode}
         tempDataSource.options.entities.push(${className})
@@ -198,13 +199,22 @@ export class BaseSysMenuService extends BaseService {
         module: ts.ModuleKind.CommonJS,
         target: ts.ScriptTarget.ES2018,
         removeComments: true,
+        experimentalDecorators: true,
+        noImplicitThis: true,
+        noUnusedLocals: true,
+        stripInternal: true,
+        skipLibCheck: true,
+        pretty: true,
+        declaration: true,
+        noImplicitAny: false,
       }
     );
     eval(code);
     await tempDataSource.buildMetadatas();
-    const columnArr = tempDataSource.getMetadata(className).columns;
+    const meta = tempDataSource.getMetadata(className);
+    const columnArr = meta.columns;
     await tempDataSource.destroy();
-    const fileName = await this.fileName(controller);
+
     const commColums = [];
     const columns = _.filter(
       columnArr.map(e => {
@@ -223,6 +233,18 @@ export class BaseSysMenuService extends BaseService {
         return o && !['createTime', 'updateTime'].includes(o.propertyName);
       }
     ).concat(commColums);
+    if (!controller) {
+      const tableNames = oldTableName.split('_');
+      const fileName = tableNames[tableNames.length - 1];
+      return {
+        columns,
+        className: className.replace('TEMP', ''),
+        tableName: oldTableName,
+        fileName,
+        path: `/admin/${module}/${fileName}`,
+      };
+    }
+    const fileName = await this.fileName(controller);
     return {
       columns,
       path: `/admin/${module}/${fileName}`,
@@ -256,6 +278,7 @@ export class BaseSysMenuService extends BaseService {
           .replace(oldTableName, `func_${oldTableName}`),
         className,
         tableName: `func_${oldTableName}`,
+        oldTableName,
       };
     } catch (err) {
       throw new CoolCommException('代码结构不正确，请检查');
@@ -267,9 +290,9 @@ export class BaseSysMenuService extends BaseService {
    * @param body body
    */
   async create(body) {
-    const { module, entity, controller } = body;
+    const { module, entity, controller, fileName } = body;
     const basePath = this.app.getBaseDir();
-    const fileName = await this.fileName(controller);
+    // const fileName = await this.fileName(controller);
     // 生成Entity
     const entityPath = pathUtil.join(
       basePath,
@@ -356,5 +379,82 @@ export default () => {
       fs.mkdirSync(folderPath, { recursive: true });
     }
     fs.writeFileSync(filePath, content);
+  }
+
+  /**
+   * 导出菜单
+   * @param ids
+   * @returns
+   */
+  async export(ids: number[]) {
+    const result: any[] = [];
+    const menus = await this.baseSysMenuEntity.findBy({ id: In(ids) });
+
+    // 递归取出子菜单
+    const getChildMenus = (parentId: number): any[] => {
+      const children = _.remove(menus, e => e.parentId == parentId);
+      children.forEach(child => {
+        child.childMenus = getChildMenus(child.id);
+        // 删除不需要的字段
+        delete child.id;
+        delete child.createTime;
+        delete child.updateTime;
+        delete child.parentId;
+      });
+      return children;
+    };
+
+    // lodash取出父级菜单(parentId为 null)， 并从menus 删除
+    const parentMenus = _.remove(menus, e => {
+      return e.parentId == null;
+    });
+
+    // 对于每个父级菜单，获取它的子菜单
+    parentMenus.forEach(parent => {
+      parent.childMenus = getChildMenus(parent.id);
+      // 删除不需要的字段
+      delete parent.id;
+      delete parent.createTime;
+      delete parent.updateTime;
+      delete parent.parentId;
+
+      result.push(parent);
+    });
+
+    return result;
+  }
+
+  /**
+   * 导入
+   * @param menus
+   */
+  async import(menus: any[]) {
+    // 递归保存子菜单
+    const saveChildMenus = async (parentMenu: any, parentId: number | null) => {
+      const children = parentMenu.childMenus || [];
+      for (let child of children) {
+        const childData = { ...child, parentId: parentId }; // 保持与数据库的parentId字段的一致性
+        delete childData.childMenus; // 删除childMenus属性，因为我们不想将它保存到数据库中
+
+        // 保存子菜单并获取其ID，以便为其子菜单设置parentId
+        const savedChild = await this.baseSysMenuEntity.save(childData);
+
+        if (!_.isEmpty(child.childMenus)) {
+          await saveChildMenus(child, savedChild.id);
+        }
+      }
+    };
+
+    for (let menu of menus) {
+      const menuData = { ...menu };
+      delete menuData.childMenus; // 删除childMenus属性，因为我们不想将它保存到数据库中
+
+      // 保存主菜单并获取其ID
+      const savedMenu = await this.baseSysMenuEntity.save(menuData);
+
+      if (menu.childMenus && menu.childMenus.length > 0) {
+        await saveChildMenus(menu, savedMenu.id);
+      }
+    }
   }
 }

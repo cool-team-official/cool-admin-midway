@@ -12,6 +12,6 @@ export class AppEvent {
 
   @Event('onServerReady')
   async onServerReady() {
-    await this.taskInfoService.initTask();
+    this.taskInfoService.initTask();
   }
 }

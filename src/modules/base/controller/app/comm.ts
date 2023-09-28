@@ -1,21 +1,20 @@
-import { Provide, Inject, Get, Post } from '@midwayjs/decorator';
+import { Provide, Inject, Get, Post, Query } from '@midwayjs/decorator';
 import {
   CoolController,
   BaseController,
   CoolEps,
   TagTypes,
   CoolUrlTag,
+  CoolTag,
 } from '@cool-midway/core';
 import { Context } from '@midwayjs/koa';
 import { CoolFile } from '@cool-midway/file';
+import { BaseSysParamService } from '../../service/sys/param';
 
 /**
  * 不需要登录的后台接口
  */
-@CoolUrlTag({
-  key: TagTypes.IGNORE_TOKEN,
-  value: ['eps'],
-})
+@CoolUrlTag()
 @Provide()
 @CoolController()
 export class BaseAppCommController extends BaseController {
@@ -28,10 +27,19 @@ export class BaseAppCommController extends BaseController {
   @Inject()
   eps: CoolEps;
 
+  @Inject()
+  baseSysParamService: BaseSysParamService;
+
+  @Get('/param', { summary: '参数配置' })
+  async param(@Query('key') key: string) {
+    return this.ok(await this.baseSysParamService.dataByKey(key));
+  }
+
   /**
    * 实体信息与路径
    * @returns
    */
+  @CoolTag(TagTypes.IGNORE_TOKEN)
   @Get('/eps', { summary: '实体信息与路径' })
   public async getEps() {
     return this.ok(this.eps.app);

@@ -58,9 +58,12 @@ export class BaseOpenController extends BaseController {
   async captcha(
     @Query('type') type: string,
     @Query('width') width: number,
-    @Query('height') height: number
+    @Query('height') height: number,
+    @Query('color') color: string
   ) {
-    return this.ok(await this.baseSysLoginService.captcha(type, width, height));
+    return this.ok(
+      await this.baseSysLoginService.captcha(type, width, height, color)
+    );
   }
 
   /**

@@ -28,8 +28,10 @@ export default {
     },
   },
   cool: {
-    // 是否自动导入数据库
+    // 是否自动导入模块数据库
     initDB: true,
+    // 是否自动导入模块菜单
+    initMenu: true,
     // crud配置
     crud: {
       // 软删除
