@@ -148,15 +148,11 @@ export class DemoAppGoodsController extends BaseController {
 
 ### 部署
 
-```bash
-$ npm start
-$ npm stop
-```
+[部署教程](https://cool-js.com/admin/node/other/deploy.html)
 
 ### 内置指令
 
 - 使用 `npm run lint` 来做代码风格检查。
-- 使用 `npm test` 来执行单元测试。
 
 [midway]: https://midwayjs.org
 
