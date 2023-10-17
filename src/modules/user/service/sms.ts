@@ -40,7 +40,7 @@ export class UserSmsService extends BaseService {
    */
   async checkCode(phone, code) {
     const cacheCode = await this.cacheManager.get(`sms:${phone}`);
-    if (cacheCode === code) {
+    if (cacheCode == code) {
       return true;
     }
     return false;
