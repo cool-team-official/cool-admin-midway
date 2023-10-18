@@ -15,6 +15,8 @@ export default () => {
     globalMiddlewares: [BaseAuthorityMiddleware, BaseLogMiddleware],
     // 模块加载顺序，默认为0，值越大越优先加载
     order: 10,
+    // app参数配置允许读取的key
+    allowKeys: [],
     // jwt 生成解密token的
     jwt: {
       // 单点登录

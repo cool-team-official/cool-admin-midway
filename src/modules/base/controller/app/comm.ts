@@ -24,14 +24,21 @@ export class BaseAppCommController extends BaseController {
   @Inject()
   ctx: Context;
 
+  @Inject('module.base.allowKeys')
+  allowKeys: string[];
+
   @Inject()
   eps: CoolEps;
 
   @Inject()
   baseSysParamService: BaseSysParamService;
 
+  @CoolTag(TagTypes.IGNORE_TOKEN)
   @Get('/param', { summary: '参数配置' })
   async param(@Query('key') key: string) {
+    if (!this.allowKeys.indexOf(key)) {
+      return this.fail('非法操作');
+    }
     return this.ok(await this.baseSysParamService.dataByKey(key));
   }
 
