@@ -23,7 +23,7 @@ export class UserMiddleware implements IMiddleware<Context, NextFunction> {
 
   resolve() {
     return async (ctx: Context, next: NextFunction) => {
-      this.ignoreUrls = this.ignoreUrls.concat(
+      const ignoreUrls = this.ignoreUrls.concat(
         this.coolUrlTagData.byKey(TagTypes.IGNORE_TOKEN)
       );
       let { url } = ctx;
@@ -41,7 +41,7 @@ export class UserMiddleware implements IMiddleware<Context, NextFunction> {
             return;
           }
         } catch (error) {}
-        if (this.ignoreUrls.includes(url)) {
+        if (ignoreUrls.includes(url)) {
           await next();
           return;
         } else {
