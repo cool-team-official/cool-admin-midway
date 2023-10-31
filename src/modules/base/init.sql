@@ -622,12 +622,12 @@ CREATE TABLE `base_sys_user` (
 -- Records of base_sys_user
 -- ----------------------------
 BEGIN;
-INSERT INTO `base_sys_user` VALUES (1, '2021-02-24 21:16:41.525157', '2023-03-08 15:11:51.000000', 1, '超级管理员', 'admin', 'e10adc3949ba59abbe56e057f20f883e', 7, '管理员', 'https://show.cool-admin.com/api/public/uploads/20230308/c731b0cba84046268b10edbbcf36f948_315c243a448e1369fa145c5ea3f020da.gif', '18000000000', 'team@cool-js.com', 1, '拥有最高权限的用户', NULL);
-INSERT INTO `base_sys_user` VALUES (24, '2021-02-26 14:17:38.000000', '2023-03-06 20:18:58.000000', 1, '小白', 'xiaobai', 'e10adc3949ba59abbe56e057f20f883e', 1, '小白', 'https://show.cool-admin.com/api/public/uploads/20230306/2e8a293ebfd8495083af93da141b045e_f85bccf6f4cf4890aea4e963e658fb94_1675933340_tplv-dy-cropcenter_323_430.jpg', NULL, NULL, 1, NULL, NULL);
-INSERT INTO `base_sys_user` VALUES (25, '2021-02-26 14:28:25.000000', '2023-03-06 20:18:53.000000', 1, '小黑', 'xiaohei', 'e10adc3949ba59abbe56e057f20f883e', 1, '小黑', 'https://show.cool-admin.com/api/public/uploads/20230306/0bd3095dd14c4ef89cf1e04c66b62900_e7b3653e07224702a1e8f246453d7d72_tplv-dy-cropcenter_323_430.jpg', NULL, NULL, 1, NULL, NULL);
-INSERT INTO `base_sys_user` VALUES (26, '2021-02-26 14:28:49.000000', '2023-03-06 20:18:48.000000', 1, '小绿', 'xiaolv', 'e10adc3949ba59abbe56e057f20f883e', 1, '小绿', 'https://show.cool-admin.com/api/public/uploads/20230306/84bff75c07e44eff9beef880fd91e9cb_467d1550bcfc46968deb294b756ff52e_1674986122_tplv-dy-cropcenter_323_430.jpg', NULL, NULL, 1, NULL, NULL);
-INSERT INTO `base_sys_user` VALUES (27, '2021-02-26 14:29:23.000000', '2023-03-07 13:15:00.000000', 1, '小青', 'xiaoqin', 'e10adc3949ba59abbe56e057f20f883e', 1, '小青', 'https://show.cool-admin.com/api/public/uploads/20230306/fb49e291d4a44c659367f17751699e04_2c0f4758d8484271be34081c8fe49adc_1675679254_tplv-dy-cropcenter_323_430.jpg', NULL, NULL, 1, NULL, NULL);
-INSERT INTO `base_sys_user` VALUES (28, '2021-02-26 14:29:52.000000', '2023-03-06 19:57:46.000000', 1, '神仙都没用', 'icssoa', 'e10adc3949ba59abbe56e057f20f883e', 1, '神仙都没用', 'https://show.cool-admin.com/api/public/uploads/20230306/26942e8aa783427f8ad73c1a10fcac6f_eb26da2fc07940b1bb63f1510933eb01_1676971271_tplv-dy-cropcenter_323_430.jpg', NULL, NULL, 1, NULL, NULL);
+INSERT INTO `base_sys_user` VALUES (1, '2021-02-24 21:16:41.525157', '2023-03-08 15:11:51.000000', 1, '超级管理员', 'admin', 'e10adc3949ba59abbe56e057f20f883e', 7, '管理员', 'https://cool-js.com/admin/headimg.jpg', '18000000000', 'team@cool-js.com', 1, '拥有最高权限的用户', NULL);
+INSERT INTO `base_sys_user` VALUES (24, '2021-02-26 14:17:38.000000', '2023-03-06 20:18:58.000000', 1, '小白', 'xiaobai', 'e10adc3949ba59abbe56e057f20f883e', 1, '小白', 'https://cool-js.com/admin/headimg.jpg', NULL, NULL, 1, NULL, NULL);
+INSERT INTO `base_sys_user` VALUES (25, '2021-02-26 14:28:25.000000', '2023-03-06 20:18:53.000000', 1, '小黑', 'xiaohei', 'e10adc3949ba59abbe56e057f20f883e', 1, '小黑', 'https://cool-js.com/admin/headimg.jpg', NULL, NULL, 1, NULL, NULL);
+INSERT INTO `base_sys_user` VALUES (26, '2021-02-26 14:28:49.000000', '2023-03-06 20:18:48.000000', 1, '小绿', 'xiaolv', 'e10adc3949ba59abbe56e057f20f883e', 1, '小绿', 'https://cool-js.com/admin/headimg.jpg', NULL, NULL, 1, NULL, NULL);
+INSERT INTO `base_sys_user` VALUES (27, '2021-02-26 14:29:23.000000', '2023-03-07 13:15:00.000000', 1, '小青', 'xiaoqin', 'e10adc3949ba59abbe56e057f20f883e', 1, '小青', 'https://cool-js.com/admin/headimg.jpg', NULL, NULL, 1, NULL, NULL);
+INSERT INTO `base_sys_user` VALUES (28, '2021-02-26 14:29:52.000000', '2023-03-06 19:57:46.000000', 1, '神仙都没用', 'icssoa', 'e10adc3949ba59abbe56e057f20f883e', 1, '神仙都没用', 'https://cool-js.com/admin/headimg.jpg', NULL, NULL, 1, NULL, NULL);
 COMMIT;
 
 -- ----------------------------
