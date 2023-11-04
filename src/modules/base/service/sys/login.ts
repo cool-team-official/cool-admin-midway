@@ -248,7 +248,6 @@ export class BaseSysLoginService extends BaseService {
         return result;
       }
     } catch (err) {
-      console.log(err);
       this.ctx.status = 401;
       this.ctx.body = {
         code: RESCODE.COMMFAIL,
