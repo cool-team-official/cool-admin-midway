@@ -1,4 +1,4 @@
-import { Provide, Inject, Get, Post, Query } from '@midwayjs/decorator';
+import { Provide, Inject, Get, Post, Query, Config } from '@midwayjs/decorator';
 import {
   CoolController,
   BaseController,
@@ -24,7 +24,7 @@ export class BaseAppCommController extends BaseController {
   @Inject()
   ctx: Context;
 
-  @Inject('module.base.allowKeys')
+  @Config('module.base.allowKeys')
   allowKeys: string[];
 
   @Inject()
