@@ -36,7 +36,7 @@ export class BaseAppCommController extends BaseController {
   @CoolTag(TagTypes.IGNORE_TOKEN)
   @Get('/param', { summary: '参数配置' })
   async param(@Query('key') key: string) {
-    if (!this.allowKeys.indexOf(key)) {
+    if (!this.allowKeys.includes(key)) {
       return this.fail('非法操作');
     }
     return this.ok(await this.baseSysParamService.dataByKey(key));
