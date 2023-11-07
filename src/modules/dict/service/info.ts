@@ -50,7 +50,13 @@ export class DictInfoService extends BaseService {
       .addOrderBy('a.createTime', 'ASC')
       .getMany();
     for (const item of typeData) {
-      result[item.key] = _.filter(data, { typeId: item.id });
+      result[item.key] = _.filter(data, { typeId: item.id }).map(e => {
+        const value = Number(e.value);
+        return {
+          ...e,
+          value: isNaN(value) ? e.value : value,
+        };
+      });
     }
     return result;
   }
