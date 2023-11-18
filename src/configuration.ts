@@ -13,6 +13,7 @@ import * as cloud from '@cool-midway/cloud';
 import * as file from '@cool-midway/file';
 import * as sms from '@cool-midway/sms';
 import { ILogger } from '@midwayjs/logger';
+// import * as swagger from '@midwayjs/swagger';
 // import * as rpc from '@cool-midway/rpc';
 // import * as task from '@cool-midway/task';
 // import * as pay from '@cool-midway/pay';
@@ -50,6 +51,8 @@ import { ILogger } from '@midwayjs/logger';
     // iot,
     // 短信
     sms,
+    // swagger 文档
+    // swagger,
     {
       component: info,
       enabledEnvironment: ['local'],

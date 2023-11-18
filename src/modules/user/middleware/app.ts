@@ -1,6 +1,6 @@
 import { ALL, Config, Middleware } from '@midwayjs/decorator';
 import { NextFunction, Context } from '@midwayjs/koa';
-import { IMiddleware, Inject } from '@midwayjs/core';
+import { IMiddleware, Init, Inject } from '@midwayjs/core';
 import * as jwt from 'jsonwebtoken';
 import * as _ from 'lodash';
 import { CoolUrlTagData, RESCODE, TagTypes } from '@cool-midway/core';
@@ -19,13 +19,15 @@ export class UserMiddleware implements IMiddleware<Context, NextFunction> {
   @Config('module.user.jwt')
   jwtConfig;
 
-  protected ignoreUrls = [];
+  ignoreUrls: string[] = [];
+
+  @Init()
+  async init() {
+    this.ignoreUrls = this.coolUrlTagData.byKey(TagTypes.IGNORE_TOKEN, 'app');
+  }
 
   resolve() {
     return async (ctx: Context, next: NextFunction) => {
-      const ignoreUrls = this.ignoreUrls.concat(
-        this.coolUrlTagData.byKey(TagTypes.IGNORE_TOKEN)
-      );
       let { url } = ctx;
       url = url.split('?')[0];
       if (_.startsWith(url, '/app/')) {
@@ -41,7 +43,7 @@ export class UserMiddleware implements IMiddleware<Context, NextFunction> {
             return;
           }
         } catch (error) {}
-        if (ignoreUrls.includes(url)) {
+        if (this.ignoreUrls.includes(url)) {
           await next();
           return;
         } else {
