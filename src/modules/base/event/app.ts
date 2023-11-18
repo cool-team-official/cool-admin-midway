@@ -1,10 +1,9 @@
 import { CoolEvent, Event } from '@cool-midway/core';
-import { App, Config, ILogger, Inject, Logger } from '@midwayjs/core';
+import { App, Config, ILogger, Logger } from '@midwayjs/core';
 import { IMidwayKoaApplication } from '@midwayjs/koa';
 import * as fs from 'fs';
 import * as path from 'path';
 import { v1 as uuid } from 'uuid';
-import { BaseSwaggerIndex } from '../swagger.ts';
 
 /**
  * 修改jwt.secret
@@ -20,12 +19,8 @@ export class BaseAppEvent {
   @App()
   app: IMidwayKoaApplication;
 
-  @Inject()
-  baseSwaggerIndex: BaseSwaggerIndex;
-
   @Event('onServerReady')
   async onServerReady() {
-    this.baseSwaggerIndex.init();
     if (this.config.base.jwt.secret == 'cool-admin-xxxxxx') {
       const filePath = path.join(
         this.app.getBaseDir(),
