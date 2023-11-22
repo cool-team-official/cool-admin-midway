@@ -39,7 +39,7 @@ export class BaseAuthorityMiddleware
     return async (ctx: Context, next: NextFunction) => {
       let statusCode = 200;
       let { url } = ctx;
-      url = url.replace(this.prefix, '');
+      url = url.replace(this.prefix, '').split('?')[0];
       const token = ctx.get('Authorization');
       const adminUrl = '/admin/';
       // 路由地址为 admin前缀的 需要权限校验

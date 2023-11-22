@@ -1,5 +1,5 @@
 import { Inject, Provide, Config } from '@midwayjs/decorator';
-import { BaseService, CoolCommException, RESCODE } from '@cool-midway/core';
+import { BaseService, CoolCommException } from '@cool-midway/core';
 import { LoginDTO } from '../../dto/login';
 import * as svgCaptcha from 'svg-captcha';
 import { v1 as uuid } from 'uuid';
@@ -217,43 +217,34 @@ export class BaseSysLoginService extends BaseService {
    * @param token
    */
   async refreshToken(token: string) {
-    try {
-      const decoded = jwt.verify(token, this.coolConfig.jwt.secret);
-      if (decoded && decoded['isRefresh']) {
-        delete decoded['exp'];
-        delete decoded['iat'];
+    const decoded = jwt.verify(token, this.coolConfig.jwt.secret);
+    if (decoded && decoded['isRefresh']) {
+      delete decoded['exp'];
+      delete decoded['iat'];
 
-        const { expire, refreshExpire } = this.coolConfig.jwt.token;
-        decoded['isRefresh'] = false;
-        const result = {
-          expire,
-          token: jwt.sign(decoded, this.coolConfig.jwt.secret, {
-            expiresIn: expire,
-          }),
-          refreshExpire,
-          refreshToken: '',
-        };
-        decoded['isRefresh'] = true;
-        result.refreshToken = jwt.sign(decoded, this.coolConfig.jwt.secret, {
-          expiresIn: refreshExpire,
-        });
-        await this.cacheManager.set(
-          `admin:passwordVersion:${decoded['userId']}`,
-          decoded['passwordVersion']
-        );
-        await this.cacheManager.set(
-          `admin:token:${decoded['userId']}`,
-          result.token
-        );
-        return result;
-      }
-    } catch (err) {
-      this.ctx.status = 401;
-      this.ctx.body = {
-        code: RESCODE.COMMFAIL,
-        message: '登录失效~',
+      const { expire, refreshExpire } = this.coolConfig.jwt.token;
+      decoded['isRefresh'] = false;
+      const result = {
+        expire,
+        token: jwt.sign(decoded, this.coolConfig.jwt.secret, {
+          expiresIn: expire,
+        }),
+        refreshExpire,
+        refreshToken: '',
       };
-      return;
+      decoded['isRefresh'] = true;
+      result.refreshToken = jwt.sign(decoded, this.coolConfig.jwt.secret, {
+        expiresIn: refreshExpire,
+      });
+      await this.cacheManager.set(
+        `admin:passwordVersion:${decoded['userId']}`,
+        decoded['passwordVersion']
+      );
+      await this.cacheManager.set(
+        `admin:token:${decoded['userId']}`,
+        result.token
+      );
+      return result;
     }
   }
 }
