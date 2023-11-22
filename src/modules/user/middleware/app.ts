@@ -21,6 +21,9 @@ export class UserMiddleware implements IMiddleware<Context, NextFunction> {
 
   ignoreUrls: string[] = [];
 
+  @Config('koa.globalPrefix')
+  prefix;
+
   @Init()
   async init() {
     this.ignoreUrls = this.coolUrlTagData.byKey(TagTypes.IGNORE_TOKEN, 'app');
@@ -29,7 +32,7 @@ export class UserMiddleware implements IMiddleware<Context, NextFunction> {
   resolve() {
     return async (ctx: Context, next: NextFunction) => {
       let { url } = ctx;
-      url = url.split('?')[0];
+      url = url.replace(this.prefix, '').split('?')[0];
       if (_.startsWith(url, '/app/')) {
         const token = ctx.get('Authorization');
         try {
