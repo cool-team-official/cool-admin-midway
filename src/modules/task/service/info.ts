@@ -330,7 +330,9 @@ export class TaskInfoService extends BaseService {
   async invokeService(serviceStr) {
     if (serviceStr) {
       const arr = serviceStr.split('.');
-      const service = await this.app.getApplicationContext().getAsync(arr[0]);
+      const service = await this.app
+        .getApplicationContext()
+        .getAsync(_.lowerFirst(arr[0]));
       for (const child of arr) {
         if (child.includes('(')) {
           const lastArr = child.split('(');
