@@ -13,6 +13,7 @@ import * as cloud from '@cool-midway/cloud';
 import * as file from '@cool-midway/file';
 import * as sms from '@cool-midway/sms';
 import { ILogger } from '@midwayjs/logger';
+import * as cache from '@midwayjs/cache';
 // import * as swagger from '@midwayjs/swagger';
 // import * as rpc from '@cool-midway/rpc';
 // import * as task from '@cool-midway/task';
@@ -35,6 +36,8 @@ import { ILogger } from '@midwayjs/logger';
     validate,
     // 本地任务 http://midwayjs.org/docs/legacy/task
     localTask,
+    // 缓存组件
+    cache,
     // cool-admin 官方组件 https://cool-js.com
     cool,
     // 文件上传 本地 阿里云存储 腾讯云存储 七牛云存储
