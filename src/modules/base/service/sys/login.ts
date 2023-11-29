@@ -162,6 +162,7 @@ export class BaseSysLoginService extends BaseService {
    * 退出登录
    */
   async logout() {
+    if (!this.coolConfig.jwt.sso) return;
     const { userId } = this.ctx.admin;
     await this.cacheManager.del(`admin:department:${userId}`);
     await this.cacheManager.del(`admin:perms:${userId}`);
