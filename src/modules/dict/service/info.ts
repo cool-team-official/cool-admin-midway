@@ -51,7 +51,7 @@ export class DictInfoService extends BaseService {
       .getMany();
     for (const item of typeData) {
       result[item.key] = _.filter(data, { typeId: item.id }).map(e => {
-        const value = Number(e.value);
+        const value = Number(e.value ? e.value : e.id);
         return {
           ...e,
           value: isNaN(value) ? e.value : value,
