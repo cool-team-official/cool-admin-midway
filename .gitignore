@@ -18,3 +18,4 @@ launch.json
 data/*
 pnpm-lock.yaml
 public/uploads/*
+lock/
