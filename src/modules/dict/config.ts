@@ -6,9 +6,9 @@ import { ModuleConfig } from '@cool-midway/core';
 export default () => {
   return {
     // 模块名称
-    name: '信息管理',
+    name: '字典管理',
     // 模块描述
-    description: '信息管理模块，主要管理数据字典等',
+    description: '数据字典等',
     // 中间件，只对本模块有效
     middlewares: [],
     // 中间件，全局有效
