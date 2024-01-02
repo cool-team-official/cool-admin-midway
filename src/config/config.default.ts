@@ -14,6 +14,10 @@ export default {
       '.html': 'ejs',
     },
   },
+  // 静态文件配置
+  staticFile: {
+    buffer: true,
+  },
   // 文件上传
   upload: {
     fileSize: '200mb',
