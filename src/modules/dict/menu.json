@@ -1,0 +1,124 @@
+[
+    {
+        "name": "字典管理",
+        "router": null,
+        "perms": null,
+        "type": 0,
+        "icon": "icon-dict",
+        "orderNum": 3,
+        "viewPath": null,
+        "keepAlive": true,
+        "isShow": true,
+        "childMenus": [
+            {
+                "name": "字典列表",
+                "router": "/dict/list",
+                "perms": null,
+                "type": 1,
+                "icon": "icon-menu",
+                "orderNum": 1,
+                "viewPath": "modules/dict/views/list.vue",
+                "keepAlive": true,
+                "isShow": true,
+                "childMenus": [
+                    {
+                        "name": "删除",
+                        "router": null,
+                        "perms": "dict:info:delete",
+                        "type": 2,
+                        "icon": null,
+                        "orderNum": 0,
+                        "viewPath": null,
+                        "keepAlive": true,
+                        "isShow": true,
+                        "childMenus": []
+                    },
+                    {
+                        "name": "修改",
+                        "router": null,
+                        "perms": "dict:info:update,dict:info:info",
+                        "type": 2,
+                        "icon": null,
+                        "orderNum": 0,
+                        "viewPath": null,
+                        "keepAlive": true,
+                        "isShow": true,
+                        "childMenus": []
+                    },
+                    {
+                        "name": "获得字典数据",
+                        "router": null,
+                        "perms": "dict:info:data",
+                        "type": 2,
+                        "icon": null,
+                        "orderNum": 0,
+                        "viewPath": null,
+                        "keepAlive": true,
+                        "isShow": true,
+                        "childMenus": []
+                    },
+                    {
+                        "name": "单个信息",
+                        "router": null,
+                        "perms": "dict:info:info",
+                        "type": 2,
+                        "icon": null,
+                        "orderNum": 0,
+                        "viewPath": null,
+                        "keepAlive": true,
+                        "isShow": true,
+                        "childMenus": []
+                    },
+                    {
+                        "name": "列表查询",
+                        "router": null,
+                        "perms": "dict:info:list",
+                        "type": 2,
+                        "icon": null,
+                        "orderNum": 0,
+                        "viewPath": null,
+                        "keepAlive": true,
+                        "isShow": true,
+                        "childMenus": []
+                    },
+                    {
+                        "name": "分页查询",
+                        "router": null,
+                        "perms": "dict:info:page",
+                        "type": 2,
+                        "icon": null,
+                        "orderNum": 0,
+                        "viewPath": null,
+                        "keepAlive": true,
+                        "isShow": true,
+                        "childMenus": []
+                    },
+                    {
+                        "name": "新增",
+                        "router": null,
+                        "perms": "dict:info:add",
+                        "type": 2,
+                        "icon": null,
+                        "orderNum": 0,
+                        "viewPath": null,
+                        "keepAlive": true,
+                        "isShow": true,
+                        "childMenus": []
+                    },
+                    {
+                        "name": "组权限",
+                        "router": null,
+                        "perms": "dict:type:list,dict:type:update,dict:type:delete,dict:type:add",
+                        "type": 2,
+                        "icon": null,
+                        "orderNum": 0,
+                        "viewPath": null,
+                        "keepAlive": true,
+                        "isShow": true,
+                        "childMenus": []
+                    }
+                ]
+            }
+        ]
+    }
+]

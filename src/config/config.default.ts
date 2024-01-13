@@ -38,5 +38,12 @@ export default {
       // 本地上传 文件地址前缀
       domain: 'http://127.0.0.1:8001',
     },
+    // crud配置
+    crud: {
+      // 插入模式，save不会校验字段(允许传入不存在的字段)，insert会校验字段
+      upsert: 'save',
+      // 软删除
+      softDelete: true,
+    },
   } as CoolConfig,
 } as MidwayConfig;

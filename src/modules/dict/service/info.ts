@@ -1,6 +1,6 @@
 import { DictTypeEntity } from './../entity/type';
 import { DictInfoEntity } from './../entity/info';
-import { Provide } from '@midwayjs/decorator';
+import { Config, Provide } from '@midwayjs/decorator';
 import { BaseService } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository, In } from 'typeorm';
@@ -17,17 +17,19 @@ export class DictInfoService extends BaseService {
   @InjectEntityModel(DictTypeEntity)
   dictTypeEntity: Repository<DictTypeEntity>;
 
+  @Config('typeorm.dataSource.default.type')
+  ormType: string;
+
   /**
    * 获得字典数据
    * @param types
    */
   async data(types: string[]) {
     const result = {};
-    const find = await this.dictTypeEntity.createQueryBuilder();
+    let typeData = await this.dictTypeEntity.find();
     if (!_.isEmpty(types)) {
-      find.where('`key` in(:key)', { key: types });
+      typeData = await this.dictTypeEntity.findBy({ key: In(types) });
     }
-    const typeData = await find.getMany();
     if (_.isEmpty(typeData)) {
       return {};
     }
@@ -41,12 +43,12 @@ export class DictInfoService extends BaseService {
         'a.orderNum',
         'a.value',
       ])
-      .where('typeId in(:typeIds)', {
+      .where('a.typeId in(:...typeIds)', {
         typeIds: typeData.map(e => {
           return e.id;
         }),
       })
-      .orderBy('orderNum', 'ASC')
+      .orderBy('a.orderNum', 'ASC')
       .addOrderBy('a.createTime', 'ASC')
       .getMany();
     for (const item of typeData) {

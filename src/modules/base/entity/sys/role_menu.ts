@@ -6,9 +6,9 @@ import { Column, Entity } from 'typeorm';
  */
 @Entity('base_sys_role_menu')
 export class BaseSysRoleMenuEntity extends BaseEntity {
-  @Column({ comment: '角色ID', type: 'bigint' })
+  @Column({ comment: '角色ID' })
   roleId: number;
 
-  @Column({ comment: '菜单ID', type: 'bigint' })
+  @Column({ comment: '菜单ID' })
   menuId: number;
 }

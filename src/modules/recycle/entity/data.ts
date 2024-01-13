@@ -16,7 +16,7 @@ export class RecycleDataEntity extends BaseEntity {
 
   @Index()
   @Column({ comment: '操作人', nullable: true })
-  userId: string;
+  userId: number;
 
   @Column({ comment: '被删除的数据', type: 'json' })
   data: object[];

@@ -6,7 +6,7 @@ import { Column, Entity } from 'typeorm';
  */
 @Entity('base_sys_menu')
 export class BaseSysMenuEntity extends BaseEntity {
-  @Column({ comment: '父菜单ID', type: 'bigint', nullable: true })
+  @Column({ comment: '父菜单ID', nullable: true })
   parentId: number;
 
   @Column({ comment: '菜单名称' })
@@ -21,7 +21,6 @@ export class BaseSysMenuEntity extends BaseEntity {
   @Column({
     comment: '类型 0-目录 1-菜单 2-按钮',
     default: 0,
-    type: 'tinyint',
   })
   type: number;
 

@@ -13,6 +13,8 @@ import * as cloud from '@cool-midway/cloud';
 import * as file from '@cool-midway/file';
 import * as sms from '@cool-midway/sms';
 import { ILogger } from '@midwayjs/logger';
+import { Repository } from 'typeorm';
+import { BaseSysRoleMenuEntity } from './modules/base/entity/sys/role_menu';
 // import * as swagger from '@midwayjs/swagger';
 // import * as rpc from '@cool-midway/rpc';
 // import * as task from '@cool-midway/task';
@@ -69,6 +71,9 @@ export class ContainerLifeCycle {
 
   @Config('module')
   config;
+
+  @orm.InjectEntityModel(BaseSysRoleMenuEntity)
+  baseSysRoleMenuEntity: Repository<BaseSysRoleMenuEntity>;
 
   async onReady() {}
 }

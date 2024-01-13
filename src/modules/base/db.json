@@ -1,0 +1,103 @@
+{
+  "base_sys_param": [
+      {
+          "keyName": "rich",
+          "name": "富文本参数",
+          "data": "<h3><strong>这是一个富文本</strong></h3><p>xxx</p><p>xxxxxxxxxx</p><p><br></p>",
+          "dataType": 1,
+          "remark": null
+      },
+      {
+          "keyName": "json",
+          "name": "JSON参数",
+          "data": "{\n  \"code\": 111233\n}",
+          "dataType": 0,
+          "remark": null
+      },
+      {
+          "keyName": "file",
+          "name": "文件",
+          "data": "",
+          "dataType": 2,
+          "remark": null
+      },
+      {
+          "keyName": "text",
+          "name": "测试",
+          "data": "这是一段字符串",
+          "dataType": 0,
+          "remark": null
+      }
+  ],
+  "base_sys_conf": [
+      {
+          "cKey": "logKeep",
+          "cValue": "31"
+      },
+      {
+          "cKey": "recycleKeep",
+          "cValue": "31"
+      }
+  ],
+  "base_sys_department": [
+      {
+          "id": 1,
+          "name": "COOL",
+          "parentId": null,
+          "orderNum": 0
+      },
+      {
+          "id": 11,
+          "name": "开发",
+          "parentId": 12,
+          "orderNum": 2
+      },
+      {
+          "id": 12,
+          "name": "测试",
+          "parentId": 1,
+          "orderNum": 1
+      },
+      {
+          "id": 13,
+          "name": "游客",
+          "parentId": 1,
+          "orderNum": 3
+      }
+  ],
+  "base_sys_role": [
+      {
+          "id": 1,
+          "userId": "1",
+          "name": "超管",
+          "label": "admin",
+          "remark": "最高权限的角色",
+          "relevance": 1,
+          "menuIdList": "null",
+          "departmentIdList": "null"
+      }
+  ],
+  "base_sys_user": [
+      {
+          "id": 1,
+          "departmentId": 1,
+          "name": "超级管理员",
+          "username": "admin",
+          "password": "e10adc3949ba59abbe56e057f20f883e",
+          "passwordV": 7,
+          "nickName": "管理员",
+          "headImg": "https://cool-js.com/admin/headimg.jpg",
+          "phone": "18000000000",
+          "email": "team@cool-js.com",
+          "status": 1,
+          "remark": "拥有最高权限的用户",
+          "socketId": null
+      }
+  ],
+  "base_sys_user_role": [
+      {
+          "userId": 1,
+          "roleId": 1
+      }
+  ]
+}

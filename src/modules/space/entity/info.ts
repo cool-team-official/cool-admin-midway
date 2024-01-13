@@ -12,7 +12,7 @@ export class SpaceInfoEntity extends BaseEntity {
   @Column({ comment: '类型' })
   type: string;
 
-  @Column({ comment: '分类ID', type: 'bigint', nullable: true })
+  @Column({ comment: '分类ID', nullable: true })
   classifyId: number;
 
   @Index()

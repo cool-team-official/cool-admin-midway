@@ -7,7 +7,7 @@ import { Column, Index, Entity } from 'typeorm';
 @Entity('base_sys_log')
 export class BaseSysLogEntity extends BaseEntity {
   @Index()
-  @Column({ comment: '用户ID', nullable: true, type: 'bigint' })
+  @Column({ comment: '用户ID', nullable: true })
   userId: number;
 
   @Index()

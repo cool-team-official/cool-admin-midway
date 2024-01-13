@@ -205,7 +205,7 @@ export class TaskInfoService extends BaseService {
       `
       SELECT
           a.*,
-          b.NAME AS taskName
+          b.name AS taskName
       FROM
       task_log a
       JOIN task_info b ON a.taskId = b.id
@@ -281,10 +281,9 @@ export class TaskInfoService extends BaseService {
    * @param jobId
    */
   async updateNextRunTime(jobId) {
-    await this.nativeQuery(
-      'update task_info a set a.nextRunTime = ? where a.id = ?',
-      [await this.getNextRunTime(jobId), jobId]
-    );
+    await this.taskInfoEntity.update(jobId, {
+      nextRunTime: await this.getNextRunTime(jobId),
+    });
   }
 
   /**

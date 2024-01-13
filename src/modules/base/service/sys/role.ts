@@ -118,13 +118,13 @@ export class BaseSysRoleService extends BaseService {
 
   async list() {
     return this.baseSysRoleEntity
-      .createQueryBuilder()
+      .createQueryBuilder('a')
       .where(
         new Brackets(qb => {
-          qb.where('id !=:id', { id: 1 }); // 超级管理员的角色不展示
+          qb.where('a.id !=:id', { id: 1 }); // 超级管理员的角色不展示
           // 如果不是超管，只能看到自己新建的或者自己有的角色
           if (this.ctx.admin.username !== 'admin') {
-            qb.andWhere('(userId=:userId or id in (:roleId))', {
+            qb.andWhere('(a.userId=:userId or a.id in (:...roleId))', {
               userId: this.ctx.admin.userId,
               roleId: this.ctx.admin.roleIds,
             });

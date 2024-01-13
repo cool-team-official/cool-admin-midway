@@ -17,7 +17,7 @@ export class CloudFuncLogEntity extends BaseEntity {
   @Column({ comment: '结果', type: 'json', nullable: true })
   result: string;
 
-  @Column({ comment: '类型 0-失败 1-成功', default: 1, type: 'tinyint' })
+  @Column({ comment: '类型 0-失败 1-成功', default: 1 })
   type: number;
 
   @Column({ comment: '异常信息', nullable: true, type: 'text' })

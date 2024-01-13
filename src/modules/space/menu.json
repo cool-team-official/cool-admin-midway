@@ -1,0 +1,14 @@
+[
+    {
+        "name": "文件管理",
+        "router": "/upload/list",
+        "perms": null,
+        "type": 1,
+        "icon": "icon-log",
+        "orderNum": 97,
+        "viewPath": "modules/upload/views/list.vue",
+        "keepAlive": true,
+        "isShow": true,
+        "childMenus": []
+    }
+]

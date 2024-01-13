@@ -7,7 +7,7 @@ import { Column, Index, Entity } from 'typeorm';
 @Entity('base_sys_user')
 export class BaseSysUserEntity extends BaseEntity {
   @Index()
-  @Column({ comment: '部门ID', type: 'bigint', nullable: true })
+  @Column({ comment: '部门ID', nullable: true })
   departmentId: number;
 
   @Column({ comment: '姓名', nullable: true })
@@ -42,7 +42,7 @@ export class BaseSysUserEntity extends BaseEntity {
   @Column({ comment: '备注', nullable: true })
   remark: string;
 
-  @Column({ comment: '状态 0:禁用 1：启用', default: 1, type: 'tinyint' })
+  @Column({ comment: '状态 0-禁用 1-启用', default: 1 })
   status: number;
   // 部门名称
   departmentName: string;

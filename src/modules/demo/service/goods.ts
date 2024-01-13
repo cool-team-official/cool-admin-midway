@@ -16,6 +16,14 @@ export class DemoGoodsService extends BaseService {
    * 执行sql分页
    */
   async sqlPage(query) {
+    await this.demoGoodsEntity.save({
+      id: 11,
+      title: '11',
+      price: 11,
+      description: '11',
+      mainImage: '11',
+    });
+    await this.demoGoodsEntity.delete({ id: 11 });
     return this.sqlRenderPage(
       'select * from demo_goods ORDER BY id ASC',
       query,

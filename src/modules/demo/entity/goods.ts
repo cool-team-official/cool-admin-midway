@@ -1,5 +1,5 @@
 import { BaseEntity } from '@cool-midway/core';
-import { Column, Entity, Index } from 'typeorm';
+import { BeforeRemove, Column, Entity, Index } from 'typeorm';
 
 /**
  * 商品模块-商品信息
@@ -29,4 +29,10 @@ export class DemoGoodsEntity extends BaseEntity {
 
   @Column({ comment: '库存', default: 0 })
   stock: number;
+
+  @BeforeRemove()
+  async beforeRemove() {
+    // await this.service.beforeRemove(this);
+    console.log('数据被删除11');
+  }
 }

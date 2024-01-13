@@ -1,0 +1,88 @@
+{
+    "dict_info": [
+        {
+            "id": 21,
+            "typeId": 19,
+            "name": "COOL",
+            "orderNum": 1,
+            "remark": null,
+            "parentId": null,
+            "value": "cool"
+        },
+        {
+            "id": 22,
+            "typeId": 19,
+            "name": "闪酷",
+            "orderNum": 2,
+            "remark": null,
+            "parentId": null,
+            "value": "https://show.cool-admin.com/api/public/uploads/20230308/c731b0cba84046268b10edbbcf36f948_315c243a448e1369fa145c5ea3f020da.gif"
+        },
+        {
+            "id": 23,
+            "typeId": 20,
+            "name": "法师",
+            "orderNum": 1,
+            "remark": null,
+            "parentId": null,
+            "value": "4"
+        },
+        {
+            "id": 24,
+            "typeId": 20,
+            "name": "战士",
+            "orderNum": 2,
+            "remark": null,
+            "parentId": null,
+            "value": "3"
+        },
+        {
+            "id": 25,
+            "typeId": 20,
+            "name": "坦克",
+            "orderNum": 3,
+            "remark": null,
+            "parentId": null,
+            "value": "2"
+        },
+        {
+            "id": 26,
+            "typeId": 20,
+            "name": "刺客",
+            "orderNum": 4,
+            "remark": null,
+            "parentId": null,
+            "value": "1"
+        },
+        {
+            "id": 27,
+            "typeId": 20,
+            "name": "射手",
+            "orderNum": 5,
+            "remark": null,
+            "parentId": null,
+            "value": "0"
+        },
+        {
+            "id": 30,
+            "typeId": 20,
+            "name": "幻影刺客",
+            "orderNum": 1,
+            "remark": null,
+            "parentId": 26,
+            "value": "5"
+        }
+    ],
+    "dict_type": [
+        {
+            "id": 19,
+            "name": "品牌",
+            "key": "brand"
+        },
+        {
+            "id": 20,
+            "name": "职业",
+            "key": "occupation"
+        }
+    ]
+}

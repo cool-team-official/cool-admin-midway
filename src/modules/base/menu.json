@@ -1,0 +1,554 @@
+[
+    {
+        "name": "系统管理",
+        "router": "/sys",
+        "perms": null,
+        "type": 0,
+        "icon": "icon-system",
+        "orderNum": 2,
+        "viewPath": null,
+        "keepAlive": true,
+        "isShow": true,
+        "childMenus": [
+            {
+                "name": "权限管理",
+                "router": null,
+                "perms": null,
+                "type": 0,
+                "icon": "icon-auth",
+                "orderNum": 1,
+                "viewPath": null,
+                "keepAlive": false,
+                "isShow": true,
+                "childMenus": [
+                    {
+                        "name": "菜单列表",
+                        "router": "/sys/menu",
+                        "perms": null,
+                        "type": 1,
+                        "icon": "icon-menu",
+                        "orderNum": 2,
+                        "viewPath": "modules/base/views/menu/index.vue",
+                        "keepAlive": true,
+                        "isShow": true,
+                        "childMenus": [
+                            {
+                                "name": "新增",
+                                "router": null,
+                                "perms": "base:sys:menu:add",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 1,
+                                "viewPath": null,
+                                "keepAlive": false,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "删除",
+                                "router": null,
+                                "perms": "base:sys:menu:delete",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 2,
+                                "viewPath": null,
+                                "keepAlive": false,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "查询",
+                                "router": null,
+                                "perms": "base:sys:menu:page,base:sys:menu:list,base:sys:menu:info",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 4,
+                                "viewPath": null,
+                                "keepAlive": false,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "参数",
+                                "router": "/test/aa",
+                                "perms": null,
+                                "type": 1,
+                                "icon": "icon-goods",
+                                "orderNum": 0,
+                                "viewPath": "modules/base/views/info.vue",
+                                "keepAlive": true,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "编辑",
+                                "router": null,
+                                "perms": "base:sys:menu:info,base:sys:menu:update",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 0,
+                                "viewPath": null,
+                                "keepAlive": true,
+                                "isShow": true,
+                                "childMenus": []
+                            }
+                        ]
+                    },
+                    {
+                        "name": "角色列表",
+                        "router": "/sys/role",
+                        "perms": null,
+                        "type": 1,
+                        "icon": "icon-dept",
+                        "orderNum": 3,
+                        "viewPath": "cool/modules/base/views/role.vue",
+                        "keepAlive": true,
+                        "isShow": true,
+                        "childMenus": [
+                            {
+                                "name": "新增",
+                                "router": null,
+                                "perms": "base:sys:role:add",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 1,
+                                "viewPath": null,
+                                "keepAlive": false,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "删除",
+                                "router": null,
+                                "perms": "base:sys:role:delete",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 2,
+                                "viewPath": null,
+                                "keepAlive": false,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "修改",
+                                "router": null,
+                                "perms": "base:sys:role:update",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 3,
+                                "viewPath": null,
+                                "keepAlive": false,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "查询",
+                                "router": null,
+                                "perms": "base:sys:role:page,base:sys:role:list,base:sys:role:info",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 4,
+                                "viewPath": null,
+                                "keepAlive": false,
+                                "isShow": true,
+                                "childMenus": []
+                            }
+                        ]
+                    },
+                    {
+                        "name": "用户列表",
+                        "router": "/sys/user",
+                        "perms": null,
+                        "type": 1,
+                        "icon": "icon-user",
+                        "orderNum": 0,
+                        "viewPath": "modules/base/views/user/index.vue",
+                        "keepAlive": true,
+                        "isShow": true,
+                        "childMenus": [
+                            {
+                                "name": "部门列表",
+                                "router": null,
+                                "perms": "base:sys:department:list",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 0,
+                                "viewPath": null,
+                                "keepAlive": true,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "新增部门",
+                                "router": null,
+                                "perms": "base:sys:department:add",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 0,
+                                "viewPath": null,
+                                "keepAlive": true,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "更新部门",
+                                "router": null,
+                                "perms": "base:sys:department:update",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 0,
+                                "viewPath": null,
+                                "keepAlive": true,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "删除部门",
+                                "router": null,
+                                "perms": "base:sys:department:delete",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 0,
+                                "viewPath": null,
+                                "keepAlive": true,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "部门排序",
+                                "router": null,
+                                "perms": "base:sys:department:order",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 0,
+                                "viewPath": null,
+                                "keepAlive": true,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "用户转移",
+                                "router": null,
+                                "perms": "base:sys:user:move",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 0,
+                                "viewPath": null,
+                                "keepAlive": true,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "新增",
+                                "router": null,
+                                "perms": "base:sys:user:add",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 0,
+                                "viewPath": null,
+                                "keepAlive": true,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "删除",
+                                "router": null,
+                                "perms": "base:sys:user:delete",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 0,
+                                "viewPath": null,
+                                "keepAlive": true,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "修改",
+                                "router": null,
+                                "perms": "base:sys:user:delete,base:sys:user:update",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 0,
+                                "viewPath": null,
+                                "keepAlive": true,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "查询",
+                                "router": null,
+                                "perms": "base:sys:user:page,base:sys:user:list,base:sys:user:info",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 0,
+                                "viewPath": null,
+                                "keepAlive": true,
+                                "isShow": true,
+                                "childMenus": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "参数配置",
+                "router": null,
+                "perms": null,
+                "type": 0,
+                "icon": "icon-params",
+                "orderNum": 3,
+                "viewPath": null,
+                "keepAlive": true,
+                "isShow": true,
+                "childMenus": [
+                    {
+                        "name": "参数列表",
+                        "router": "/sys/param",
+                        "perms": null,
+                        "type": 1,
+                        "icon": "icon-menu",
+                        "orderNum": 0,
+                        "viewPath": "cool/modules/base/views/param.vue",
+                        "keepAlive": true,
+                        "isShow": true,
+                        "childMenus": [
+                            {
+                                "name": "新增",
+                                "router": null,
+                                "perms": "base:sys:param:add",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 0,
+                                "viewPath": null,
+                                "keepAlive": true,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "修改",
+                                "router": null,
+                                "perms": "base:sys:param:info,base:sys:param:update",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 0,
+                                "viewPath": null,
+                                "keepAlive": true,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "删除",
+                                "router": null,
+                                "perms": "base:sys:param:delete",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 0,
+                                "viewPath": null,
+                                "keepAlive": true,
+                                "isShow": true,
+                                "childMenus": []
+                            },
+                            {
+                                "name": "查看",
+                                "router": null,
+                                "perms": "base:sys:param:page,base:sys:param:list,base:sys:param:info",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 0,
+                                "viewPath": null,
+                                "keepAlive": true,
+                                "isShow": true,
+                                "childMenus": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "监控管理",
+                "router": null,
+                "perms": null,
+                "type": 0,
+                "icon": "icon-monitor",
+                "orderNum": 9,
+                "viewPath": null,
+                "keepAlive": true,
+                "isShow": true,
+                "childMenus": [
+                    {
+                        "name": "请求日志",
+                        "router": "/sys/log",
+                        "perms": null,
+                        "type": 1,
+                        "icon": "icon-log",
+                        "orderNum": 1,
+                        "viewPath": "cool/modules/base/views/log.vue",
+                        "keepAlive": true,
+                        "isShow": true,
+                        "childMenus": [
+                            {
+                                "name": "权限",
+                                "router": null,
+                                "perms": "base:sys:log:page,base:sys:log:clear,base:sys:log:getKeep,base:sys:log:setKeep",
+                                "type": 2,
+                                "icon": null,
+                                "orderNum": 1,
+                                "viewPath": null,
+                                "keepAlive": false,
+                                "isShow": true,
+                                "childMenus": []
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "框架教程",
+        "router": "/tutorial",
+        "perms": null,
+        "type": 0,
+        "icon": "icon-task",
+        "orderNum": 98,
+        "viewPath": null,
+        "keepAlive": true,
+        "isShow": true,
+        "childMenus": [
+            {
+                "name": "文档",
+                "router": "/tutorial/doc",
+                "perms": null,
+                "type": 1,
+                "icon": "icon-log",
+                "orderNum": 0,
+                "viewPath": "https://admin.cool-js.com",
+                "keepAlive": true,
+                "isShow": true,
+                "childMenus": []
+            },
+            {
+                "name": "插件市场",
+                "router": "/tutorial/plugin",
+                "perms": null,
+                "type": 1,
+                "icon": "icon-app",
+                "orderNum": 1,
+                "viewPath": "https://cool-js.com/plugin/list.html",
+                "keepAlive": true,
+                "isShow": true,
+                "childMenus": []
+            }
+        ]
+    },
+    {
+        "name": "通用",
+        "router": null,
+        "perms": null,
+        "type": 0,
+        "icon": "icon-radioboxfill",
+        "orderNum": 99,
+        "viewPath": null,
+        "keepAlive": true,
+        "isShow": false,
+        "childMenus": [
+            {
+                "name": "图片上传",
+                "router": null,
+                "perms": "space:info:page,space:info:list,space:info:info,space:info:add,space:info:delete,space:info:update,space:type:page,space:type:list,space:type:info,space:type:add,space:type:delete,space:type:update",
+                "type": 2,
+                "icon": null,
+                "orderNum": 1,
+                "viewPath": null,
+                "keepAlive": true,
+                "isShow": true,
+                "childMenus": []
+            }
+        ]
+    },
+    {
+        "name": "页面设计",
+        "router": "/design/page",
+        "perms": null,
+        "type": 1,
+        "icon": "icon-design",
+        "orderNum": 7,
+        "viewPath": "modules/design/views/page.vue",
+        "keepAlive": true,
+        "isShow": true,
+        "childMenus": []
+    },
+    {
+        "name": "工作台",
+        "router": null,
+        "perms": null,
+        "type": 0,
+        "icon": "icon-workbench",
+        "orderNum": 1,
+        "viewPath": null,
+        "keepAlive": true,
+        "isShow": true,
+        "childMenus": [
+            {
+                "name": "组件预览",
+                "router": "/demo",
+                "perms": null,
+                "type": 1,
+                "icon": "icon-favor",
+                "orderNum": 1,
+                "viewPath": "modules/demo/views/demo.vue",
+                "keepAlive": true,
+                "isShow": true,
+                "childMenus": []
+            },
+            {
+                "name": "crud 示例",
+                "router": "/demo/crud",
+                "perms": null,
+                "type": 1,
+                "icon": "icon-favor",
+                "orderNum": 1,
+                "viewPath": "modules/demo/views/crud.vue",
+                "keepAlive": true,
+                "isShow": true,
+                "childMenus": []
+            },
+            {
+                "name": "编辑器",
+                "router": "/demo/editor",
+                "perms": null,
+                "type": 1,
+                "icon": "icon-favor",
+                "orderNum": 4,
+                "viewPath": "modules/demo/views/editor.vue",
+                "keepAlive": true,
+                "isShow": true,
+                "childMenus": []
+            },
+            {
+                "name": "文件上传",
+                "router": "/demo/upload",
+                "perms": null,
+                "type": 1,
+                "icon": "icon-favor",
+                "orderNum": 3,
+                "viewPath": "modules/demo/views/upload.vue",
+                "keepAlive": true,
+                "isShow": true,
+                "childMenus": []
+            }
+        ]
+    },
+    {
+        "name": "首页",
+        "router": "/",
+        "perms": null,
+        "type": 1,
+        "icon": null,
+        "orderNum": 0,
+        "viewPath": "modules/demo/views/home/index.vue",
+        "keepAlive": true,
+        "isShow": false,
+        "childMenus": []
+    }
+]

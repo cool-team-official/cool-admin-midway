@@ -1,0 +1,64 @@
+[
+    {
+        "name": "数据管理",
+        "router": null,
+        "perms": null,
+        "type": 0,
+        "icon": "icon-data",
+        "orderNum": 3,
+        "viewPath": null,
+        "keepAlive": true,
+        "isShow": true,
+        "childMenus": [
+            {
+                "name": "数据回收站",
+                "router": "/recycle/data",
+                "perms": null,
+                "type": 1,
+                "icon": "icon-delete",
+                "orderNum": 1,
+                "viewPath": "modules/recycle/views/data.vue",
+                "keepAlive": true,
+                "isShow": true,
+                "childMenus": [
+                    {
+                        "name": "恢复数据",
+                        "router": null,
+                        "perms": "recycle:data:restore",
+                        "type": 2,
+                        "icon": null,
+                        "orderNum": 0,
+                        "viewPath": null,
+                        "keepAlive": true,
+                        "isShow": true,
+                        "childMenus": []
+                    },
+                    {
+                        "name": "单个信息",
+                        "router": null,
+                        "perms": "recycle:data:info",
+                        "type": 2,
+                        "icon": null,
+                        "orderNum": 0,
+                        "viewPath": null,
+                        "keepAlive": true,
+                        "isShow": true,
+                        "childMenus": []
+                    },
+                    {
+                        "name": "分页查询",
+                        "router": null,
+                        "perms": "recycle:data:page",
+                        "type": 2,
+                        "icon": null,
+                        "orderNum": 0,
+                        "viewPath": null,
+                        "keepAlive": true,
+                        "isShow": true,
+                        "childMenus": []
+                    }
+                ]
+            }
+        ]
+    }
+]

@@ -1,0 +1,40 @@
+{
+    "task_info": [
+        {
+            "id": 1,
+            "jobId": null,
+            "repeatConf": "{\"count\":1,\"type\":1,\"limit\":5,\"name\":\"每秒执行,总共5次\",\"taskType\":1,\"every\":1000,\"service\":\"taskDemoService.test()\",\"status\":1,\"id\":1,\"createTime\":\"2021-03-10 14:25:13\",\"updateTime\":\"2021-03-10 14:25:13\",\"jobId\":1}",
+            "name": "每秒执行,总共5次",
+            "cron": null,
+            "limit": 5,
+            "every": 1000,
+            "remark": null,
+            "status": 0,
+            "startDate": null,
+            "endDate": null,
+            "data": null,
+            "service": "taskDemoService.test()",
+            "type": 1,
+            "nextRunTime": "2021-3-10 14:25:18",
+            "taskType": 1
+        },
+        {
+            "id": 2,
+            "jobId": null,
+            "repeatConf": "{\"count\":1,\"id\":2,\"createTime\":\"2021-03-10 14:25:53\",\"updateTime\":\"2021-03-10 14:25:55\",\"name\":\"cron任务，5秒执行一次\",\"cron\":\"0/5 * * * * ? \",\"status\":1,\"service\":\"taskDemoService.test()\",\"type\":1,\"nextRunTime\":\"2021-03-10 14:26:00\",\"taskType\":0,\"jobId\":2}",
+            "name": "cron任务，5秒执行一次",
+            "cron": "0/5 * * * * ? ",
+            "limit": null,
+            "every": null,
+            "remark": null,
+            "status": 0,
+            "startDate": null,
+            "endDate": null,
+            "data": null,
+            "service": "taskDemoService.test()",
+            "type": 1,
+            "nextRunTime": null,
+            "taskType": 0
+        }
+    ]
+}

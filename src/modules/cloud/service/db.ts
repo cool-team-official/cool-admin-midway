@@ -22,6 +22,9 @@ export class CloudDBService extends BaseService {
   @Config('cool')
   coolConfig: CoolConfig;
 
+  @Config('typeorm.dataSource.default.type')
+  ormType: string;
+
   /**
    * 数据
    * @param id
@@ -47,10 +50,10 @@ export class CloudDBService extends BaseService {
     if (method == 'page') {
       const { page = 1, size = this.coolConfig.crud.pageSize } = params;
       const find = repository
-        .createQueryBuilder()
+        .createQueryBuilder('a')
         .offset((page - 1) * size)
         .limit(size)
-        .orderBy('createTime', 'DESC');
+        .orderBy('a.createTime', 'DESC');
       return {
         list: await find.getMany(),
         pagination: {
@@ -122,6 +125,7 @@ export class CloudDBService extends BaseService {
    * 初始化
    */
   async initEntity() {
+    if (this.ormType != 'mysql') return;
     const tables = await this.cloudDBEntity.findBy({ status: 1 });
     const tableNames = [];
     for (const table of tables) {

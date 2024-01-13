@@ -30,7 +30,7 @@ export class TaskInfoEntity extends BaseEntity {
   @Column({ comment: '备注', nullable: true })
   remark: string;
 
-  @Column({ comment: '状态 0:停止 1：运行', default: 1, type: 'tinyint' })
+  @Column({ comment: '状态 0-停止 1-运行', default: 1 })
   status: number;
 
   @Column({ comment: '开始时间', nullable: true })
@@ -45,12 +45,12 @@ export class TaskInfoEntity extends BaseEntity {
   @Column({ comment: '执行的service实例ID', nullable: true })
   service: string;
 
-  @Column({ comment: '状态 0:系统 1：用户', default: 0, type: 'tinyint' })
+  @Column({ comment: '状态 0-系统 1-用户', default: 0 })
   type: number;
 
   @Column({ comment: '下一次执行时间', nullable: true })
   nextRunTime: Date;
 
-  @Column({ comment: '状态 0:cron 1：时间间隔', default: 0, type: 'tinyint' })
+  @Column({ comment: '状态 0-cron 1-时间间隔', default: 0 })
   taskType: number;
 }

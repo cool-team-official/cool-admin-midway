@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">cool-admin(midway版)一个很酷的后台权限管理系统，开源免费，模块化、插件化、极速开发CRUD，方便快速构建迭代后台管理系统，支持serverless、docker、普通服务器等多种方式部署
-到 <a href="https://cool-js.com" target="_blank">文档</a> 进一步了解
+到 <a href="https://cool-js.com" target="_blank">官网</a> 进一步了解。
 <p align="center">
     <a href="https://github.com/cool-team-official/cool-admin-midway/blob/master/LICENSE" target="_blank"><img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="GitHub license" />
     <a href=""><img src="https://img.shields.io/github/package-json/v/cool-team-official/cool-admin-midway?style=flat-square" alt="GitHub tag"></a>
@@ -12,16 +12,25 @@
 
 ## 技术栈
 
-- 后端：**`node.js` `midway.js` `koa.js` `mysql` `typescript`**
+- 后端：**`node.js` `midway.js` `koa.js`  `typescript`**
 - 前端：**`vue.js` `element-plus` `jsx` `pinia` `vue-router`**
+- 数据库：**`mysql` `postgresql` `sqlite`**
 
 如果你是前端，后端的这些技术选型对你是特别友好的，前端开发者可以较快速地上手。
 如果你是后端，Typescript 的语法又跟 java、php 等特别类似，一切看起来也是那么得熟悉。
+
+如果你想使用java版本后端，请移步[cool-admin-java](https://cool-js.com/admin/java/introduce.html)
+
+#### 官网
+
+[https://cool-js.com](https://cool-js.com)
 
 <!-- 在此次添加使用文档 -->
 ## 演示
 
 [AI极速编码](https://www.bilibili.com/video/BV1K84y137z1)
+
+<img src="https://cool-js.com/ai/show/AI%E7%BC%96%E7%A0%81.gif" alt="Admin Home"></a>
 
 [https://show.cool-admin.com](https://show.cool-admin.com)
 
@@ -30,9 +39,6 @@
 
 <img src="https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/home-mini.png" alt="Admin Home"></a>
 
-#### 文档
-
-[https://cool-js.com](https://cool-js.com)
 
 #### 项目前端
 
@@ -46,9 +52,12 @@
 
 #### 修改数据库配置，配置文件位于`src/config/config.local.ts`
 
-数据库为 mysql(`>=5.7版本`)，建议 8.0，node 版本(`>=16.x`)，建议 18.x，首次启动会自动初始化并导入数据
+以Mysql为例，其他数据库请参考[数据库配置文档](https://cool-js.com/admin/node/quick.html#%E6%95%B0%E6%8D%AE%E5%BA%93%E9%85%8D%E7%BD%AE)
+
+Mysql(`>=5.7版本`)，建议 8.0，node 版本(`>=16.x`)，建议 18.x，首次启动会自动初始化并导入数据
 
 ```ts
+// mysql，驱动已经内置，无需安装
 typeorm: {
     dataSource: {
       default: {
@@ -72,7 +81,6 @@ typeorm: {
     },
   },
 ```
-
 #### 安装依赖并运行
 
 ```bash
@@ -81,7 +89,7 @@ $ npm run dev
 $ open http://localhost:8001/
 ```
 
-注： `npm i`如果安装失败可以尝试使用[cnpm](https://developer.aliyun.com/mirror/NPM?from=tnpm)，或者切换您的镜像源
+注： `npm i`如果安装失败可以尝试使用[cnpm](https://developer.aliyun.com/mirror/NPM?from=tnpm)，或者切换您的镜像源，推荐使用[pnpm](https://pnpm.io/)
 
 ## CURD(快速增删改查)
 

@@ -17,7 +17,7 @@ export class IotDeviceEntity extends BaseEntity {
   uniqueId: string;
 
   @Index()
-  @Column({ comment: '状态 0-离线 1-在线', type: 'tinyint', default: 0 })
+  @Column({ comment: '状态 0-离线 1-在线', default: 0 })
   status: number;
 
   @Column({ comment: '客户端ID', nullable: true })

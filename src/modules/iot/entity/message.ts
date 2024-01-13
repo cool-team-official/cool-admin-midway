@@ -14,6 +14,6 @@ export class IotMessageEntity extends BaseEntity {
   data: string;
 
   @Index()
-  @Column({ comment: '类型 0-推送 1-接收', type: 'tinyint', default: 1 })
+  @Column({ comment: '类型 0-推送 1-接收', default: 1 })
   type: number;
 }

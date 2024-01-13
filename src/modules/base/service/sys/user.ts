@@ -45,13 +45,10 @@ export class BaseSysUserService extends BaseService {
     const sql = `
         SELECT
             a.id,a.name,a.nickName,a.headImg,a.email,a.remark,a.status,a.createTime,a.updateTime,a.username,a.phone,a.departmentId,
-            GROUP_CONCAT(c.name) AS roleName,
-            d.name as departmentName
+            b.name as "departmentName"
         FROM
             base_sys_user a
-            LEFT JOIN base_sys_user_role b ON a.id = b.userId
-            LEFT JOIN base_sys_role c ON b.roleId = c.id
-            LEFT JOIN base_sys_department d on a.departmentId = d.id
+            LEFT JOIN base_sys_department b on a.departmentId = b.id
         WHERE 1 = 1
             ${this.setSql(
               !_.isEmpty(departmentIds),
@@ -68,10 +65,23 @@ export class BaseSysUserService extends BaseService {
               this.ctx.admin.username !== 'admin',
               'and a.departmentId in (?)',
               [!_.isEmpty(permsDepartmentArr) ? permsDepartmentArr : [null]]
-            )}
-        GROUP BY a.id
-        `;
-    return this.sqlRenderPage(sql, query);
+            )} `;
+    const result = await this.sqlRenderPage(sql, query);
+    // 匹配角色
+    if (!_.isEmpty(result.list)) {
+      const userIds = result.list.map(e => e.id);
+      const roles = await this.nativeQuery(
+        'SELECT b.name, a.userId FROM base_sys_user_role a LEFT JOIN base_sys_role b ON a.roleId = b.id WHERE a.userId in (?) ',
+        [userIds]
+      );
+      result.list.forEach(e => {
+        e['roleName'] = roles
+          .filter(role => role.userId == e.id)
+          .map(role => role.name)
+          .join(',');
+      });
+    }
+    return result;
   }
 
   /**
@@ -81,10 +91,10 @@ export class BaseSysUserService extends BaseService {
    */
   async move(departmentId, userIds) {
     await this.baseSysUserEntity
-      .createQueryBuilder()
+      .createQueryBuilder('a')
       .update()
       .set({ departmentId })
-      .where('id in (:userIds)', { userIds })
+      .where('a.id in (:...userIds)', { userIds })
       .execute();
   }
 

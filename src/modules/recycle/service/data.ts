@@ -78,9 +78,9 @@ export class RecycleDataService extends BaseService {
         .add(-keepDay, 'days')
         .format('YYYY-MM-DD')} 00:00:00`;
       await this.recycleDataEntity
-        .createQueryBuilder()
+        .createQueryBuilder('a')
         .delete()
-        .where('createTime < :createTime', { createTime: beforeDate })
+        .where('a.createTime < :createTime', { createTime: beforeDate })
         .execute();
     } else {
       await this.recycleDataEntity.clear();
