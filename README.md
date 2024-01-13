@@ -28,9 +28,7 @@
 <!-- 在此次添加使用文档 -->
 ## 演示
 
-[AI极速编码](https://www.bilibili.com/video/BV1K84y137z1)
-
-<img src="https://cool-js.com/ai/show/AI%E7%BC%96%E7%A0%81.gif" alt="Admin Home"></a>
+[AI极速编码](https://cool-js.com/ai/introduce.html)
 
 [https://show.cool-admin.com](https://show.cool-admin.com)
 
