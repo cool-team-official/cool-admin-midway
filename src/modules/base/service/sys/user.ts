@@ -1,7 +1,7 @@
 import { Inject, Provide } from '@midwayjs/decorator';
 import { BaseService, CoolCommException } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { BaseSysUserEntity } from '../../entity/sys/user';
 import { BaseSysPermsService } from './perms';
 import * as _ from 'lodash';
@@ -90,12 +90,7 @@ export class BaseSysUserService extends BaseService {
    * @param userIds
    */
   async move(departmentId, userIds) {
-    await this.baseSysUserEntity
-      .createQueryBuilder('a')
-      .update()
-      .set({ departmentId })
-      .where('a.id in (:...userIds)', { userIds })
-      .execute();
+    await this.baseSysUserEntity.update({ id: In(userIds) }, { departmentId });
   }
 
   /**
