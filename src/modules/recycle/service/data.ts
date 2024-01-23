@@ -2,7 +2,7 @@ import { RecycleDataEntity } from './../entity/data';
 import { Inject, Provide, Scope, ScopeEnum } from '@midwayjs/decorator';
 import { BaseService } from '@cool-midway/core';
 import { InjectEntityModel, TypeORMDataSourceManager } from '@midwayjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { BaseSysConfService } from '../../base/service/sys/conf';
@@ -74,14 +74,8 @@ export class RecycleDataService extends BaseService {
     }
     const keepDay = await this.baseSysConfService.getValue('recycleKeep');
     if (keepDay) {
-      const beforeDate = `${moment()
-        .add(-keepDay, 'days')
-        .format('YYYY-MM-DD')} 00:00:00`;
-      await this.recycleDataEntity
-        .createQueryBuilder('a')
-        .delete()
-        .where('a.createTime < :createTime', { createTime: beforeDate })
-        .execute();
+      const beforeDate = moment().add(-keepDay, 'days').startOf('day').toDate();
+      await this.recycleDataEntity.delete({ createTime: LessThan(beforeDate) });
     } else {
       await this.recycleDataEntity.clear();
     }
