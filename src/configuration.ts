@@ -1,5 +1,5 @@
 import * as orm from '@midwayjs/typeorm';
-import { Configuration, App, Config, Inject } from '@midwayjs/decorator';
+import { Configuration, App, Inject } from '@midwayjs/decorator';
 import * as koa from '@midwayjs/koa';
 import * as validate from '@midwayjs/validate';
 import * as info from '@midwayjs/info';
@@ -13,8 +13,7 @@ import * as cloud from '@cool-midway/cloud';
 import * as file from '@cool-midway/file';
 import * as sms from '@cool-midway/sms';
 import { ILogger } from '@midwayjs/logger';
-import { Repository } from 'typeorm';
-import { BaseSysRoleMenuEntity } from './modules/base/entity/sys/role_menu';
+import { IMidwayApplication } from '@midwayjs/core';
 // import * as swagger from '@midwayjs/swagger';
 // import * as rpc from '@cool-midway/rpc';
 // import * as task from '@cool-midway/task';
@@ -64,16 +63,10 @@ import { BaseSysRoleMenuEntity } from './modules/base/entity/sys/role_menu';
 })
 export class ContainerLifeCycle {
   @App()
-  app: koa.Application;
+  app: IMidwayApplication;
 
   @Inject()
   logger: ILogger;
-
-  @Config('module')
-  config;
-
-  @orm.InjectEntityModel(BaseSysRoleMenuEntity)
-  baseSysRoleMenuEntity: Repository<BaseSysRoleMenuEntity>;
 
   async onReady() {}
 }

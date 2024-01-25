@@ -1,6 +1,5 @@
 import { CoolConfig } from '@cool-midway/core';
 import { MidwayConfig } from '@midwayjs/core';
-// import * as path from 'path';
 
 /**
  * 本地开发 npm run dev 读取的配置文件

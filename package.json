@@ -1,12 +1,12 @@
 {
   "name": "cool-admin",
-  "version": "7.0.0",
+  "version": "7.1.0",
   "description": "一个项目用COOL就够了",
   "private": true,
   "dependencies": {
     "@cool-midway/cache-manager-fs-hash": "^7.0.0",
     "@cool-midway/cloud": "^7.0.0",
-    "@cool-midway/core": "^7.1.0",
+    "@cool-midway/core": "^7.1.1",
     "@cool-midway/file": "^7.0.5",
     "@cool-midway/iot": "^7.0.0",
     "@cool-midway/pay": "^7.0.0",
@@ -24,20 +24,12 @@
     "@midwayjs/static-file": "^3.14.0",
     "@midwayjs/task": "^3.6.0",
     "@midwayjs/typeorm": "^3.14.0",
+    "@midwayjs/upload": "^3.14.3",
     "@midwayjs/validate": "^3.14.0",
     "@midwayjs/view-ejs": "^3.14.0",
-    "axios": "^1.6.5",
     "ipip-ipdb": "^0.6.0",
-    "jsonwebtoken": "^9.0.2",
-    "lodash": "^4.17.21",
-    "md5": "^2.3.0",
-    "mini-svg-data-uri": "^1.4.4",
-    "moment": "^2.30.1",
     "mysql2": "^3.7.0",
-    "svg-captcha": "^1.4.0",
-    "svg2png-wasm": "^1.4.1",
-    "typeorm": "^0.3.19",
-    "uuid": "^9.0.1"
+    "typeorm": "^0.3.19"
   },
   "devDependencies": {
     "@midwayjs/cli": "^2.1.1",
