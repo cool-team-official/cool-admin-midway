@@ -4,7 +4,6 @@ import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Not, Repository } from 'typeorm';
 import { PluginInfoEntity } from '../entity/info';
 import { IMidwayApplication, IMidwayContext } from '@midwayjs/core';
-import * as decompress from 'decompress';
 import * as _ from 'lodash';
 import { PluginInfo } from '../interface';
 import { PluginCenterService } from './center';
@@ -118,6 +117,7 @@ export class PluginService extends BaseService {
     errorData: string;
   }> {
     // const plugin = await download(encodeURI(url));
+    const decompress = require('decompress');
     const files = await decompress(filePath);
     let errorData;
     let pluginJson: PluginInfo, readme: string, logo: string, content: string;
