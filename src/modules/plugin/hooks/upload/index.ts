@@ -1,7 +1,6 @@
 import { BaseUpload, MODETYPE } from './interface';
 import { BasePluginHook } from '../base';
 import * as fs from 'fs';
-import * as download from 'download';
 import * as path from 'path';
 import * as moment from 'moment';
 import { v1 as uuid } from 'uuid';
@@ -40,6 +39,7 @@ export class PluginUpload extends BasePluginHook implements BaseUpload {
     const { domain } = this.pluginInfo.config;
     // 从url获取扩展名
     const extend = path.extname(url);
+    const download = require('download');
     // 数据
     const data = url.includes('http')
       ? await download(url)
