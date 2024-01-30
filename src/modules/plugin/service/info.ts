@@ -1,7 +1,7 @@
 import { App, Inject, Provide } from '@midwayjs/decorator';
 import { BaseService, CoolCommException } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
-import { Not, Repository } from 'typeorm';
+import { Equal, Not, Repository } from 'typeorm';
 import { PluginInfoEntity } from '../entity/info';
 import { IMidwayApplication, IMidwayContext } from '@midwayjs/core';
 import * as _ from 'lodash';
@@ -59,6 +59,7 @@ export class PluginService extends BaseService {
    * @returns
    */
   async invoke(key: string, method: string, ...params) {
+    await this.checkStatus(key);
     // 实例化
     const instance = new (await this.pluginCenterService.plugins.get(key))();
     await instance.init(
@@ -67,6 +68,20 @@ export class PluginService extends BaseService {
       this.app
     );
     return await instance[method](...params);
+  }
+
+  /**
+   * 检查状态
+   * @param key
+   */
+  async checkStatus(key: string) {
+    const info = await this.pluginInfoEntity.findOneBy({
+      keyName: Equal(key),
+      status: 0,
+    });
+    if (info) {
+      throw new CoolCommException('插件不存在或已禁用');
+    }
   }
 
   /**

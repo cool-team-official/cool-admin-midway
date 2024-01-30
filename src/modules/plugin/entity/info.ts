@@ -1,5 +1,5 @@
 import { BaseEntity } from '@cool-midway/core';
-import { Column, Entity, DataSource } from 'typeorm';
+import { Column, Entity, DataSource, Index } from 'typeorm';
 
 console.log(DataSource);
 
@@ -14,6 +14,7 @@ export class PluginInfoEntity extends BaseEntity {
   @Column({ comment: '简介' })
   description: string;
 
+  @Index()
   @Column({ comment: 'Key名' })
   keyName: string;
 
