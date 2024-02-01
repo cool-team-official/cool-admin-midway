@@ -49,10 +49,12 @@ export class BaseSysParamService extends BaseService {
    * @param key
    */
   async htmlByKey(key) {
-    let html = '<html><body>@content</body></html>';
+    let html = '<html><title>@title</title><body>@content</body></html>';
     let result: any = await this.cacheManager.get(`param:${key}`);
     if (result) {
-      html = html.replace('@content', result.data);
+      html = html
+        .replace('@content', result.data)
+        .replace('@title', result.name);
     } else {
       html = html.replace('@content', 'key notfound');
     }
