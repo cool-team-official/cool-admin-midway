@@ -122,8 +122,8 @@ export class BaseSysMenuService extends BaseService {
       );
     }
     find.orderBy('a.orderNum', 'ASC');
-    find.groupBy('a.id');
-    return await find.getMany();
+    const list = await find.getMany();
+    return _.uniqBy(list, 'id');
   }
 
   /**
