@@ -20,6 +20,22 @@ import { PluginService } from '../../service/info';
   api: ['add', 'delete', 'update', 'info', 'list', 'page'],
   entity: PluginInfoEntity,
   service: PluginService,
+  pageQueryOp: {
+    select: [
+      'a.id',
+      'a.name',
+      'a.keyName',
+      'a.hook',
+      'a.version',
+      'a.status',
+      'a.readme',
+      'a.author',
+      'a.logo',
+      'a.description',
+      'a.pluginJson',
+      'a.config',
+    ],
+  },
 })
 export class AdminPluginInfoController extends BaseController {
   @Inject()
