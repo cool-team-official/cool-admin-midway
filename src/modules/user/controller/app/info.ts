@@ -28,4 +28,19 @@ export class AppUserInfoController extends BaseController {
       await this.userInfoService.updatePerson(this.ctx.user.id, body)
     );
   }
+
+  @Post('/updatePassword', { summary: '更新用户密码' })
+  async updatePassword(
+    @Body('password') password: string,
+    @Body('code') code: string
+  ) {
+    await this.userInfoService.updatePassword(this.ctx.user.id, password, code);
+    return this.ok();
+  }
+
+  @Post('/logoff', { summary: '注销' })
+  async logoff() {
+    await this.userInfoService.logoff(this.ctx.user.id);
+    return this.ok();
+  }
 }

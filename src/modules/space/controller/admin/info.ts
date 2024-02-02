@@ -15,12 +15,4 @@ import { SpaceInfoService } from '../../service/info';
     fieldEq: ['type', 'classifyId'],
   },
 })
-export class BaseAppSpaceInfoController extends BaseController {
-  @Config('module.space.wps')
-  config;
-
-  @Get('/getConfig', { summary: '获得WPS配置' })
-  async getConfig() {
-    return this.ok({ appId: this.config.appId });
-  }
-}
+export class BaseAppSpaceInfoController extends BaseController {}

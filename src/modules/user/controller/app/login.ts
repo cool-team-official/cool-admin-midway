@@ -68,4 +68,13 @@ export class AppUserLoginController extends BaseController {
   public async refreshToken(@Body('refreshToken') refreshToken) {
     return this.ok(await this.userLoginService.refreshToken(refreshToken));
   }
+
+  @CoolTag(TagTypes.IGNORE_TOKEN)
+  @Post('/password', { summary: '密码登录' })
+  async password(
+    @Body('phone') phone: string,
+    @Body('password') password: string
+  ) {
+    return this.ok(await this.userLoginService.password(phone, password));
+  }
 }

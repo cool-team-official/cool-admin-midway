@@ -10,6 +10,7 @@ import { CoolFile } from '@cool-midway/file';
 import { BaseSysLoginService } from '../../base/service/sys/login';
 import { UserSmsService } from './sms';
 import { v1 as uuid } from 'uuid';
+import * as md5 from 'md5';
 
 /**
  * 登录
@@ -184,6 +185,23 @@ export class UserLoginService extends BaseService {
       throw new CoolCommException(
         '刷新token失败，请检查refreshToken是否正确或过期'
       );
+    }
+  }
+
+  /**
+   * 密码登录
+   * @param phone
+   * @param password
+   */
+  async password(phone, password) {
+    const user = await this.userInfoEntity.findOneBy({ phone });
+
+    if (user && user.password == md5(password)) {
+      return this.token({
+        id: user.id,
+      });
+    } else {
+      throw new CoolCommException('账号或密码错误');
     }
   }
 
