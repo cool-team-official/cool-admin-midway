@@ -466,65 +466,16 @@
                 "childMenus": []
             },
             {
-                "name": "示例组件",
-                "router": null,
+                "name": "crud 示例",
+                "router": "/demo/crud",
                 "perms": null,
-                "type": 0,
-                "icon": "icon-workbench",
+                "type": 1,
+                "icon": "icon-favor",
                 "orderNum": 1,
-                "viewPath": null,
+                "viewPath": "modules/demo/views/crud/index.vue",
                 "keepAlive": true,
                 "isShow": true,
-                "childMenus": [
-                    {
-                        "name": "组件预览",
-                        "router": "/demo",
-                        "perms": null,
-                        "type": 1,
-                        "icon": "icon-favor",
-                        "orderNum": 1,
-                        "viewPath": "modules/demo/views/demo.vue",
-                        "keepAlive": true,
-                        "isShow": true,
-                        "childMenus": []
-                    },
-                    {
-                        "name": "crud 示例",
-                        "router": "/demo/crud",
-                        "perms": null,
-                        "type": 1,
-                        "icon": "icon-favor",
-                        "orderNum": 1,
-                        "viewPath": "modules/demo/views/crud/index.vue",
-                        "keepAlive": true,
-                        "isShow": true,
-                        "childMenus": []
-                    },
-                    {
-                        "name": "编辑器",
-                        "router": "/demo/editor",
-                        "perms": null,
-                        "type": 1,
-                        "icon": "icon-favor",
-                        "orderNum": 4,
-                        "viewPath": "modules/demo/views/editor.vue",
-                        "keepAlive": true,
-                        "isShow": true,
-                        "childMenus": []
-                    },
-                    {
-                        "name": "文件上传",
-                        "router": "/demo/upload",
-                        "perms": null,
-                        "type": 1,
-                        "icon": "icon-favor",
-                        "orderNum": 3,
-                        "viewPath": "modules/demo/views/upload.vue",
-                        "keepAlive": true,
-                        "isShow": true,
-                        "childMenus": []
-                    }
-                ]
+                "childMenus": []
             }
         ]
     },
@@ -1224,13 +1175,13 @@
                 "childMenus": []
             },
             {
-                "name": "插件管理",
-                "router": "/helper/plugin",
+                "name": "后端插件",
+                "router": "/helper/plugins/serve",
                 "perms": null,
                 "type": 1,
                 "icon": "icon-component",
-                "orderNum": 4,
-                "viewPath": "modules/helper/views/plugin.vue",
+                "orderNum": 2,
+                "viewPath": "modules/helper/views/plugins/serve.vue",
                 "keepAlive": true,
                 "isShow": true,
                 "childMenus": [
@@ -1247,6 +1198,18 @@
                         "childMenus": []
                     }
                 ]
+            },
+            {
+                "name": "前端插件",
+                "router": "/helper/plugins/vue",
+                "perms": null,
+                "type": 1,
+                "icon": "icon-vue",
+                "orderNum": 1,
+                "viewPath": "modules/helper/views/plugins/vue.vue",
+                "keepAlive": true,
+                "isShow": true,
+                "childMenus": []
             }
         ]
     }
