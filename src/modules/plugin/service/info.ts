@@ -52,6 +52,14 @@ export class PluginService extends BaseService {
   }
 
   /**
+   * 获得插件配置
+   * @param key
+   */
+  async getConfig(key: string) {
+    return this.pluginCenterService.pluginInfos.get(key)?.config;
+  }
+
+  /**
    * 调用插件
    * @param key 插件key
    * @param method 方法
@@ -59,15 +67,25 @@ export class PluginService extends BaseService {
    * @returns
    */
   async invoke(key: string, method: string, ...params) {
+    // 实例
+    const instance = await this.getInstance(key);
+    return await instance[method](...params);
+  }
+
+  /**
+   * 获得插件实例
+   * @param key
+   * @returns
+   */
+  async getInstance(key: string) {
     await this.checkStatus(key);
-    // 实例化
     const instance = new (await this.pluginCenterService.plugins.get(key))();
     await instance.init(
       this.pluginCenterService.pluginInfos.get(key),
       this.ctx,
       this.app
     );
-    return await instance[method](...params);
+    return instance;
   }
 
   /**
@@ -77,9 +95,9 @@ export class PluginService extends BaseService {
   async checkStatus(key: string) {
     const info = await this.pluginInfoEntity.findOneBy({
       keyName: Equal(key),
-      status: 0,
+      status: 1,
     });
-    if (info) {
+    if (!info) {
       throw new CoolCommException('插件不存在或已禁用');
     }
   }

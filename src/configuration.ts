@@ -11,13 +11,11 @@ import * as localTask from '@midwayjs/task';
 import * as cool from '@cool-midway/core';
 import * as cloud from '@cool-midway/cloud';
 import * as file from '@cool-midway/file';
-import * as sms from '@cool-midway/sms';
 import { ILogger } from '@midwayjs/logger';
 import { IMidwayApplication } from '@midwayjs/core';
 // import * as swagger from '@midwayjs/swagger';
 // import * as rpc from '@cool-midway/rpc';
 // import * as task from '@cool-midway/task';
-// import * as pay from '@cool-midway/pay';
 // import * as iot from '@cool-midway/iot';
 
 @Configuration({
@@ -46,12 +44,8 @@ import { IMidwayApplication } from '@midwayjs/core';
     // task,
     // cool-admin 云开发组件
     cloud,
-    // 支付(微信、支付宝) https://cool-js.com/admin/node/core/pay.html
-    // pay,
     // 物联网开发，如MQTT支持等
     // iot,
-    // 短信
-    sms,
     // swagger 文档
     // swagger,
     {

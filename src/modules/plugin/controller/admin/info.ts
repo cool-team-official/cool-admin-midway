@@ -34,6 +34,8 @@ import { PluginService } from '../../service/info';
       'a.description',
       'a.pluginJson',
       'a.config',
+      'a.createTime',
+      'a.updateTime',
     ],
   },
 })

@@ -12,6 +12,7 @@ import { PluginInfoEntity } from '../entity/info';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository } from 'typeorm';
 import { PluginInfo } from '../interface';
+import * as _ from 'lodash';
 
 /**
  * 插件中心
@@ -80,7 +81,7 @@ export class PluginCenterService {
       const instance = await this.getInstance(plugin.content.data);
       this.pluginInfos.set(plugin.keyName, {
         ...plugin.pluginJson,
-        config: plugin.config,
+        config: this.getConfig(plugin.config),
       });
       if (plugin.hook) {
         await this.register(plugin.hook, instance);
@@ -91,16 +92,34 @@ export class PluginCenterService {
   }
 
   /**
+   * 获得配置
+   * @param config
+   * @returns
+   */
+  private getConfig(config: any) {
+    const env = this.app.getEnv();
+    let isMulti = false;
+    for (const key in config) {
+      if (key.includes('@')) {
+        isMulti = true;
+        break;
+      }
+    }
+    return isMulti ? config[`@${env}`] : config;
+  }
+
+  /**
    * 获得实例
    * @param content
    * @returns
    */
   async getInstance(content: string) {
     let _instance;
-    eval(`
-       ${content} 
-       _instance = Plugin;
-    `);
+    const script = `
+        ${content} 
+        _instance = Plugin;
+    `;
+    eval(script);
     return _instance;
   }
 }

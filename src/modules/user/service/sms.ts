@@ -2,7 +2,7 @@ import { Provide, Config, Inject } from '@midwayjs/decorator';
 import { BaseService, CoolCommException } from '@cool-midway/core';
 import * as _ from 'lodash';
 import { CacheManager } from '@midwayjs/cache';
-import { CoolSms } from '@cool-midway/sms';
+import { PluginService } from '../../plugin/service/info';
 
 /**
  * 描述
@@ -17,15 +17,26 @@ export class UserSmsService extends BaseService {
   cacheManager: CacheManager;
 
   @Inject()
-  coolSms: CoolSms;
+  pluginService: PluginService;
 
   /**
    * 发送验证码
    * @param phone
    */
   async sendSms(phone) {
+    // 随机四位验证码
+    const code = _.random(1000, 9999);
+    const pluginKey = this.config.pluginKey;
+    if (!pluginKey) throw new CoolCommException('未配置短信插件');
     try {
-      const code = await this.coolSms.sendCode(phone);
+      if (pluginKey == 'sms-tx') {
+        await this.pluginService.invoke('sms-tx', 'send', [code], [code]);
+      }
+      if (pluginKey == 'sms-ali') {
+        await this.pluginService.invoke('sms-ali', 'send', [phone], {
+          code,
+        });
+      }
       this.cacheManager.set(`sms:${phone}`, code, this.config.timeout);
     } catch (error) {
       throw new CoolCommException('发送过于频繁，请稍后再试');
