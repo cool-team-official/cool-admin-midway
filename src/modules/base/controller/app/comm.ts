@@ -8,8 +8,8 @@ import {
   CoolTag,
 } from '@cool-midway/core';
 import { Context } from '@midwayjs/koa';
-import { CoolFile } from '@cool-midway/file';
 import { BaseSysParamService } from '../../service/sys/param';
+import { PluginService } from '../../../plugin/service/info';
 
 /**
  * 不需要登录的后台接口
@@ -19,7 +19,7 @@ import { BaseSysParamService } from '../../service/sys/param';
 @CoolController()
 export class BaseAppCommController extends BaseController {
   @Inject()
-  coolFile: CoolFile;
+  pluginService: PluginService;
 
   @Inject()
   ctx: Context;
@@ -57,7 +57,8 @@ export class BaseAppCommController extends BaseController {
    */
   @Post('/upload', { summary: '文件上传' })
   async upload() {
-    return this.ok(await this.coolFile.upload(this.ctx));
+    const file = await this.pluginService.getInstance('upload');
+    return this.ok(await file.upload(this.ctx));
   }
 
   /**
@@ -65,6 +66,7 @@ export class BaseAppCommController extends BaseController {
    */
   @Get('/uploadMode', { summary: '文件上传模式' })
   async uploadMode() {
-    return this.ok(await this.coolFile.getMode());
+    const file = await this.pluginService.getInstance('upload');
+    return this.ok(await file.getMode());
   }
 }
