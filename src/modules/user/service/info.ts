@@ -3,10 +3,10 @@ import { BaseService, CoolCommException } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserInfoEntity } from '../entity/info';
-import { CoolFile } from '@cool-midway/file';
 import { v1 as uuid } from 'uuid';
 import { UserSmsService } from './sms';
 import * as md5 from 'md5';
+import { PluginService } from '../../plugin/service/info';
 
 /**
  * 用户信息
@@ -17,7 +17,7 @@ export class UserInfoService extends BaseService {
   userInfoEntity: Repository<UserInfoEntity>;
 
   @Inject()
-  file: CoolFile;
+  pluginService: PluginService;
 
   @Inject()
   userSmsService: UserSmsService;
@@ -59,7 +59,8 @@ export class UserInfoService extends BaseService {
       const info = await this.person(id);
       // 修改了头像要重新处理
       if (param.avatarUrl && info.avatarUrl != param.avatarUrl) {
-        param.avatarUrl = await this.file.downAndUpload(
+        const file = await this.pluginService.getInstance('upload');
+        param.avatarUrl = await file.downAndUpload(
           param.avatarUrl,
           uuid() + '.png'
         );

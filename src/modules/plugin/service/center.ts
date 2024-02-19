@@ -3,6 +3,7 @@ import {
   App,
   IMidwayApplication,
   Init,
+  Inject,
   Scope,
   ScopeEnum,
 } from '@midwayjs/core';
@@ -13,6 +14,9 @@ import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository } from 'typeorm';
 import { PluginInfo } from '../interface';
 import * as _ from 'lodash';
+import { CacheManager } from '@midwayjs/cache';
+
+export const PLUGIN_CACHE_KEY = 'PLUGIN_INIT';
 
 /**
  * 插件中心
@@ -32,11 +36,18 @@ export class PluginCenterService {
   @InjectEntityModel(PluginInfoEntity)
   pluginInfoEntity: Repository<PluginInfoEntity>;
 
+  @Inject()
+  cacheManager: CacheManager;
+
   @Init()
   async init() {
+    const inits: any[] = (await this.cacheManager.get(PLUGIN_CACHE_KEY)) || [];
+    const pid = process.pid;
+    if (inits.includes(pid)) return;
     this.plugins.clear();
     await this.initHooks();
     await this.initPlugin();
+    await this.cacheManager.set(PLUGIN_CACHE_KEY, inits.concat([process.pid]));
   }
 
   /**
@@ -75,17 +86,25 @@ export class PluginCenterService {
   /**
    * 初始化插件
    */
-  async initPlugin() {
-    const plugins = await this.pluginInfoEntity.findBy({ status: 1 });
+  async initPlugin(hook?: string) {
+    const find: any = { status: 1 };
+    if (hook) {
+      find.hook = hook;
+    }
+    const plugins = await this.pluginInfoEntity.findBy(find);
     for (const plugin of plugins) {
       const instance = await this.getInstance(plugin.content.data);
-      this.pluginInfos.set(plugin.keyName, {
-        ...plugin.pluginJson,
-        config: this.getConfig(plugin.config),
-      });
       if (plugin.hook) {
+        this.pluginInfos.set(plugin.hook, {
+          ...plugin.pluginJson,
+          config: this.getConfig(plugin.config),
+        });
         await this.register(plugin.hook, instance);
       } else {
+        this.pluginInfos.set(plugin.keyName, {
+          ...plugin.pluginJson,
+          config: this.getConfig(plugin.config),
+        });
         await this.register(plugin.keyName, instance);
       }
     }

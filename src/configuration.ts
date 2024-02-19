@@ -10,8 +10,8 @@ import * as localTask from '@midwayjs/task';
 // import * as crossDomain from '@midwayjs/cross-domain';
 import * as cool from '@cool-midway/core';
 import * as cloud from '@cool-midway/cloud';
-import * as file from '@cool-midway/file';
 import { ILogger } from '@midwayjs/logger';
+import * as upload from '@midwayjs/upload';
 import { IMidwayApplication } from '@midwayjs/core';
 // import * as swagger from '@midwayjs/swagger';
 // import * as rpc from '@cool-midway/rpc';
@@ -34,10 +34,10 @@ import { IMidwayApplication } from '@midwayjs/core';
     validate,
     // 本地任务 http://midwayjs.org/docs/legacy/task
     localTask,
+    // 文件上传
+    upload,
     // cool-admin 官方组件 https://cool-js.com
     cool,
-    // 文件上传 本地 阿里云存储 腾讯云存储 七牛云存储
-    file,
     // rpc 微服务 远程调用
     // rpc,
     // 任务与队列

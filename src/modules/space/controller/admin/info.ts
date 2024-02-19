@@ -1,4 +1,4 @@
-import { Config, Get, Provide } from '@midwayjs/decorator';
+import { Provide } from '@midwayjs/decorator';
 import { CoolController, BaseController } from '@cool-midway/core';
 import { SpaceInfoEntity } from '../../entity/info';
 import { SpaceInfoService } from '../../service/info';

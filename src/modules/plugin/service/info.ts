@@ -3,11 +3,12 @@ import { BaseService, CoolCommException } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Equal, Not, Repository } from 'typeorm';
 import { PluginInfoEntity } from '../entity/info';
-import { IMidwayApplication, IMidwayContext } from '@midwayjs/core';
+import { Config, IMidwayApplication, IMidwayContext } from '@midwayjs/core';
 import * as _ from 'lodash';
 import { PluginInfo } from '../interface';
-import { PluginCenterService } from './center';
+import { PLUGIN_CACHE_KEY, PluginCenterService } from './center';
 import * as fs from 'fs';
+import { CacheManager } from '@midwayjs/cache';
 
 /**
  * 插件信息
@@ -26,12 +27,26 @@ export class PluginService extends BaseService {
   @Inject()
   pluginCenterService: PluginCenterService;
 
+  @Config('module.plugin.hooks')
+  hooksConfig;
+
+  @Inject()
+  cacheManager: CacheManager;
+
   /**
    * 初始化
    * @param data
    * @param type
    */
   async modifyAfter() {
+    await this.reInit();
+  }
+
+  /**
+   * 需要重新初始化插件
+   */
+  async reInit() {
+    await this.cacheManager.set(PLUGIN_CACHE_KEY, []);
     await this.pluginCenterService.init();
   }
 
@@ -79,6 +94,7 @@ export class PluginService extends BaseService {
    */
   async getInstance(key: string) {
     await this.checkStatus(key);
+    await this.pluginCenterService.init();
     const instance = new (await this.pluginCenterService.plugins.get(key))();
     await instance.init(
       this.pluginCenterService.pluginInfos.get(key),
@@ -93,10 +109,13 @@ export class PluginService extends BaseService {
    * @param key
    */
   async checkStatus(key: string) {
-    const info = await this.pluginInfoEntity.findOneBy({
-      keyName: Equal(key),
-      status: 1,
-    });
+    if (Object.keys(this.hooksConfig).includes(key)) {
+      return;
+    }
+    const info = await this.pluginInfoEntity
+      .createQueryBuilder('a')
+      .where({ status: 1, keyName: Equal(key) })
+      .getOne();
     if (!info) {
       throw new CoolCommException('插件不存在或已禁用');
     }
@@ -232,6 +251,6 @@ export class PluginService extends BaseService {
       await this.pluginInfoEntity.insert(data);
     }
     // 初始化插件
-    await this.pluginCenterService.init();
+    await this.reInit();
   }
 }

@@ -1,8 +1,9 @@
 import { SpaceInfoEntity } from './../entity/info';
-import { Config, Provide } from '@midwayjs/decorator';
-import { BaseService, CoolFileConfig, MODETYPE } from '@cool-midway/core';
+import { Inject, Provide } from '@midwayjs/decorator';
+import { BaseService, MODETYPE } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository } from 'typeorm';
+import { PluginService } from '../../plugin/service/info';
 
 /**
  * 文件信息
@@ -12,15 +13,17 @@ export class SpaceInfoService extends BaseService {
   @InjectEntityModel(SpaceInfoEntity)
   spaceInfoEntity: Repository<SpaceInfoEntity>;
 
-  @Config('cool.file')
-  config: CoolFileConfig;
+  @Inject()
+  pluginService: PluginService;
 
   /**
    * 新增
    */
   async add(param) {
-    if (this.config.mode == MODETYPE.LOCAL) {
-      param.key = param.url.replace(this.config.domain, '');
+    const result = await this.pluginService.invoke('upload', 'getMode');
+    const config = await this.pluginService.getConfig('upload');
+    if (result.mode == MODETYPE.LOCAL) {
+      param.key = param.url.replace(config.domain, '');
     }
     return super.add(param);
   }
