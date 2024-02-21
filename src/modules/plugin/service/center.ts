@@ -15,8 +15,11 @@ import { Repository } from 'typeorm';
 import { PluginInfo } from '../interface';
 import * as _ from 'lodash';
 import { CacheManager } from '@midwayjs/cache';
+import { CoolEventManager } from '@cool-midway/core';
 
 export const PLUGIN_CACHE_KEY = 'PLUGIN_INIT';
+
+export const EVENT_PLUGIN_READY = 'EVENT_PLUGIN_READY';
 
 /**
  * 插件中心
@@ -39,6 +42,9 @@ export class PluginCenterService {
   @Inject()
   cacheManager: CacheManager;
 
+  @Inject()
+  coolEventManager: CoolEventManager;
+
   @Init()
   async init() {
     const inits: any[] = (await this.cacheManager.get(PLUGIN_CACHE_KEY)) || [];
@@ -48,6 +54,7 @@ export class PluginCenterService {
     await this.initHooks();
     await this.initPlugin();
     await this.cacheManager.set(PLUGIN_CACHE_KEY, inits.concat([process.pid]));
+    this.coolEventManager.emit(EVENT_PLUGIN_READY);
   }
 
   /**
