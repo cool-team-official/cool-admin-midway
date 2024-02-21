@@ -51,6 +51,15 @@ export class PluginService extends BaseService {
   }
 
   /**
+   * 删除不经过回收站
+   * @param ids
+   */
+  async delete(ids: any) {
+    await this.pluginInfoEntity.delete(ids);
+    await this.reInit();
+  }
+
+  /**
    * 更新
    * @param param
    */

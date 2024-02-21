@@ -37,6 +37,9 @@ import { PluginService } from '../../service/info';
       'a.createTime',
       'a.updateTime',
     ],
+    addOrderBy: {
+      id: 'DESC',
+    },
   },
 })
 export class AdminPluginInfoController extends BaseController {
