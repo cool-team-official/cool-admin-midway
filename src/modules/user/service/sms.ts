@@ -1,4 +1,4 @@
-import { Provide, Config, Inject } from '@midwayjs/decorator';
+import { Provide, Config, Inject, Init } from '@midwayjs/decorator';
 import { BaseService, CoolCommException } from '@cool-midway/core';
 import * as _ from 'lodash';
 import { CacheManager } from '@midwayjs/cache';
@@ -19,6 +19,23 @@ export class UserSmsService extends BaseService {
   @Inject()
   pluginService: PluginService;
 
+  plugin;
+
+  @Init()
+  async init() {
+    for (const key of ['sms-tx', 'sms-ali']) {
+      try {
+        this.plugin = await this.pluginService.getInstance(key);
+        if (this.plugin) {
+          this.config.pluginKey = key;
+          break;
+        }
+      } catch (e) {
+        continue;
+      }
+    }
+  }
+
   /**
    * 发送验证码
    * @param phone
@@ -27,13 +44,13 @@ export class UserSmsService extends BaseService {
     // 随机四位验证码
     const code = _.random(1000, 9999);
     const pluginKey = this.config.pluginKey;
-    if (!pluginKey) throw new CoolCommException('未配置短信插件');
+    if (!this.plugin) throw new CoolCommException('未配置短信插件');
     try {
       if (pluginKey == 'sms-tx') {
-        await this.pluginService.invoke('sms-tx', 'send', [code], [code]);
+        await this.plugin.send([phone], [code]);
       }
       if (pluginKey == 'sms-ali') {
-        await this.pluginService.invoke('sms-ali', 'send', [phone], {
+        await this.plugin.send([phone], {
           code,
         });
       }
