@@ -7,7 +7,6 @@ import { Config, IMidwayApplication, IMidwayContext } from '@midwayjs/core';
 import * as _ from 'lodash';
 import { PluginInfo } from '../interface';
 import { PLUGIN_CACHE_KEY, PluginCenterService } from './center';
-import * as fs from 'fs';
 import { CacheManager } from '@midwayjs/cache';
 
 /**

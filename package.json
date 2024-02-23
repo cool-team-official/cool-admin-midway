@@ -25,6 +25,7 @@
     "@midwayjs/validate": "^3.14.7",
     "@midwayjs/view-ejs": "^3.14.7",
     "axios": "^1.6.7",
+    "decompress": "^4.2.1",
     "ipip-ipdb": "^0.6.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
