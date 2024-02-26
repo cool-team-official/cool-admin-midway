@@ -32,12 +32,8 @@ export default {
     },
   },
   cool: {
-    file: {
-      // 上传模式 本地上传或云存储
-      mode: MODETYPE.LOCAL,
-      // 本地上传 文件地址前缀
-      domain: 'http://127.0.0.1:8001',
-    },
+    // 已经插件化，本地文件上传查看 plugin/config.ts，其他云存储查看对应插件的使用
+    file: {},
     // crud配置
     crud: {
       // 插入模式，save不会校验字段(允许传入不存在的字段)，insert会校验字段
