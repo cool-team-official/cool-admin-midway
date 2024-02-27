@@ -64,25 +64,44 @@ export class DictInfoService extends BaseService {
   }
 
   /**
-   * 获得字典值
-   * @param infoId
+   * 获得单个或多个字典值
+   * @param value 字典值或字典值数组
+   * @param key 字典类型
    * @returns
    */
-  async value(infoId: number) {
-    const info = await this.dictInfoEntity.findOneBy({ id: infoId });
-    return info?.name;
+  async getValues(value: string | string[], key: string) {
+    // 获取字典类型
+    const type = await this.dictTypeEntity.findOneBy({ key });
+    if (!type) {
+      return null; // 或者适当的错误处理
+    }
+
+    // 根据typeId获取所有相关的字典信息
+    const dictValues = await this.dictInfoEntity.find({
+      where: { typeId: type.id },
+    });
+
+    // 如果value是字符串，直接查找
+    if (typeof value === 'string') {
+      return this.findValueInDictValues(value, dictValues);
+    }
+
+    // 如果value是数组，遍历数组，对每个元素进行查找
+    return value.map(val => this.findValueInDictValues(val, dictValues));
   }
 
   /**
-   * 获得字典值
-   * @param infoId
+   * 在字典值数组中查找指定的值
+   * @param value 要查找的值
+   * @param dictValues 字典值数组
    * @returns
    */
-  async values(infoIds: number[]) {
-    const infos = await this.dictInfoEntity.findBy({ id: In(infoIds) });
-    return infos.map(e => {
-      return e.name;
-    });
+  findValueInDictValues(value: string, dictValues: any[]) {
+    let result = dictValues.find(dictValue => dictValue.value === value);
+    if (!result) {
+      result = dictValues.find(dictValue => dictValue.id === parseInt(value));
+    }
+    return result ? result.name : null; // 或者适当的错误处理
   }
 
   /**
