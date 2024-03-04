@@ -45,7 +45,10 @@ export class PluginCenterService {
   @Inject()
   coolEventManager: CoolEventManager;
 
-  @Init()
+  /**
+   * 初始化
+   * @returns
+   */
   async init() {
     const inits: any[] = (await this.cacheManager.get(PLUGIN_CACHE_KEY)) || [];
     const pid = process.pid;

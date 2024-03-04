@@ -21,9 +21,12 @@ export class BaseAppEvent {
   @Inject()
   cacheManager: CacheManager;
 
+  @Inject()
+  pluginCenterService: PluginCenterService;
+
   @Event('onServerReady')
   async onServerReady() {
     await this.cacheManager.set(PLUGIN_CACHE_KEY, []);
-    this.app.getApplicationContext().getAsync(PluginCenterService);
+    this.pluginCenterService.init();
   }
 }
