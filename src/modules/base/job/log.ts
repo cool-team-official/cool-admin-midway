@@ -1,27 +1,22 @@
-import {
-  Provide,
-  Inject,
-  CommonSchedule,
-  TaskLocal,
-  FORMAT,
-} from '@midwayjs/decorator';
+import { Job, IJob } from '@midwayjs/cron';
+import { FORMAT, ILogger, Inject } from '@midwayjs/core';
 import { BaseSysLogService } from '../service/sys/log';
-import { ILogger } from '@midwayjs/logger';
 
 /**
  * 日志定时任务
  */
-@Provide()
-export class BaseLogSchedule implements CommonSchedule {
+@Job({
+  cronTime: FORMAT.CRONTAB.EVERY_PER_10_SECOND,
+  start: true,
+})
+export class BaseLogJob implements IJob {
   @Inject()
   baseSysLogService: BaseSysLogService;
 
   @Inject()
   logger: ILogger;
 
-  // 定时执行的具体任务
-  @TaskLocal(FORMAT.CRONTAB.EVERY_DAY)
-  async exec() {
+  async onTick() {
     this.logger.info('清除日志定时任务开始执行');
     const startTime = Date.now();
     await this.baseSysLogService.clear();

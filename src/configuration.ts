@@ -6,7 +6,7 @@ import * as info from '@midwayjs/info';
 import { join } from 'path';
 import * as view from '@midwayjs/view-ejs';
 import * as staticFile from '@midwayjs/static-file';
-import * as localTask from '@midwayjs/task';
+import * as cron from '@midwayjs/cron';
 // import * as crossDomain from '@midwayjs/cross-domain';
 import * as cool from '@cool-midway/core';
 import * as cloud from '@cool-midway/cloud';
@@ -32,8 +32,8 @@ import { IMidwayApplication } from '@midwayjs/core';
     orm,
     // 参数验证 https://midwayjs.org/docs/extensions/validate
     validate,
-    // 本地任务 http://midwayjs.org/docs/legacy/task
-    localTask,
+    // 本地任务 http://www.midwayjs.org/docs/extensions/cron
+    cron,
     // 文件上传
     upload,
     // cool-admin 官方组件 https://cool-js.com
