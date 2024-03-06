@@ -3,11 +3,16 @@ import { BaseService, CoolCommException } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Equal, Not, Repository } from 'typeorm';
 import { PluginInfoEntity } from '../entity/info';
-import { Config, IMidwayApplication, IMidwayContext } from '@midwayjs/core';
+import {
+  Config,
+  IMidwayApplication,
+  IMidwayContext,
+  InjectClient,
+} from '@midwayjs/core';
 import * as _ from 'lodash';
 import { PluginInfo } from '../interface';
 import { PLUGIN_CACHE_KEY, PluginCenterService } from './center';
-import { CacheManager } from '@midwayjs/cache';
+import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 
 /**
  * 插件信息
@@ -29,8 +34,8 @@ export class PluginService extends BaseService {
   @Config('module.plugin.hooks')
   hooksConfig;
 
-  @Inject()
-  cacheManager: CacheManager;
+  @InjectClient(CachingFactory, 'default')
+  midwayCache: MidwayCache;
 
   /**
    * 初始化
@@ -45,7 +50,7 @@ export class PluginService extends BaseService {
    * 需要重新初始化插件
    */
   async reInit() {
-    await this.cacheManager.set(PLUGIN_CACHE_KEY, []);
+    await this.midwayCache.set(PLUGIN_CACHE_KEY, []);
     await this.pluginCenterService.init();
   }
 

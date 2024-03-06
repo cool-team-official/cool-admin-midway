@@ -1,7 +1,13 @@
-import { Provide, Config, Inject, Init } from '@midwayjs/decorator';
+import {
+  Provide,
+  Config,
+  Inject,
+  Init,
+  InjectClient,
+} from '@midwayjs/decorator';
 import { BaseService, CoolCommException } from '@cool-midway/core';
 import * as _ from 'lodash';
-import { CacheManager } from '@midwayjs/cache';
+import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 import { PluginService } from '../../plugin/service/info';
 
 /**
@@ -13,8 +19,8 @@ export class UserSmsService extends BaseService {
   @Config('module.user.sms')
   config;
 
-  @Inject()
-  cacheManager: CacheManager;
+  @InjectClient(CachingFactory, 'default')
+  midwayCache: MidwayCache;
 
   @Inject()
   pluginService: PluginService;
@@ -54,7 +60,7 @@ export class UserSmsService extends BaseService {
           code,
         });
       }
-      this.cacheManager.set(`sms:${phone}`, code, this.config.timeout);
+      this.midwayCache.set(`sms:${phone}`, code, this.config.timeout * 1000);
     } catch (error) {
       throw new CoolCommException('发送过于频繁，请稍后再试');
     }
@@ -67,7 +73,7 @@ export class UserSmsService extends BaseService {
    * @returns
    */
   async checkCode(phone, code) {
-    const cacheCode = await this.cacheManager.get(`sms:${phone}`);
+    const cacheCode = await this.midwayCache.get(`sms:${phone}`);
     if (cacheCode == code) {
       return true;
     }

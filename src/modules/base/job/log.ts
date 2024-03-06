@@ -6,7 +6,7 @@ import { BaseSysLogService } from '../service/sys/log';
  * 日志定时任务
  */
 @Job({
-  cronTime: FORMAT.CRONTAB.EVERY_PER_10_SECOND,
+  cronTime: FORMAT.CRONTAB.EVERY_DAY,
   start: true,
 })
 export class BaseLogJob implements IJob {

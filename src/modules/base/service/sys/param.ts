@@ -1,9 +1,9 @@
-import { Inject, Provide } from '@midwayjs/decorator';
+import { Inject, InjectClient, Provide } from '@midwayjs/decorator';
 import { BaseService, CoolCommException } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Not, Repository } from 'typeorm';
 import { BaseSysParamEntity } from '../../entity/sys/param';
-import { CacheManager } from '@midwayjs/cache';
+import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 
 /**
  * 参数配置
@@ -13,18 +13,18 @@ export class BaseSysParamService extends BaseService {
   @InjectEntityModel(BaseSysParamEntity)
   baseSysParamEntity: Repository<BaseSysParamEntity>;
 
-  @Inject()
-  cacheManager: CacheManager;
+  @InjectClient(CachingFactory, 'default')
+  midwayCache: MidwayCache;
 
   /**
    * 根据key获得对应的参数
    * @param key
    */
   async dataByKey(key) {
-    let result: any = await this.cacheManager.get(`param:${key}`);
+    let result: any = await this.midwayCache.get(`param:${key}`);
     if (!result) {
       result = await this.baseSysParamEntity.findOneBy({ keyName: key });
-      this.cacheManager.set(`param:${key}`, result);
+      this.midwayCache.set(`param:${key}`, result);
     }
     if (result) {
       if (result.dataType == 0) {
@@ -50,7 +50,7 @@ export class BaseSysParamService extends BaseService {
    */
   async htmlByKey(key) {
     let html = '<html><title>@title</title><body>@content</body></html>';
-    let result: any = await this.cacheManager.get(`param:${key}`);
+    let result: any = await this.midwayCache.get(`param:${key}`);
     if (result) {
       html = html
         .replace('@content', result.data)
@@ -85,7 +85,7 @@ export class BaseSysParamService extends BaseService {
   async modifyAfter() {
     const params = await this.baseSysParamEntity.find();
     for (const param of params) {
-      await this.cacheManager.set(`param:${param.keyName}`, param);
+      await this.midwayCache.set(`param:${param.keyName}`, param);
     }
   }
 }

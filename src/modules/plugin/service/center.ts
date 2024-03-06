@@ -4,6 +4,7 @@ import {
   IMidwayApplication,
   Init,
   Inject,
+  InjectClient,
   Scope,
   ScopeEnum,
 } from '@midwayjs/core';
@@ -14,10 +15,10 @@ import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository } from 'typeorm';
 import { PluginInfo } from '../interface';
 import * as _ from 'lodash';
-import { CacheManager } from '@midwayjs/cache';
+import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 import { CoolEventManager } from '@cool-midway/core';
 
-export const PLUGIN_CACHE_KEY = 'PLUGIN_INIT';
+export const PLUGIN_CACHE_KEY = 'plugin:init';
 
 export const EVENT_PLUGIN_READY = 'EVENT_PLUGIN_READY';
 
@@ -39,8 +40,8 @@ export class PluginCenterService {
   @InjectEntityModel(PluginInfoEntity)
   pluginInfoEntity: Repository<PluginInfoEntity>;
 
-  @Inject()
-  cacheManager: CacheManager;
+  @InjectClient(CachingFactory, 'default')
+  midwayCache: MidwayCache;
 
   @Inject()
   coolEventManager: CoolEventManager;
@@ -50,13 +51,13 @@ export class PluginCenterService {
    * @returns
    */
   async init() {
-    const inits: any[] = (await this.cacheManager.get(PLUGIN_CACHE_KEY)) || [];
+    const inits: any[] = (await this.midwayCache.get(PLUGIN_CACHE_KEY)) || [];
     const pid = process.pid;
     if (inits.includes(pid)) return;
     this.plugins.clear();
     await this.initHooks();
     await this.initPlugin();
-    await this.cacheManager.set(PLUGIN_CACHE_KEY, inits.concat([process.pid]));
+    await this.midwayCache.set(PLUGIN_CACHE_KEY, inits.concat([process.pid]));
     this.coolEventManager.emit(EVENT_PLUGIN_READY);
   }
 

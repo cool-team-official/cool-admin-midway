@@ -9,14 +9,12 @@ import * as staticFile from '@midwayjs/static-file';
 import * as cron from '@midwayjs/cron';
 // import * as crossDomain from '@midwayjs/cross-domain';
 import * as cool from '@cool-midway/core';
-import * as cloud from '@cool-midway/cloud';
 import { ILogger } from '@midwayjs/logger';
 import * as upload from '@midwayjs/upload';
 import { IMidwayApplication } from '@midwayjs/core';
 // import * as swagger from '@midwayjs/swagger';
 // import * as rpc from '@cool-midway/rpc';
 // import * as task from '@cool-midway/task';
-// import * as iot from '@cool-midway/iot';
 
 @Configuration({
   imports: [
@@ -42,11 +40,7 @@ import { IMidwayApplication } from '@midwayjs/core';
     // rpc,
     // 任务与队列
     // task,
-    // cool-admin 云开发组件
-    cloud,
-    // 物联网开发，如MQTT支持等
-    // iot,
-    // swagger 文档
+    // swagger 文档  http://www.midwayjs.org/docs/extensions/swagger
     // swagger,
     {
       component: info,

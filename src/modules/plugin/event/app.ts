@@ -1,8 +1,15 @@
 import { CoolEvent, Event } from '@cool-midway/core';
-import { App, Config, ILogger, Inject, Logger } from '@midwayjs/core';
+import {
+  App,
+  Config,
+  ILogger,
+  Inject,
+  InjectClient,
+  Logger,
+} from '@midwayjs/core';
 import { IMidwayKoaApplication } from '@midwayjs/koa';
 import { PLUGIN_CACHE_KEY, PluginCenterService } from '../service/center';
-import { CacheManager } from '@midwayjs/cache';
+import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 
 /**
  * 修改jwt.secret
@@ -18,15 +25,15 @@ export class BaseAppEvent {
   @App()
   app: IMidwayKoaApplication;
 
-  @Inject()
-  cacheManager: CacheManager;
+  @InjectClient(CachingFactory, 'default')
+  midwayCache: MidwayCache;
 
   @Inject()
   pluginCenterService: PluginCenterService;
 
   @Event('onServerReady')
   async onServerReady() {
-    await this.cacheManager.set(PLUGIN_CACHE_KEY, []);
+    await this.midwayCache.set(PLUGIN_CACHE_KEY, []);
     this.pluginCenterService.init();
   }
 }

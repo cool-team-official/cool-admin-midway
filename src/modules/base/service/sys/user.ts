@@ -1,4 +1,4 @@
-import { Inject, Provide } from '@midwayjs/decorator';
+import { Inject, InjectClient, Provide } from '@midwayjs/decorator';
 import { BaseService, CoolCommException } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { In, Repository } from 'typeorm';
@@ -8,7 +8,7 @@ import * as _ from 'lodash';
 import { BaseSysUserRoleEntity } from '../../entity/sys/user_role';
 import * as md5 from 'md5';
 import { BaseSysDepartmentEntity } from '../../entity/sys/department';
-import { CacheManager } from '@midwayjs/cache';
+import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 
 /**
  * 系统用户
@@ -24,8 +24,8 @@ export class BaseSysUserService extends BaseService {
   @InjectEntityModel(BaseSysDepartmentEntity)
   baseSysDepartmentEntity: Repository<BaseSysDepartmentEntity>;
 
-  @Inject()
-  cacheManager: CacheManager;
+  @InjectClient(CachingFactory, 'default')
+  midwayCache: MidwayCache;
 
   @Inject()
   baseSysPermsService: BaseSysPermsService;
@@ -186,7 +186,7 @@ export class BaseSysUserService extends BaseService {
         throw new CoolCommException('原密码错误');
       }
       param.passwordV = userInfo.passwordV + 1;
-      await this.cacheManager.set(
+      await this.midwayCache.set(
         `admin:passwordVersion:${param.id}`,
         param.passwordV
       );
@@ -211,7 +211,7 @@ export class BaseSysUserService extends BaseService {
         throw new CoolCommException('用户不存在');
       }
       param.passwordV = userInfo.passwordV + 1;
-      await this.cacheManager.set(
+      await this.midwayCache.set(
         `admin:passwordVersion:${param.id}`,
         param.passwordV
       );
@@ -230,6 +230,6 @@ export class BaseSysUserService extends BaseService {
    * @param userId
    */
   async forbidden(userId) {
-    await this.cacheManager.del(`admin:token:${userId}`);
+    await this.midwayCache.del(`admin:token:${userId}`);
   }
 }

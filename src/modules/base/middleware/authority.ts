@@ -3,8 +3,13 @@ import * as _ from 'lodash';
 import { CoolUrlTagData, RESCODE, TagTypes } from '@cool-midway/core';
 import * as jwt from 'jsonwebtoken';
 import { NextFunction, Context } from '@midwayjs/koa';
-import { IMiddleware, IMidwayApplication, Init } from '@midwayjs/core';
-import { CacheManager } from '@midwayjs/cache';
+import {
+  IMiddleware,
+  IMidwayApplication,
+  Init,
+  InjectClient,
+} from '@midwayjs/core';
+import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 
 /**
  * 权限校验
@@ -19,8 +24,8 @@ export class BaseAuthorityMiddleware
   @Config('module.base')
   jwtConfig;
 
-  @Inject()
-  cacheManager: CacheManager;
+  @InjectClient(CachingFactory, 'default')
+  midwayCache: MidwayCache;
 
   @Inject()
   coolUrlTagData: CoolUrlTagData;
@@ -61,11 +66,11 @@ export class BaseAuthorityMiddleware
           return;
         }
         if (ctx.admin) {
-          const rToken = await this.cacheManager.get(
+          const rToken = await this.midwayCache.get(
             `admin:token:${ctx.admin.userId}`
           );
           // 判断密码版本是否正确
-          const passwordV = await this.cacheManager.get(
+          const passwordV = await this.midwayCache.get(
             `admin:passwordVersion:${ctx.admin.userId}`
           );
           if (passwordV != ctx.admin.passwordVersion) {
@@ -119,7 +124,7 @@ export class BaseAuthorityMiddleware
           if (rToken !== token && this.jwtConfig.jwt.sso) {
             statusCode = 401;
           } else {
-            let perms: string[] = await this.cacheManager.get(
+            let perms: string[] = await this.midwayCache.get(
               `admin:perms:${ctx.admin.userId}`
             );
             if (!_.isEmpty(perms)) {
