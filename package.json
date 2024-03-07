@@ -8,6 +8,7 @@
     "@cool-midway/rpc": "^7.0.0",
     "@cool-midway/task": "^7.0.0",
     "@midwayjs/bootstrap": "^3.15.0",
+    "@midwayjs/cache-manager": "^3.15.0",
     "@midwayjs/core": "^3.15.0",
     "@midwayjs/cron": "^3.15.0",
     "@midwayjs/cross-domain": "^3.15.1",
