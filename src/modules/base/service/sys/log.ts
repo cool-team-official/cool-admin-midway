@@ -39,7 +39,7 @@ export class BaseSysLogService extends BaseService {
     sysLog.ip = typeof ip === 'string' ? ip : ip.join(',');
     const ipAddrArr = [];
     for (const e of sysLog.ip.split(','))
-      ipAddrArr.push(await await this.utils.getIpAddr(context, e));
+      ipAddrArr.push(await this.utils.getIpAddr(context, e));
     sysLog.ipAddr = ipAddrArr.join(',');
     sysLog.action = url.split('?')[0];
     sysLog.params = params;
