@@ -53,6 +53,10 @@ export class PluginUpload extends BasePluginHook implements BaseUpload {
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
     }
+    const uuidStr = uuid();
+    const name = `uploads/${moment().format('YYYYMMDD')}/${
+      fileName ? fileName : uuidStr + extend
+    }`;
     fs.writeFileSync(
       `${dirPath}/${fileName ? fileName : uuid() + extend}`,
       data
