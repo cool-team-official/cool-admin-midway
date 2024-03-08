@@ -15,7 +15,7 @@ export class BaseSysMenuEntity extends BaseEntity {
   @Column({ comment: '菜单地址', nullable: true })
   router: string;
 
-  @Column({ comment: '权限标识', nullable: true })
+  @Column({ comment: '权限标识', type: 'text', nullable: true })
   perms: string;
 
   @Column({
