@@ -20,8 +20,8 @@ export class BaseSysRoleEntity extends BaseEntity {
   @Column({ comment: '备注', nullable: true })
   remark: string;
 
-  @Column({ comment: '数据权限是否关联上下级', default: 1 })
-  relevance: number;
+  @Column({ comment: '数据权限是否关联上下级', default: false })
+  relevance: boolean;
 
   @Column({ comment: '菜单权限', type: 'json' })
   menuIdList: number[];
