@@ -112,7 +112,10 @@ export class PluginService extends BaseService {
     await instance.init(
       this.pluginCenterService.pluginInfos.get(key),
       this.ctx,
-      this.app
+      this.app,
+      {
+        cache: this.midwayCache,
+      }
     );
     return instance;
   }
