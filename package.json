@@ -4,7 +4,7 @@
   "description": "一个项目用COOL就够了",
   "private": true,
   "dependencies": {
-    "@cool-midway/core": "^7.1.10",
+    "@cool-midway/core": "^7.1.11",
     "@cool-midway/rpc": "^7.0.0",
     "@cool-midway/task": "^7.0.0",
     "@midwayjs/bootstrap": "^3.15.0",
@@ -61,8 +61,7 @@
     "ci": "npm run cov",
     "build": "mwtsc --cleanOutDir",
     "pm2:start": "pm2 start ./bootstrap.js -i max --name cool-admin",
-    "pm2:stop": "pm2 stop cool-admin & pm2 delete cool-admin",
-    "pm2:debug": "pm2-runtime start ./bootstrap.js -i max --name cool-admin"
+    "pm2:stop": "pm2 stop cool-admin & pm2 delete cool-admin"
   },
   "midway-bin-clean": [
     ".vscode/.tsbuildinfo",

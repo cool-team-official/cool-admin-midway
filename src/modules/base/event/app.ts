@@ -21,21 +21,38 @@ export class BaseAppEvent {
 
   @Event('onServerReady')
   async onServerReady() {
+    this.checkConfig();
+  }
+
+  /**
+   * 检查配置
+   */
+  async checkConfig() {
     if (this.config.base.jwt.secret == 'cool-admin-xxxxxx') {
-      const filePath = path.join(
-        this.app.getBaseDir(),
-        'modules',
-        'base',
-        'config.ts'
+      this.coreLogger.warn(
+        '检测到模块[base] jwt.secret 配置是默认值，即将自动修改...'
       );
-      // 替换文件内容
-      let fileData = fs.readFileSync(filePath, 'utf8');
-      const secret = uuid().replace(/-/g, '');
-      this.config.base.jwt.secret = secret;
-      fs.writeFileSync(filePath, fileData.replace('cool-admin-xxxxxx', secret));
-      this.coreLogger.info(
-        '\x1B[36m [cool:module:base] midwayjs cool module base auto modify jwt.secret\x1B[0m'
-      );
+      setTimeout(() => {
+        const filePath = path.join(
+          this.app.getBaseDir(),
+          '..',
+          'src',
+          'modules',
+          'base',
+          'config.ts'
+        );
+        // 替换文件内容
+        let fileData = fs.readFileSync(filePath, 'utf8');
+        const secret = uuid().replace(/-/g, '');
+        this.config.base.jwt.secret = secret;
+        fs.writeFileSync(
+          filePath,
+          fileData.replace('cool-admin-xxxxxx', secret)
+        );
+        this.coreLogger.info(
+          '\x1B[36m [cool:module:base] midwayjs cool module base auto modify jwt.secret\x1B[0m'
+        );
+      }, 6000);
     }
   }
 }
