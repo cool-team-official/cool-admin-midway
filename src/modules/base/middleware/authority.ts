@@ -60,8 +60,11 @@ export class BaseAuthorityMiddleware
             return;
           }
         } catch (error) {}
-        // 不需要登录 无需权限校验
-        if (this.ignoreUrls.includes(url)) {
+        // 使用matchUrl方法来检查URL是否应该被忽略
+        const isIgnored = this.ignoreUrls.some(pattern =>
+          this.matchUrl(pattern, url)
+        );
+        if (isIgnored) {
           await next();
           return;
         }
@@ -152,5 +155,31 @@ export class BaseAuthorityMiddleware
       }
       await next();
     };
+  }
+
+  // 匹配URL的方法
+  matchUrl(pattern, url) {
+    const patternSegments = pattern.split('/').filter(Boolean);
+    const urlSegments = url.split('/').filter(Boolean);
+
+    // 如果段的数量不同，则无法匹配
+    if (patternSegments.length !== urlSegments.length) {
+      return false;
+    }
+
+    // 逐段进行匹配
+    for (let i = 0; i < patternSegments.length; i++) {
+      if (patternSegments[i].startsWith(':')) {
+        // 如果模式段以':'开始，我们认为它是一个参数，可以匹配任何内容
+        continue;
+      }
+      // 如果两个段不相同，则不匹配
+      if (patternSegments[i] !== urlSegments[i]) {
+        return false;
+      }
+    }
+
+    // 所有段都匹配
+    return true;
   }
 }
