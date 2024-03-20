@@ -9,7 +9,7 @@ import {
  * 事件
  */
 @CoolController()
-export class AppDemoEventController extends BaseController {
+export class OpenDemoEventController extends BaseController {
   @Inject()
   coolEventManager: CoolEventManager;
 

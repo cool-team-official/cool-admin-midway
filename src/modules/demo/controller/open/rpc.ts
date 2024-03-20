@@ -5,9 +5,8 @@ import { DemoRpcService } from '../../service/rpc';
 /**
  * 远程RPC调用
  */
-@Provide()
 @CoolController()
-export class AppDemoRpcController extends BaseController {
+export class OpenDemoRpcController extends BaseController {
   @Inject()
   demoRpcService: DemoRpcService;
 

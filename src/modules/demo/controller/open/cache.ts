@@ -6,9 +6,8 @@ import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 /**
  * 缓存
  */
-@Provide()
 @CoolController()
-export class AppDemoCacheController extends BaseController {
+export class OpenDemoCacheController extends BaseController {
   @InjectClient(CachingFactory, 'default')
   midwayCache: MidwayCache;
 

@@ -6,9 +6,8 @@ import { DemoGetterQueue } from '../../queue/getter';
 /**
  * 队列
  */
-@Provide()
 @CoolController()
-export class DemoQueueController extends BaseController {
+export class OpenDemoQueueController extends BaseController {
   // 普通队列
   @Inject()
   demoCommQueue: DemoCommQueue;

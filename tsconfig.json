@@ -16,7 +16,8 @@
     "declaration": true,
     "noImplicitAny": false,
     "typeRoots": [ "./typings", "./node_modules/@types"],
-    "outDir": "dist"
+    "outDir": "dist",
+    "rootDir": "src"
   },
   "exclude": [
     "dist",

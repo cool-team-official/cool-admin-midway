@@ -8,13 +8,12 @@ import { Repository } from 'typeorm';
 /**
  * 测试
  */
-@Provide()
 @CoolController({
   api: ['add', 'delete', 'update', 'info', 'list', 'page'],
   entity: DemoGoodsEntity,
   service: DemoGoodsService,
 })
-export class AppDemoGoodsController extends BaseController {
+export class OpenDemoGoodsController extends BaseController {
   @InjectEntityModel(DemoGoodsEntity)
   demoGoodsEntity: Repository<DemoGoodsEntity>;
 

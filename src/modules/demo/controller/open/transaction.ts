@@ -6,10 +6,9 @@ import { DemoTransactionService } from '../../service/transaction';
 /**
  * 事务
  */
-@Provide()
 @CoolController({
   api: ['add', 'delete', 'update', 'info', 'list', 'page'],
   entity: DemoGoodsEntity,
   service: DemoTransactionService,
 })
-export class AppDemoTransactionController extends BaseController {}
+export class OpenDemoTransactionController extends BaseController {}
