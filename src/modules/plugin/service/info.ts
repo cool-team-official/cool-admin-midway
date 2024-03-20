@@ -115,6 +115,7 @@ export class PluginService extends BaseService {
       this.app,
       {
         cache: this.midwayCache,
+        pluginService: this,
       }
     );
     return instance;
