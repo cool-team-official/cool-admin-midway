@@ -19,8 +19,8 @@ export class UserAppEvent {
   @App()
   app: IMidwayKoaApplication;
 
-  @Event('onServerReady')
-  async onServerReady() {
+  @Event('onDBInit')
+  async onDBInit() {
     this.checkConfig();
   }
 
@@ -30,7 +30,7 @@ export class UserAppEvent {
   async checkConfig() {
     if (this.config.user.jwt.secret == 'cool-app-xxxxxx') {
       this.coreLogger.warn(
-        '检测到模块[user] jwt.secret 配置是默认值，即将自动修改...'
+        '检测到模块[user] jwt.secret 配置是默认值，请不要关闭！即将自动修改...'
       );
       setTimeout(() => {
         const filePath = path.join(
@@ -49,7 +49,7 @@ export class UserAppEvent {
         this.coreLogger.info(
           '\x1B[36m [cool:module:user] midwayjs cool module user auto modify jwt.secret\x1B[0m'
         );
-      }, 8000);
+      }, 15000);
     }
   }
 }
