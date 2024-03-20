@@ -1,5 +1,9 @@
 import { App, Inject, Provide } from '@midwayjs/decorator';
-import { BaseService, CoolCommException } from '@cool-midway/core';
+import {
+  BaseService,
+  CoolCommException,
+  CoolEventManager,
+} from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Equal, Not, Repository } from 'typeorm';
 import { PluginInfoEntity } from '../entity/info';
@@ -13,6 +17,7 @@ import * as _ from 'lodash';
 import { PluginInfo } from '../interface';
 import { PLUGIN_CACHE_KEY, PluginCenterService } from './center';
 import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
+import { GLOBAL_EVENT_PLUGIN_INIT } from '../event/init';
 
 /**
  * 插件信息
@@ -37,6 +42,9 @@ export class PluginService extends BaseService {
   @InjectClient(CachingFactory, 'default')
   midwayCache: MidwayCache;
 
+  @Inject()
+  coolEventManager: CoolEventManager;
+
   /**
    * 初始化
    * @param data
@@ -44,6 +52,8 @@ export class PluginService extends BaseService {
    */
   async modifyAfter() {
     await this.reInit();
+    // 多进程发送全局事件，pm2下生效
+    this.coolEventManager.globalEmit(GLOBAL_EVENT_PLUGIN_INIT, false);
   }
 
   /**

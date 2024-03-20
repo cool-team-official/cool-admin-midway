@@ -12,10 +12,10 @@ import { PLUGIN_CACHE_KEY, PluginCenterService } from '../service/center';
 import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 
 /**
- * 修改jwt.secret
+ * 插件事件
  */
 @CoolEvent()
-export class BaseAppEvent {
+export class PluginAppEvent {
   @Logger()
   coreLogger: ILogger;
 
