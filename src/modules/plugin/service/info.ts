@@ -144,7 +144,7 @@ export class PluginService extends BaseService {
       .where({ status: 1, keyName: Equal(key) })
       .getOne();
     if (!info) {
-      throw new CoolCommException('插件不存在或已禁用');
+      throw new CoolCommException(`插件[${key}]不存在或已禁用`);
     }
   }
 
