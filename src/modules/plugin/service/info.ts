@@ -51,7 +51,6 @@ export class PluginService extends BaseService {
    * @param type
    */
   async modifyAfter() {
-    await this.reInit();
     // 多进程发送全局事件，pm2下生效
     this.coolEventManager.globalEmit(GLOBAL_EVENT_PLUGIN_INIT, false);
   }
