@@ -18,10 +18,10 @@ export class DemoGoodsService extends BaseService {
   async sqlPage(query) {
     await this.demoGoodsEntity.save({
       id: 11,
-      title: '11',
-      price: 11,
-      description: '11',
-      mainImage: '11',
+      title: '标题',
+      price: 99.0,
+      description: '商品描述',
+      mainImage: 'https://cool-js.com/logo.png',
     });
     await this.demoGoodsEntity.delete({ id: 11 });
     return this.sqlRenderPage(

@@ -30,13 +30,11 @@ export class UserAppEvent {
   async checkConfig() {
     if (this.config.user.jwt.secret == 'cool-app-xxxxxx') {
       this.coreLogger.warn(
-        '检测到模块[user] jwt.secret 配置是默认值，请不要关闭！即将自动修改...'
+        '\x1B[36m 检测到模块[user] jwt.secret 配置是默认值，请不要关闭！即将自动修改... \x1B[0m'
       );
       setTimeout(() => {
         const filePath = path.join(
           this.app.getBaseDir(),
-          '..',
-          'src',
           'modules',
           'user',
           'config.ts'
@@ -49,7 +47,7 @@ export class UserAppEvent {
         this.coreLogger.info(
           '\x1B[36m [cool:module:user] midwayjs cool module user auto modify jwt.secret\x1B[0m'
         );
-      }, 15000);
+      }, 6000);
     }
   }
 }

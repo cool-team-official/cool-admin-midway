@@ -38,6 +38,7 @@
     "ws": "^8.16.0"
   },
   "devDependencies": {
+    "@midwayjs/cli": "^2.1.1",
     "@midwayjs/mock": "^3.15.2",
     "@types/jest": "^29.5.12",
     "@types/koa": "^2.15.0",
@@ -54,13 +55,13 @@
   },
   "scripts": {
     "start": "NODE_ENV=production node ./bootstrap.js",
-    "dev": "cross-env NODE_ENV=local mwtsc --watch --run @midwayjs/mock/app.js",
-    "cov": "jest --coverage",
+    "dev": "cross-env && cross-env NODE_ENV=local TS_NODE_TYPE_CHECK=false TS_NODE_TRANSPILE_ONLY=true midway-bin dev --ts",
+    "cov": "midway-bin cov --ts",
     "lint": "mwts check",
     "lint:fix": "mwts fix",
     "ci": "npm run cov",
-    "build": "mwtsc --cleanOutDir",
-    "pm2:start": "pm2 start ./bootstrap.js -i 2 --name cool-admin",
+    "build": "midway-bin build -c",
+    "pm2:start": "pm2 start ./bootstrap.js -i max --name cool-admin",
     "pm2:stop": "pm2 stop cool-admin & pm2 delete cool-admin"
   },
   "midway-bin-clean": [

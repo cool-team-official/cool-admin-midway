@@ -31,30 +31,17 @@ export class BaseAppEvent {
     this.checkKeys();
   }
 
-  @Event('onServerReady')
-  async onServerReady() {
-    setTimeout(() => {
-      this.coreLogger.info(
-        `
-项目启动成功，欢迎使用 cool-admin 框架！ 官网: https://cool-js.com
-服务访问地址: http://127.0.0.1:${this.port}`
-      );
-    }, 2000);
-  }
-
   /**
    * 检查配置
    */
   async checkConfig() {
     if (this.config.base.jwt.secret == 'cool-admin-xxxxxx') {
       this.coreLogger.warn(
-        '检测到模块[base] jwt.secret 配置是默认值，请不要关闭！即将自动修改...'
+        '\x1B[36m 检测到模块[base] jwt.secret 配置是默认值，请不要关闭！即将自动修改... \x1B[0m'
       );
       setTimeout(() => {
         const filePath = path.join(
           this.app.getBaseDir(),
-          '..',
-          'src',
           'modules',
           'base',
           'config.ts'
@@ -70,7 +57,7 @@ export class BaseAppEvent {
         this.coreLogger.info(
           '\x1B[36m [cool:module:base] midwayjs cool module base auto modify jwt.secret\x1B[0m'
         );
-      }, 15000);
+      }, 6000);
     }
   }
 
@@ -80,13 +67,11 @@ export class BaseAppEvent {
   async checkKeys() {
     if (this.configKeys == 'cool-admin-keys-xxxxxx') {
       this.coreLogger.warn(
-        '检测到配置Keys是默认值，请不要关闭！即将自动修改...'
+        '\x1B[36m 检测到基础配置[Keys] 是默认值，请不要关闭！即将自动修改... \x1B[0m'
       );
       setTimeout(() => {
         const filePath = path.join(
           this.app.getBaseDir(),
-          '..',
-          'src',
           'config',
           'config.default.ts'
         );
@@ -101,7 +86,7 @@ export class BaseAppEvent {
         this.coreLogger.info(
           '\x1B[36m [cool:module:base] midwayjs cool keys auto modify \x1B[0m'
         );
-      }, 15000);
+      }, 6000);
     }
   }
 }
