@@ -8,6 +8,8 @@ export interface PluginInfo {
   key?: string;
   /** 钩子 */
   hook?: string;
+  /** 是否单例 */
+  singleton?: boolean;
   /** 版本 */
   version?: string;
   /** 描述 */

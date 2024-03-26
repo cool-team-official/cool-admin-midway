@@ -5,7 +5,7 @@ import {
   CoolEventManager,
 } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
-import { Equal, Not, Repository } from 'typeorm';
+import { Equal, In, Not, Repository } from 'typeorm';
 import { PluginInfoEntity } from '../entity/info';
 import {
   Config,
@@ -15,9 +15,12 @@ import {
 } from '@midwayjs/core';
 import * as _ from 'lodash';
 import { PluginInfo } from '../interface';
-import { PLUGIN_CACHE_KEY, PluginCenterService } from './center';
+import { PluginCenterService } from './center';
 import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
-import { GLOBAL_EVENT_PLUGIN_INIT } from '../event/init';
+import {
+  GLOBAL_EVENT_PLUGIN_INIT,
+  GLOBAL_EVENT_PLUGIN_REMOVE,
+} from '../event/init';
 
 /**
  * 插件信息
@@ -46,21 +49,41 @@ export class PluginService extends BaseService {
   coolEventManager: CoolEventManager;
 
   /**
-   * 初始化
-   * @param data
+   * 新增或更新
+   * @param param
    * @param type
    */
-  async modifyAfter() {
-    // 多进程发送全局事件，pm2下生效
-    this.coolEventManager.globalEmit(GLOBAL_EVENT_PLUGIN_INIT, false);
+  async addOrUpdate(param: any, type?: 'add' | 'update') {
+    await super.addOrUpdate(param, type);
+    const info = await this.pluginInfoEntity.findOneBy({ id: param.id });
+    if (info.status == 1) {
+      await this.reInit(info.keyName);
+    } else {
+      await this.remove(info.keyName, !!info.hook);
+    }
   }
 
   /**
-   * 需要重新初始化插件
+   * 重新初始化插件
    */
-  async reInit() {
-    await this.midwayCache.set(PLUGIN_CACHE_KEY, []);
-    await this.pluginCenterService.init();
+  async reInit(keyName: string) {
+    // 多进程发送全局事件，pm2下生效，本地开发则通过普通事件
+    this.coolEventManager.globalEmit(GLOBAL_EVENT_PLUGIN_INIT, false, keyName);
+  }
+
+  /**
+   * 移除插件
+   * @param keyName
+   * @param isHook
+   */
+  async remove(keyName: string, isHook = false) {
+    // 多进程发送全局事件，pm2下生效
+    this.coolEventManager.globalEmit(
+      GLOBAL_EVENT_PLUGIN_REMOVE,
+      false,
+      keyName,
+      isHook
+    );
   }
 
   /**
@@ -68,8 +91,11 @@ export class PluginService extends BaseService {
    * @param ids
    */
   async delete(ids: any) {
+    const list = await this.pluginInfoEntity.findBy({ id: In(ids) });
+    for (const item of list) {
+      await this.remove(item.keyName, !!item.hook);
+    }
     await this.pluginInfoEntity.delete(ids);
-    await this.reInit();
   }
 
   /**
@@ -115,18 +141,19 @@ export class PluginService extends BaseService {
    * @returns
    */
   async getInstance(key: string) {
-    await this.checkStatus(key);
-    await this.pluginCenterService.init();
-    const instance = new (await this.pluginCenterService.plugins.get(key))();
-    await instance.init(
-      this.pluginCenterService.pluginInfos.get(key),
-      this.ctx,
-      this.app,
-      {
-        cache: this.midwayCache,
-        pluginService: this,
-      }
-    );
+    const check = await this.checkStatus(key);
+    if (!check) throw new CoolCommException(`插件[${key}]不存在或已禁用`);
+    let instance;
+    const pluginInfo = this.pluginCenterService.pluginInfos.get(key);
+    if (pluginInfo.singleton) {
+      instance = this.pluginCenterService.plugins.get(key);
+    } else {
+      instance = new (await this.pluginCenterService.plugins.get(key))();
+    }
+    await instance.init(pluginInfo, this.ctx, this.app, {
+      cache: this.midwayCache,
+      pluginService: this,
+    });
     return instance;
   }
 
@@ -136,15 +163,14 @@ export class PluginService extends BaseService {
    */
   async checkStatus(key: string) {
     if (Object.keys(this.hooksConfig).includes(key)) {
-      return;
+      return true;
     }
     const info = await this.pluginInfoEntity
       .createQueryBuilder('a')
       .where({ status: 1, keyName: Equal(key) })
       .getOne();
-    if (!info) {
-      throw new CoolCommException(`插件[${key}]不存在或已禁用`);
-    }
+
+    return !!info;
   }
 
   /**
@@ -277,6 +303,6 @@ export class PluginService extends BaseService {
       await this.pluginInfoEntity.insert(data);
     }
     // 初始化插件
-    await this.reInit();
+    await this.reInit(pluginJson.key);
   }
 }
