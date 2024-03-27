@@ -12,23 +12,24 @@
 
 ## 技术栈
 
-- 后端：**`node.js` `midway.js` `koa.js`  `typescript`**
+- 后端：**`node.js` `midway.js` `koa.js` `typescript`**
 - 前端：**`vue.js` `element-plus` `jsx` `pinia` `vue-router`**
 - 数据库：**`mysql` `postgresql` `sqlite`**
 
 如果你是前端，后端的这些技术选型对你是特别友好的，前端开发者可以较快速地上手。
 如果你是后端，Typescript 的语法又跟 java、php 等特别类似，一切看起来也是那么得熟悉。
 
-如果你想使用java版本后端，请移步[cool-admin-java](https://cool-js.com/admin/java/introduce.html)
+如果你想使用 java 版本后端，请移步[cool-admin-java](https://cool-js.com/admin/java/introduce.html)
 
 #### 官网
 
 [https://cool-js.com](https://cool-js.com)
 
 <!-- 在此次添加使用文档 -->
+
 ## 演示
 
-[AI极速编码](https://cool-js.com/ai/introduce.html)
+[AI 极速编码](https://cool-js.com/ai/introduce.html)
 
 [https://show.cool-admin.com](https://show.cool-admin.com)
 
@@ -36,7 +37,6 @@
 - 密码：123456
 
 <img src="https://cool-show.oss-cn-shanghai.aliyuncs.com/admin/home-mini.png" alt="Admin Home"></a>
-
 
 #### 项目前端
 
@@ -50,7 +50,7 @@
 
 #### 修改数据库配置，配置文件位于`src/config/config.local.ts`
 
-以Mysql为例，其他数据库请参考[数据库配置文档](https://cool-js.com/admin/node/quick.html#%E6%95%B0%E6%8D%AE%E5%BA%93%E9%85%8D%E7%BD%AE)
+以 Mysql 为例，其他数据库请参考[数据库配置文档](https://cool-js.com/admin/node/quick.html#%E6%95%B0%E6%8D%AE%E5%BA%93%E9%85%8D%E7%BD%AE)
 
 Mysql(`>=5.7版本`)，建议 8.0，node 版本(`>=16.x`)，建议 18.x，首次启动会自动初始化并导入数据
 
@@ -79,6 +79,7 @@ typeorm: {
     },
   },
 ```
+
 #### 安装依赖并运行
 
 ```bash
@@ -154,7 +155,7 @@ export class DemoAppGoodsController extends BaseController {
 
 ### 部署
 
-[部署教程](https://cool-js.com/admin/node/other/deploy.html)
+[部署教程](https://cool-js.com/admin/deploy.html)
 
 ### 内置指令
 
