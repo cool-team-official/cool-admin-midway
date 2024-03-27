@@ -1,9 +1,14 @@
-import { Config, Provide } from '@midwayjs/decorator';
+import { Config, Init, Inject, Provide } from '@midwayjs/decorator';
 import { BaseService, CoolCache, CoolCommException } from '@cool-midway/core';
 import axios from 'axios';
 import * as crypto from 'crypto';
 import { v1 as uuid } from 'uuid';
 import * as moment from 'moment';
+import { InjectEntityModel } from '@midwayjs/typeorm';
+import { Equal, Repository } from 'typeorm';
+import { UserInfoEntity } from '../entity/info';
+import { UserWxEntity } from '../entity/wx';
+import { PluginService } from '../../plugin/service/info';
 
 /**
  * 微信
@@ -12,6 +17,66 @@ import * as moment from 'moment';
 export class UserWxService extends BaseService {
   @Config('module.user')
   config;
+
+  @InjectEntityModel(UserInfoEntity)
+  userInfoEntity: Repository<UserInfoEntity>;
+
+  @InjectEntityModel(UserWxEntity)
+  userWxEntity: Repository<UserWxEntity>;
+
+  @Inject()
+  pluginService: PluginService;
+
+  /**
+   * 获得小程序实例
+   * @returns
+   */
+  async getMiniApp() {
+    const wxPlugin = await this.pluginService.getInstance('wx');
+    return wxPlugin.MiniApp();
+  }
+
+  /**
+   * 获得公众号实例
+   * @returns
+   */
+  async getOfficialAccount() {
+    const wxPlugin = await this.pluginService.getInstance('wx');
+    return wxPlugin.OfficialAccount();
+  }
+
+  /**
+   * 获得App实例
+   * @returns
+   */
+  async getOpenPlatform() {
+    const wxPlugin = await this.pluginService.getInstance('wx');
+    return wxPlugin.OpenPlatform();
+  }
+
+  /**
+   * 获得用户的openId
+   * @param userId
+   * @param type 0-小程序 1-公众号 2-App
+   */
+  async getOpenid(userId: number, type = 0) {
+    const user = await this.userInfoEntity.findOneBy({
+      id: Equal(userId),
+      status: 1,
+    });
+    if (!user) {
+      throw new CoolCommException('用户不存在或已被禁用');
+    }
+    const wx = await this.userWxEntity
+      .createQueryBuilder('a')
+      .where('a.type = :type', { type })
+      .andWhere('(a.unionid = :unionid or a.openid =:openid )', {
+        unionid: user.unionid,
+        openid: user.unionid,
+      })
+      .getOne();
+    return wx ? wx.openid : null;
+  }
 
   /**
    * 获得微信配置
@@ -30,7 +95,9 @@ export class UserWxService extends BaseService {
         },
       }
     );
-    const { appid } = this.config.wx.mp;
+
+    const account = (await this.getOfficialAccount()).getAccount();
+    const appid = account.getAppId();
     // 返回结果集
     const result = {
       timestamp: parseInt(moment().valueOf() / 1000 + ''),
@@ -57,7 +124,16 @@ export class UserWxService extends BaseService {
    * @param code
    */
   async mpUserInfo(code) {
-    const token = await this.openOrMpToken(code, this.config.wx.mp);
+    const token = await this.openOrMpToken(code, 'mp');
+    return await this.openOrMpUserInfo(token);
+  }
+
+  /**
+   * 获得app用户信息
+   * @param code
+   */
+  async appUserInfo(code) {
+    const token = await this.openOrMpToken(code, 'open');
     return await this.openOrMpUserInfo(token);
   }
 
@@ -66,18 +142,14 @@ export class UserWxService extends BaseService {
    * @param appid
    * @param secret
    */
-  @CoolCache(3600)
   public async getWxToken(type = 'mp') {
-    //@ts-ignore
-    const conf = this.config.wx[type];
-    const result = await axios.get('https://api.weixin.qq.com/cgi-bin/token', {
-      params: {
-        grant_type: 'client_credential',
-        appid: conf.appid,
-        secret: conf.secret,
-      },
-    });
-    return result.data;
+    let app;
+    if (type == 'mp') {
+      app = await this.getOfficialAccount();
+    } else {
+      app = await this.getOpenPlatform();
+    }
+    return await app.getAccessToken().getToken();
   }
 
   /**
@@ -101,15 +173,19 @@ export class UserWxService extends BaseService {
   /**
    * 获得token嗯
    * @param code
-   * @param conf
+   * @param type
    */
-  async openOrMpToken(code, conf) {
+  async openOrMpToken(code, type = 'mp') {
+    const account =
+      type == 'mp'
+        ? (await this.getOfficialAccount()).getAccount()
+        : (await this.getMiniApp()).getAccount();
     const result = await axios.get(
       'https://api.weixin.qq.com/sns/oauth2/access_token',
       {
         params: {
-          appid: conf.appid,
-          secret: conf.secret,
+          appid: account.getAppId(),
+          secret: account.getSecret(),
           code,
           grant_type: 'authorization_code',
         },
@@ -124,20 +200,10 @@ export class UserWxService extends BaseService {
    * @param conf 配置
    */
   async miniSession(code) {
-    const { appid, secret } = this.config.wx.mini;
-    const result = await axios.get(
-      'https://api.weixin.qq.com/sns/jscode2session',
-      {
-        params: {
-          appid,
-          secret,
-          js_code: code,
-          grant_type: 'authorization_code',
-        },
-      }
-    );
-
-    return result.data;
+    const app = await this.getMiniApp();
+    const utils = app.getUtils();
+    const result = await utils.codeToSession(code);
+    return result;
   }
 
   /**
@@ -178,7 +244,12 @@ export class UserWxService extends BaseService {
     if (session.errcode) {
       throw new CoolCommException('获取手机号失败，请刷新重试');
     }
-    return await this.miniDecryptData(encryptedData, iv, session.session_key);
+    const result = await this.miniDecryptData(
+      encryptedData,
+      iv,
+      session.session_key
+    );
+    return result.phoneNumber;
   }
 
   /**
@@ -188,23 +259,8 @@ export class UserWxService extends BaseService {
    * @param sessionKey
    */
   async miniDecryptData(encryptedData, iv, sessionKey) {
-    sessionKey = Buffer.from(sessionKey, 'base64');
-    encryptedData = Buffer.from(encryptedData, 'base64');
-    iv = Buffer.from(iv, 'base64');
-    try {
-      // 解密
-      const decipher = crypto.createDecipheriv('aes-128-cbc', sessionKey, iv);
-      // 设置自动 padding 为 true，删除填充补位
-      decipher.setAutoPadding(true);
-      // @ts-ignore
-      let decoded = decipher.update(encryptedData, 'binary', 'utf8');
-      // @ts-ignore
-      decoded += decipher.final('utf8');
-      // @ts-ignore
-      decoded = JSON.parse(decoded);
-      return decoded;
-    } catch (err) {
-      throw new CoolCommException('获得信息失败');
-    }
+    const app = await this.getMiniApp();
+    const utils = app.getUtils();
+    return await utils.decryptSession(sessionKey, iv, encryptedData);
   }
 }

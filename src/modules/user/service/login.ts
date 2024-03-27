@@ -1,7 +1,7 @@
 import { Config, Inject, Provide } from '@midwayjs/decorator';
 import { BaseService, CoolCommException } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { UserInfoEntity } from '../entity/info';
 import { UserWxService } from './wx';
 import * as jwt from 'jsonwebtoken';
@@ -62,7 +62,9 @@ export class UserLoginService extends BaseService {
     // 1、检查短信验证码  2、登录
     const check = await this.userSmsService.checkCode(phone, smsCode);
     if (check) {
-      let user: any = await this.userInfoEntity.findOneBy({ phone });
+      let user: any = await this.userInfoEntity.findOneBy({
+        phone: Equal(phone),
+      });
       if (!user) {
         user = {
           phone,
@@ -84,6 +86,33 @@ export class UserLoginService extends BaseService {
    */
   async mp(code: string) {
     let wxUserInfo = await this.userWxService.mpUserInfo(code);
+    if (wxUserInfo) {
+      delete wxUserInfo.privilege;
+      wxUserInfo = await this.saveWxInfo(
+        {
+          openid: wxUserInfo.openid,
+          unionid: wxUserInfo.unionid,
+          avatarUrl: wxUserInfo.headimgurl,
+          nickName: wxUserInfo.nickname,
+          gender: wxUserInfo.sex,
+          city: wxUserInfo.city,
+          province: wxUserInfo.province,
+          country: wxUserInfo.country,
+        },
+        1
+      );
+      return this.wxLoginToken(wxUserInfo);
+    } else {
+      throw new Error('微信登录失败');
+    }
+  }
+
+  /**
+   * 微信APP授权登录
+   * @param code
+   */
+  async wxApp(code: string) {
+    let wxUserInfo = await this.userWxService.appUserInfo(code);
     if (wxUserInfo) {
       delete wxUserInfo.privilege;
       wxUserInfo = await this.saveWxInfo(

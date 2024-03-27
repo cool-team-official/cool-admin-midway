@@ -5,7 +5,7 @@ import {
   TagTypes,
   CoolTag,
 } from '@cool-midway/core';
-import { Get, Inject, Query } from '@midwayjs/core';
+import { Body, Inject, Post } from '@midwayjs/core';
 import { UserWxService } from '../../service/wx';
 
 /**
@@ -18,9 +18,8 @@ export class UserCommController extends BaseController {
   userWxService: UserWxService;
 
   @CoolTag(TagTypes.IGNORE_TOKEN)
-  @Get('/wxMpConfig', { summary: '获取微信公众号配置' })
-  public async getWxMpConfig(@Query() url: string) {
-    const a = await this.userWxService.getWxMpConfig(url);
-    return this.ok(a);
+  @Post('/wxMpConfig', { summary: '获取微信公众号配置' })
+  public async getWxMpConfig(@Body('url') url: string) {
+    return this.ok(await this.userWxService.getWxMpConfig(url));
   }
 }

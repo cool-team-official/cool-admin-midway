@@ -35,6 +35,12 @@ export class AppUserLoginController extends BaseController {
   }
 
   @CoolTag(TagTypes.IGNORE_TOKEN)
+  @Post('/wxApp', { summary: '微信APP授权登录' })
+  async app(@Body('code') code: string) {
+    return this.ok(await this.userLoginService.wxApp(code));
+  }
+
+  @CoolTag(TagTypes.IGNORE_TOKEN)
   @Post('/phone', { summary: '手机号登录' })
   async phone(@Body('phone') phone: string, @Body('smsCode') smsCode: string) {
     return this.ok(await this.userLoginService.phone(phone, smsCode));

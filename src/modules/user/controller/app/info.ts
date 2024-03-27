@@ -43,4 +43,23 @@ export class AppUserInfoController extends BaseController {
     await this.userInfoService.logoff(this.ctx.user.id);
     return this.ok();
   }
+
+  @Post('/bindPhone', { summary: '绑定手机号' })
+  async bindPhone(@Body('phone') phone: string, @Body('code') code: string) {
+    await this.userInfoService.bindPhone(this.ctx.user.id, phone, code);
+    return this.ok();
+  }
+
+  @Post('/miniPhone', { summary: '绑定小程序手机号' })
+  async miniPhone(@Body() body) {
+    const { code, encryptedData, iv } = body;
+    return this.ok(
+      await this.userInfoService.miniPhone(
+        this.ctx.user.id,
+        code,
+        encryptedData,
+        iv
+      )
+    );
+  }
 }

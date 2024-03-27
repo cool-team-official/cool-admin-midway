@@ -21,19 +21,6 @@ export default () => {
       // 验证码有效期，单位秒
       timeout: 60 * 3,
     },
-    // 微信配置
-    wx: {
-      // 小程序
-      mini: {
-        appid: '',
-        secret: '',
-      },
-      // 公众号
-      mp: {
-        appid: '',
-        secret: '',
-      },
-    },
     // jwt
     jwt: {
       // token 过期时间，单位秒
