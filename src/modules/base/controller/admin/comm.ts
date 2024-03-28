@@ -33,7 +33,9 @@ export class BaseCommController extends BaseController {
    */
   @Get('/person', { summary: '个人信息' })
   async person() {
-    return this.ok(await this.baseSysUserService.person());
+    return this.ok(
+      await this.baseSysUserService.person(this.ctx.admin?.userId)
+    );
   }
 
   /**

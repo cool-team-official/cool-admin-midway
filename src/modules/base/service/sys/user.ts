@@ -1,7 +1,7 @@
 import { Inject, InjectClient, Provide } from '@midwayjs/decorator';
 import { BaseService, CoolCommException } from '@cool-midway/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Equal, In, Repository } from 'typeorm';
 import { BaseSysUserEntity } from '../../entity/sys/user';
 import { BaseSysPermsService } from './perms';
 import * as _ from 'lodash';
@@ -96,9 +96,9 @@ export class BaseSysUserService extends BaseService {
   /**
    * 获得个人信息
    */
-  async person() {
+  async person(userId) {
     const info = await this.baseSysUserEntity.findOneBy({
-      id: this.ctx.admin?.userId,
+      id: Equal(userId),
     });
     delete info?.password;
     return info;
