@@ -88,20 +88,23 @@ export class PluginUpload extends BasePluginHook implements BaseUpload {
       if (_.isEmpty(ctx.files)) {
         throw new CoolCommException('上传文件为空');
       }
+      // 检查public/uploads文件夹是否存在，不存在则创建
+      const basePath = path.join(
+        this.app.getBaseDir(),
+        '..',
+        'public',
+        'uploads'
+      );
+      if (!fs.existsSync(basePath)) {
+        fs.mkdirSync(basePath);
+      }
+
       const file = ctx.files[0];
       const extension = file.filename.split('.').pop();
       const name =
         moment().format('YYYYMMDD') + '/' + (key || `${uuid()}.${extension}`);
-      const target = path.join(
-        this.app.getBaseDir(),
-        '..',
-        `public/uploads/${name}`
-      );
-      const dirPath = path.join(
-        this.app.getBaseDir(),
-        '..',
-        `public/uploads/${moment().format('YYYYMMDD')}`
-      );
+      const target = path.join(basePath, name);
+      const dirPath = path.join(basePath, moment().format('YYYYMMDD'));
       if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath);
       }
@@ -109,7 +112,8 @@ export class PluginUpload extends BasePluginHook implements BaseUpload {
       fs.writeFileSync(target, data);
       return domain + '/public/uploads/' + name;
     } catch (err) {
-      throw new CoolCommException('上传失败');
+      console.error(err);
+      throw new CoolCommException('上传失败' + err.message);
     }
   }
 }
