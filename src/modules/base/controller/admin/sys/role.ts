@@ -27,7 +27,7 @@ import { BaseSysRoleService } from '../../../service/sys/role';
         ['label != :label', { label: 'admin' }],
         // 如果不是超管，只能看到自己新建的或者自己有的角色
         [
-          `(userId=:userId or id in (${roleIds.join(',')}))`,
+          `(a.userId=:userId or id in (${roleIds.join(',')}))`,
           { userId },
           username !== 'admin',
         ],
