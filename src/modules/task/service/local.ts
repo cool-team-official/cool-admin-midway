@@ -41,7 +41,7 @@ export class TaskLocalService extends BaseService {
   @Inject()
   utils: Utils;
 
-  @Config('task.log.keepDays')
+  @Config('module.task.log.keepDays')
   keepDays: number;
 
   @Inject()
