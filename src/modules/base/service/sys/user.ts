@@ -10,6 +10,7 @@ import * as md5 from 'md5';
 import { BaseSysDepartmentEntity } from '../../entity/sys/department';
 import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 import { BaseSysRoleEntity } from '../../entity/sys/role';
+import { CryptoUtil } from '../../../../utils/crypto';
 
 /**
  * 系统用户
@@ -137,7 +138,7 @@ export class BaseSysUserService extends BaseService {
     if (!_.isEmpty(exists)) {
       throw new CoolCommException('用户名已经存在~');
     }
-    param.password = md5(param.password);
+    param.password = await CryptoUtil.hashPassword(param.password);
     await super.add(param);
     await this.updateUserRole(param);
     return param.id;
@@ -178,15 +179,27 @@ export class BaseSysUserService extends BaseService {
   public async personUpdate(param) {
     param.id = this.ctx.admin.userId;
     if (!_.isEmpty(param.password)) {
-      param.password = md5(param.password);
-      const oldPassword = md5(param.oldPassword);
       const userInfo = await this.baseSysUserEntity.findOneBy({ id: param.id });
       if (!userInfo) {
         throw new CoolCommException('用户不存在');
       }
-      if (oldPassword !== userInfo.password) {
+
+      // 验证原密码
+      let isOldPasswordValid = false;
+      if (CryptoUtil.isBcryptHash(userInfo.password)) {
+        // 新的bcrypt格式
+        isOldPasswordValid = await CryptoUtil.verifyPassword(param.oldPassword, userInfo.password);
+      } else if (CryptoUtil.isMD5Hash(userInfo.password)) {
+        // 旧的MD5格式
+        isOldPasswordValid = userInfo.password === md5(param.oldPassword);
+      }
+
+      if (!isOldPasswordValid) {
         throw new CoolCommException('原密码错误');
       }
+
+      // 使用bcrypt加密新密码
+      param.password = await CryptoUtil.hashPassword(param.password);
       param.passwordV = userInfo.passwordV + 1;
       await this.midwayCache.set(
         `admin:passwordVersion:${param.id}`,
@@ -207,7 +220,8 @@ export class BaseSysUserService extends BaseService {
       throw new CoolCommException('非法操作~');
     }
     if (!_.isEmpty(param.password)) {
-      param.password = md5(param.password);
+      // 使用bcrypt加密新密码
+      param.password = await CryptoUtil.hashPassword(param.password);
       const userInfo = await this.baseSysUserEntity.findOneBy({ id: param.id });
       if (!userInfo) {
         throw new CoolCommException('用户不存在');

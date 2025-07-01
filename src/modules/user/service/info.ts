@@ -8,6 +8,7 @@ import { PluginService } from '../../plugin/service/info';
 import { UserInfoEntity } from '../entity/info';
 import { UserSmsService } from './sms';
 import { UserWxService } from './wx';
+import { CryptoUtil } from '../../../utils/crypto';
 
 /**
  * 用户信息
@@ -105,7 +106,9 @@ export class UserInfoService extends BaseService {
     if (!check) {
       throw new CoolCommException('验证码错误');
     }
-    await this.userInfoEntity.update(user.id, { password: md5(password) });
+    // 使用bcrypt加密新密码
+    const hashedPassword = await CryptoUtil.hashPassword(password);
+    await this.userInfoEntity.update(user.id, { password: hashedPassword });
   }
 
   /**

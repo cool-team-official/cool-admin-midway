@@ -13,6 +13,7 @@ import { BaseSysDepartmentService } from './department';
 import * as jwt from 'jsonwebtoken';
 import { Context } from '@midwayjs/koa';
 import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
+import { CryptoUtil } from '../../../../utils/crypto';
 import { Utils } from '../../../../comm/utils';
 import * as svgCaptcha from 'svg-captcha';
 
@@ -57,8 +58,27 @@ export class BaseSysLoginService extends BaseService {
       const user = await this.baseSysUserEntity.findOneBy({ username });
       // 校验用户
       if (user) {
-        // 校验用户状态及密码
-        if (user.status === 0 || user.password !== md5(password)) {
+        // 校验用户状态
+        if (user.status === 0) {
+          throw new CoolCommException('账户或密码不正确~');
+        }
+
+        // 校验密码，支持MD5向bcrypt的平滑迁移
+        let isPasswordValid = false;
+        if (CryptoUtil.isBcryptHash(user.password)) {
+          // 新的bcrypt格式
+          isPasswordValid = await CryptoUtil.verifyPassword(password, user.password);
+        } else if (CryptoUtil.isMD5Hash(user.password)) {
+          // 旧的MD5格式，验证后自动升级为bcrypt
+          isPasswordValid = user.password === md5(password);
+          if (isPasswordValid) {
+            // 自动升级密码为bcrypt格式
+            const hashedPassword = await CryptoUtil.hashPassword(password);
+            await this.baseSysUserEntity.update(user.id, { password: hashedPassword });
+          }
+        }
+
+        if (!isPasswordValid) {
           throw new CoolCommException('账户或密码不正确~');
         }
       } else {
