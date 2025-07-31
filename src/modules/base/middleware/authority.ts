@@ -1,16 +1,18 @@
-import { App, Config, Inject, Middleware } from '@midwayjs/core';
-import * as _ from 'lodash';
-import { CoolCommException, CoolUrlTagData, TagTypes } from '@cool-midway/core';
-import * as jwt from 'jsonwebtoken';
-import { NextFunction, Context } from '@midwayjs/koa';
 import {
+  App,
+  Config,
   IMiddleware,
   IMidwayApplication,
   Init,
-  InjectClient,
+  Inject,
+  Middleware,
 } from '@midwayjs/core';
-import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
+import * as _ from 'lodash';
+import { CoolCommException, CoolUrlTagData, TagTypes } from '@cool-midway/core';
+import * as jwt from 'jsonwebtoken';
+import { Context, NextFunction } from '@midwayjs/koa';
 import { Utils } from '../../../comm/utils';
+import { CacheStore } from '@/comm/cache';
 
 /**
  * 权限校验
@@ -25,8 +27,8 @@ export class BaseAuthorityMiddleware
   @Config('module.base')
   jwtConfig;
 
-  @InjectClient(CachingFactory, 'default')
-  midwayCache: MidwayCache;
+  @Inject()
+  cache: CacheStore;
 
   @Inject()
   coolUrlTagData: CoolUrlTagData;
@@ -69,11 +71,11 @@ export class BaseAuthorityMiddleware
           return;
         }
         if (ctx.admin) {
-          const rToken = await this.midwayCache.get(
+          const rToken = await this.cache.get(
             `admin:token:${ctx.admin.userId}`
           );
           // 判断密码版本是否正确
-          const passwordV = await this.midwayCache.get(
+          const passwordV = await this.cache.get(
             `admin:passwordVersion:${ctx.admin.userId}`
           );
           if (passwordV != ctx.admin.passwordVersion) {
@@ -107,7 +109,7 @@ export class BaseAuthorityMiddleware
           if (rToken !== token && this.jwtConfig.jwt.sso) {
             statusCode = 401;
           } else {
-            let perms: string[] = await this.midwayCache.get(
+            let perms: string[] = await this.cache.get(
               `admin:perms:${ctx.admin.userId}`
             );
             if (!_.isEmpty(perms)) {
