@@ -1,15 +1,15 @@
-import { Provide, Inject, Get, Post, Query, Config } from '@midwayjs/core';
+import { Config, Get, Inject, Post, Provide, Query } from '@midwayjs/core';
 import {
-  CoolController,
   BaseController,
+  CoolController,
   CoolEps,
-  TagTypes,
-  CoolUrlTag,
   CoolTag,
+  CoolUrlTag,
+  TagTypes,
 } from '@cool-midway/core';
 import { Context } from '@midwayjs/koa';
 import { BaseSysParamService } from '../../service/sys/param';
-import { PluginService } from '../../../plugin/service/info';
+import { FileService } from '@/comm/file';
 
 /**
  * 不需要登录的后台接口
@@ -19,7 +19,7 @@ import { PluginService } from '../../../plugin/service/info';
 @CoolController()
 export class BaseAppCommController extends BaseController {
   @Inject()
-  pluginService: PluginService;
+  file: FileService;
 
   @Inject()
   ctx: Context;
@@ -57,8 +57,7 @@ export class BaseAppCommController extends BaseController {
    */
   @Post('/upload', { summary: '文件上传' })
   async upload() {
-    const file = await this.pluginService.getInstance('upload');
-    return this.ok(await file.upload(this.ctx));
+    return this.ok(await this.file.upload(this.ctx));
   }
 
   /**
@@ -66,7 +65,6 @@ export class BaseAppCommController extends BaseController {
    */
   @Get('/uploadMode', { summary: '文件上传模式' })
   async uploadMode() {
-    const file = await this.pluginService.getInstance('upload');
-    return this.ok(await file.getMode());
+    return this.ok(await this.file.getMode());
   }
 }

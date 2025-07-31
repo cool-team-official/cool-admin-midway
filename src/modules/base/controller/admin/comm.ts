@@ -7,11 +7,11 @@ import {
 } from '@cool-midway/core';
 import { ALL, Body, Get, Inject, Post, Provide } from '@midwayjs/core';
 import { Context } from '@midwayjs/koa';
-import { PluginService } from '../../../plugin/service/info';
 import { BaseSysUserEntity } from '../../entity/sys/user';
 import { BaseSysLoginService } from '../../service/sys/login';
 import { BaseSysPermsService } from '../../service/sys/perms';
 import { BaseSysUserService } from '../../service/sys/user';
+import { FileService } from '@/comm/file';
 
 /**
  * Base 通用接口 一般写不需要权限过滤的接口
@@ -33,7 +33,7 @@ export class BaseCommController extends BaseController {
   ctx: Context;
 
   @Inject()
-  pluginService: PluginService;
+  file: FileService;
 
   /**
    * 获得个人信息
@@ -69,8 +69,7 @@ export class BaseCommController extends BaseController {
    */
   @Post('/upload', { summary: '文件上传' })
   async upload() {
-    const file = await this.pluginService.getInstance('upload');
-    return this.ok(await file.upload(this.ctx));
+    return this.ok(await this.file.upload(this.ctx));
   }
 
   /**
@@ -78,8 +77,7 @@ export class BaseCommController extends BaseController {
    */
   @Get('/uploadMode', { summary: '文件上传模式' })
   async uploadMode() {
-    const file = await this.pluginService.getInstance('upload');
-    return this.ok(await file.getMode());
+    return this.ok(await this.file.getMode());
   }
 
   /**
