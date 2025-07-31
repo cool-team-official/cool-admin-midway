@@ -1,9 +1,8 @@
-import { CoolConfig } from '@cool-midway/core';
+import { CoolCacheStore, CoolConfig } from '@cool-midway/core';
 import { MidwayConfig } from '@midwayjs/core';
-import { CoolCacheStore } from '@cool-midway/core';
 import * as path from 'path';
-import { pCachePath, pUploadPath } from '../comm/path';
-import { availablePort } from '../comm/port';
+import { pCachePath, pUploadPath } from '@/comm/path';
+import { availablePort } from '@/comm/port';
 
 // redis缓存
 // import { redisStore } from 'cache-manager-ioredis-yet';
