@@ -56,7 +56,7 @@ export class UserMiddleware implements IMiddleware<Context, NextFunction> {
         } else {
           if (!ctx.user) {
             ctx.status = 401;
-            throw new CoolCommException('登录失效~');
+            throw new CoolCommException('登录失效~', ctx.status);
           }
         }
       }
