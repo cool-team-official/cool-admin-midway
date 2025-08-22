@@ -23,4 +23,10 @@ export class DictInfoEntity extends BaseEntity {
 
   @Column({ comment: '父ID', default: null })
   parentId: number;
+
+  @Column({ comment: 'el-tag类型', nullable: true, default: '' })
+  type: string;
+
+  @Column({ comment: 'el-tag颜色', nullable: true, default: '' })
+  color: string;
 }
