@@ -38,6 +38,7 @@ export class BaseSysPermsService extends BaseService {
    * @param userId 用户ID
    */
   async refreshPerms(userId) {
+    await this.midwayCache.del(`admin:token:${userId}`);
     const roleIds = await this.baseSysRoleService.getByUser(userId);
     const perms = await this.baseSysMenuService.getPerms(roleIds);
     await this.midwayCache.set(`admin:perms:${userId}`, perms);
