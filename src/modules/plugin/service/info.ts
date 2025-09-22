@@ -315,9 +315,8 @@ export class PluginService extends BaseService {
     if (checkResult.type != 3 && !forceBool) {
       return checkResult;
     }
-    const { pluginJson, readme, logo, content, tsContent } = await this.data(
-      filePath
-    );
+    const { pluginJson, readme, logo, content, tsContent } =
+      await this.data(filePath);
     if (pluginJson.key == 'plugin') {
       throw new CoolCommException('插件key不能为plugin，请更换其他key');
     }

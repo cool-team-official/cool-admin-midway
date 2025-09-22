@@ -11,9 +11,8 @@ import { BaseSysLogService } from '../service/sys/log';
 export class BaseLogMiddleware implements IMiddleware<Context, NextFunction> {
   resolve() {
     return async (ctx: Context, next: NextFunction) => {
-      const baseSysLogService = await ctx.requestContext.getAsync(
-        BaseSysLogService
-      );
+      const baseSysLogService =
+        await ctx.requestContext.getAsync(BaseSysLogService);
       baseSysLogService.record(
         ctx,
         ctx.url,

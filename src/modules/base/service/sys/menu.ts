@@ -8,7 +8,6 @@ import * as _ from 'lodash';
 import { BaseSysPermsService } from './perms';
 import { Context } from '@midwayjs/koa';
 import { TempDataSource } from './data';
-// eslint-disable-next-line node/no-unpublished-import
 import * as ts from 'typescript';
 import * as fs from 'fs';
 import * as pathUtil from 'path';
