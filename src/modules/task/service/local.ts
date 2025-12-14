@@ -345,7 +345,9 @@ export class TaskLocalService extends BaseService {
 
     if (!task.isOnce) {
       await this.updateNextRunTime(task.jobId);
-      await this.taskInfoEntity.update({ id: task.id }, { status: 1 });
+      // 修复执行一次任务后，强制回到“运行”状态的问题，即保持之前的状态。
+      // await this.taskInfoEntity.update({ id: task.id }, { status: 1 });
+      if (task.status) await this.taskInfoEntity.update({ id: task.id }, { status: 1 });
     }
   }
 }
