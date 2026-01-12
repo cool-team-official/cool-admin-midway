@@ -35,7 +35,13 @@ export default {
   // 文件上传
   upload: {
     fileSize: '200mb',
-    whitelist: null,
+    whitelist: [
+      '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', // 图片
+      '.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm',  // 视频
+      '.mp3', '.wav', '.flac', '.aac', '.ogg',         // 音频
+      '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', // 文档
+      '.txt', '.csv', '.json', '.xml', '.zip', '.rar', '.7z', '.tar', '.gz'  // 其他
+    ],
   },
   // 缓存 可切换成其他缓存如：redis http://www.midwayjs.org/docs/extensions/caching
   cacheManager: {
