@@ -19,6 +19,30 @@ import { BarrageEntity } from '../../entity/barrage';
     };
   },
   pageQueryOp: {
+    fieldEq: ['type', 'video_id', 'status', 'sort'],
+    keyWordLikeFields: ['text'],
+    where: ctx => {
+      let { startTime, endTime } = ctx.request.body;
+      const where = [];
+
+      if (startTime && !endTime) {
+        endTime = startTime + 5000;
+      }
+      if (!startTime && endTime) {
+        startTime = endTime - 5000;
+      }
+
+      if (startTime && endTime) {
+        where.push([
+          'time >= :startTime AND time <= :endTime',
+          { startTime, endTime },
+        ]);
+      }
+
+      return where;
+    },
+  },
+  listQueryOp: {
     fieldEq: ['type', 'video_id'],
   },
 })

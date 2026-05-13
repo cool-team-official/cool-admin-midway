@@ -21,7 +21,8 @@ import { Get } from '@midwayjs/core';
     };
   },
   pageQueryOp: {
-    fieldEq: ['type', 'video_id', 'status'],
+    fieldEq: ['type', 'video_id', 'status', 'sort'],
+    keyWordLikeFields: ['text'],
     where: ctx => {
       let { startTime, endTime } = ctx.request.body;
       const where = [];
