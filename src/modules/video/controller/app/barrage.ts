@@ -21,12 +21,35 @@ import { Get } from '@midwayjs/core';
     };
   },
   pageQueryOp: {
+    fieldEq: ['type', 'video_id', 'status'],
+    where: ctx => {
+      let { startTime, endTime } = ctx.request.body;
+      const where = [];
+
+      if (startTime && !endTime) {
+        endTime = startTime + 5000;
+      }
+      if (!startTime && endTime) {
+        startTime = endTime - 5000;
+      }
+
+      if (startTime && endTime) {
+        where.push([
+          'time >= :startTime AND time <= :endTime',
+          { startTime, endTime },
+        ]);
+      }
+
+      return where;
+    },
+  },
+  listQueryOp: {
     fieldEq: ['type', 'video_id'],
   },
 })
 @CoolUrlTag({
   key: TagTypes.IGNORE_TOKEN,
-  value: ['page', 'info', 'add'],
+  value: ['page', 'info', 'add', 'list'],
 })
 export class AppBarrageController extends BaseController {
   @CoolTag(TagTypes.IGNORE_TOKEN)
