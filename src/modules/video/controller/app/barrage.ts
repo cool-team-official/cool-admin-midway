@@ -7,6 +7,7 @@ import {
 } from '@cool-midway/core';
 import { BarrageEntity } from '../../entity/barrage';
 import { Get } from '@midwayjs/core';
+import { UserInfoEntity } from '../../../user/entity/info';
 
 /**
  *
@@ -21,8 +22,22 @@ import { Get } from '@midwayjs/core';
     };
   },
   pageQueryOp: {
-    fieldEq: ['type', 'video_id', 'status', 'sort'],
-    keyWordLikeFields: ['text'],
+    fieldEq: [
+      { column: 'a.type', requestParam: 'type' },
+      { column: 'a.video_id', requestParam: 'video_id' },
+      { column: 'a.status', requestParam: 'status' },
+      { column: 'a.sort', requestParam: 'sort' },
+    ],
+    keyWordLikeFields: ['a.text'],
+    select: ['a.*', 'b.avatarUrl', 'b.nickName', 'b.phone', 'b.gender'],
+    join: [
+      {
+        entity: UserInfoEntity,
+        alias: 'b',
+        condition: 'a.createUserId = b.id',
+        type: 'innerJoin',
+      },
+    ],
     where: ctx => {
       let { startTime, endTime } = ctx.request.body;
       const where = [];
@@ -36,12 +51,15 @@ import { Get } from '@midwayjs/core';
 
       if (startTime && endTime) {
         where.push([
-          'time >= :startTime AND time <= :endTime',
+          'a.time >= :startTime AND a.time <= :endTime',
           { startTime, endTime },
         ]);
       }
 
       return where;
+    },
+    addOrderBy: {
+      createTime: 'DESC',
     },
   },
   listQueryOp: {
@@ -50,7 +68,7 @@ import { Get } from '@midwayjs/core';
 })
 @CoolUrlTag({
   key: TagTypes.IGNORE_TOKEN,
-  value: ['page', 'info', 'add', 'list'],
+  value: ['page', 'info', 'list'],
 })
 export class AppBarrageController extends BaseController {
   @CoolTag(TagTypes.IGNORE_TOKEN)

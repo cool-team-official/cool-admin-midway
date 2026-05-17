@@ -1,6 +1,6 @@
 import { CoolController, BaseController } from '@cool-midway/core';
 import { InviteRecordEntity } from '../../entity/inviteRecord';
-import {UserInfoEntity} from "../../entity/info";
+import { UserInfoEntity } from '../../entity/info';
 
 /**
  * 邀请记录管理
@@ -10,13 +10,7 @@ import {UserInfoEntity} from "../../entity/info";
   entity: InviteRecordEntity,
   pageQueryOp: {
     fieldEq: ['code'],
-    select: [
-      'a.*',
-      'b.avatarUrl',
-      'b.nickName',
-      'b.phone',
-      'b.gender'
-    ],
+    select: ['a.*', 'b.avatarUrl', 'b.nickName', 'b.phone', 'b.gender'],
     join: [
       {
         entity: UserInfoEntity,

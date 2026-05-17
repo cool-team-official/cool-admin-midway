@@ -9,7 +9,13 @@ export class BarrageEntity extends BaseEntity {
   @Column({ type: 'bigint', comment: '视频ID', unsigned: true })
   video_id: number;
 
-  @Column({ type: 'bigint', comment: '剧集', unsigned: true })
+  @Column({
+    type: 'bigint',
+    comment: '剧集',
+    unsigned: true,
+    default: 0,
+    nullable: true,
+  })
   sort: number;
 
   @Column({ type: 'text', comment: '弹幕内容' })
