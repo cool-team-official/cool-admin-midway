@@ -110,7 +110,7 @@ import { UserInfoEntity } from '../../../user/entity/info';
       { column: 'a.type', requestParam: 'type' },
       { column: 'a.video_id', requestParam: 'video_id' },
       { column: 'a.status', requestParam: 'status' },
-      { column: 'a.sort', requestParam: 'sort' },
+      { column: 'a.sort', requestParam: 'index' },
     ],
     keyWordLikeFields: ['a.text'],
     select: ['a.*', 'b.avatarUrl', 'b.nickName', 'b.phone', 'b.gender'],
