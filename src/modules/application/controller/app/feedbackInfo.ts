@@ -98,7 +98,7 @@ import {FeedbackInfoEntity} from "../../entity/feedbackInfo";
     };
   },
   pageQueryOp: {
-    keyWordLikeFields: ['feedbackType', 'videoName'],
+    keyWordLikeFields: ['feedbackType', 'videoName', 'createUserId'],
   }
 })
 export class AppFeedbackInfoController extends BaseController {
