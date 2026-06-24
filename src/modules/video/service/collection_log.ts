@@ -4,94 +4,23 @@
  作者：xiaoliwanshui
  邮箱：chocolaer@126.com
 
-
- ============================================================================
-                                版权声明
- ============================================================================
-
-
- 本软件（以下简称"本软件"）受中华人民共和国著作权法及国际著作权条约保护。
-
-
- 【版权人】橘子视频 (Juzi Video)
- 【权利范围】本软件的全部源代码、二进制文件、文档及相关材料
-
-
- ============================================================================
-                                许可证协议
- ============================================================================
-
-
- 本软件仅授权用户进行以下操作：
-
-
-  ✓ 可免费试用：下载并运行本软件，仅限个人非商业用途
-  ✓ 可学习研究：查看和学习本软件源代码，仅供个人研究
-
-
- ============================================================================
-                                禁止事项
- ============================================================================
-
-
-  ✗ 禁止商业使用：未经授权，不得对本软件进行销售、授权、出租或商业利用
-  ✗ 禁止修改演绎：未经授权，不得对本软件进行修改、反向工程或创作衍生作品
-  ✗ 禁止分发传播：未经授权，不得以任何形式向第三方分发或公开本软件
-  ✗ 禁止删除版权：不得移除或篡改本软件中的任何版权声明或知识产权标识
-
-
- ============================================================================
-                                免责声明
- ============================================================================
-
-
- 本软件按"原样"提供，不提供任何明示或暗示的保证，包括但不限于：
- 对适销性、特定用途适用性、非侵权性的保证。在任何情况下，
- 版权持有人均不对因使用本软件而产生的任何索赔、损害或损失承担责任。
-
-
- ============================================================================
-                                终止条款
- ============================================================================
-
-
- 若您违反本协议的任何条款，本许可证将自动终止。
- 终止后，您必须立即停止使用本软件，并销毁所有相关副本。
-
-
- ============================================================================
-                                法律适用
- ============================================================================
-
-
- 本协议受中华人民共和国法律管辖，并按其解释。
-
-
- ============================================================================
-                                联系我们
- ============================================================================
-
-
- 如需商业授权或其他合作事宜，请联系版权方。
-
-
- ---
-
-
- 本软件受著作权法和国际条约保护。
- 未经授权的复制、修改、分发或商业使用将被追究法律责任。
+ ... 
 */
 
-import { InjectEntityModel } from '@midwayjs/typeorm';
-import { In, Repository } from 'typeorm';
-import { Provide } from '@midwayjs/core';
+import { Inject, Provide } from '@midwayjs/core';
 import { BaseService } from '../../base/service/base';
 import { CollectionLogEntity } from '../entity/collection_log';
 import { CollectionEntity } from '../entity/collection';
-import { VIDEOPARAMS } from '../bean/VideoParams';
+import { InjectEntityModel } from '@midwayjs/typeorm';
+import { Brackets, In, LessThan, Repository } from 'typeorm';
+import * as moment from 'moment';
+import { BaseSysConfService } from '../../base/service/sys/conf';
 
 @Provide()
 export class CollectionLogService extends BaseService {
+  @Inject()
+  baseSysConfService: BaseSysConfService;
+
   @InjectEntityModel(CollectionLogEntity)
   collectionLogEntity: Repository<CollectionLogEntity>;
 
@@ -105,22 +34,71 @@ export class CollectionLogService extends BaseService {
   async page(query: any): Promise<any> {
     const find = this.collectionLogEntity.createQueryBuilder('a');
     find.leftJoin(CollectionEntity, 'b', 'a.collection_id = b.id');
-    find.select([
-      'a.*',
-      'b.name as collectionName',
-    ]);
-    if (query?.collection_id !== undefined && query?.collection_id !== null && query.collection_id !== '') {
+    find.select(['a.*', 'b.name as collectionName']);
+
+    const keyWord = query?.keyWord?.trim?.() ?? query?.keyWord;
+    if (keyWord) {
+      find.andWhere(
+        new Brackets(qb => {
+          qb.where('b.name like :keyWord', { keyWord: `%${keyWord}%` })
+            .orWhere('a.error_message like :keyWord', { keyWord: `%${keyWord}%` })
+            .orWhere('a.request_url like :keyWord', { keyWord: `%${keyWord}%` });
+        })
+      );
+    }
+
+    if (
+      query?.collection_id !== undefined &&
+      query?.collection_id !== null &&
+      query.collection_id !== ''
+    ) {
       find.andWhere('a.collection_id = :collection_id', {
         collection_id: query.collection_id,
       });
     }
-    if (query?.status !== undefined && query?.status !== null && query?.status !== '') {
+
+    if (
+      query?.status !== undefined &&
+      query?.status !== null &&
+      query.status !== ''
+    ) {
       find.andWhere('a.status = :status', { status: query.status });
     }
-    if (query?.task_type) {
+
+    if (
+      query?.task_type !== undefined &&
+      query?.task_type !== null &&
+      query.task_type !== ''
+    ) {
       find.andWhere('a.task_type = :task_type', { task_type: query.task_type });
     }
+
+    find.orderBy('a.id', 'DESC');
     return this.entityRenderPage(find, query);
+  }
+
+  async clear(isAll?) {
+    if (isAll) {
+      await this.collectionLogEntity.clear();
+      return;
+    }
+    const keepDay = await this.baseSysConfService.getValue('collectionLogKeep');
+    if (keepDay) {
+      const beforeDate = moment().add(-keepDay, 'days').startOf('day').toDate();
+      await this.collectionLogEntity.delete({
+        createTime: LessThan(beforeDate),
+      });
+    } else {
+      await this.collectionLogEntity.clear();
+    }
+  }
+
+  async setKeep(value: number) {
+    await this.baseSysConfService.updateVaule('collectionLogKeep', value);
+  }
+
+  async getKeep() {
+    return this.baseSysConfService.getValue('collectionLogKeep');
   }
 
   async delete(ids: number[]): Promise<void> {

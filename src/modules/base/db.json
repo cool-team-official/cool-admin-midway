@@ -35,6 +35,10 @@
           "cValue": "31"
       },
       {
+          "cKey": "collectionLogKeep",
+          "cValue": "31"
+      },
+      {
           "cKey": "recycleKeep",
           "cValue": "31"
       }

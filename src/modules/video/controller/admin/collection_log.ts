@@ -82,18 +82,23 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
+import { Body, Get, Inject, Post } from '@midwayjs/core';
 import { BaseController, CoolController } from '@cool-midway/core';
 import { CollectionLogEntity } from '../../entity/collection_log';
 import { CollectionLogService } from '../../service/collection_log';
-import { Inject } from '@midwayjs/core';
 
 @CoolController({
   api: ['page', 'info', 'delete'],
   entity: CollectionLogEntity,
   service: CollectionLogService,
+  serviceApis: [
+    'clear',
+    'setKeep',
+    'getKeep',
+  ],
   pageQueryOp: {
-    fieldEq: ['collection_id', 'status', 'task_type', 'page'],
     keyWordLikeFields: ['collection_name', 'error_message', 'request_url'],
+    fieldEq: ['collection_id', 'status', 'task_type', 'page'],
     addOrderBy: {
       id: 'desc',
     },
@@ -102,4 +107,21 @@ import { Inject } from '@midwayjs/core';
 export class AdminCollectionLogController extends BaseController {
   @Inject()
   collectionLogService: CollectionLogService;
+
+  @Post('/clear', { summary: '清理' })
+  public async clear() {
+    await this.collectionLogService.clear(true);
+    return this.ok();
+  }
+
+  @Post('/setKeep', { summary: '日志保存时间' })
+  public async setKeep(@Body('value') value: number) {
+    await this.collectionLogService.setKeep(value);
+    return this.ok();
+  }
+
+  @Get('/getKeep', { summary: '获得日志保存时间' })
+  public async getKeep() {
+    return this.ok(await this.collectionLogService.getKeep());
+  }
 }
