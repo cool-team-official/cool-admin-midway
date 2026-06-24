@@ -82,58 +82,51 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import { CoolConfig } from '@cool-midway/core';
-import { MidwayConfig } from '@midwayjs/core';
-import { TenantSubscriber } from '../modules/base/db/tenant';
-import { entities } from '../entities';
+import { InjectEntityModel } from '@midwayjs/typeorm';
+import { In, Repository } from 'typeorm';
+import { Provide } from '@midwayjs/core';
+import { BaseService } from '../../base/service/base';
+import { CollectionLogEntity } from '../entity/collection_log';
+import { CollectionEntity } from '../entity/collection';
+import { VIDEOPARAMS } from '../bean/VideoParams';
 
-/**
- * 本地开发 npm run dev 读取的配置文件
- */
-export default {
-  typeorm: {
-    dataSource: {
-      default: {
-        type: 'mysql',
-        host: '127.0.0.1',
-        port: 3306,
-        username: 'root',
-        password: 'admin',
-        database: 'cms',
-        // 自动建表 注意：线上部署的时候不要使用，有可能导致数据丢失
-        synchronize: true,
-        // 打印日志
-        logging: false,
-        // 字符集
-        charset: 'utf8mb4',
-        // 是否开启缓存
-        cache: true,
-        // 实体路径
-        entities,
-        // 订阅者
-        subscribers: [TenantSubscriber],
-        // 连接池配置（优化：增加连接池大小，提高并发处理能力）
-        poolSize: 20,
-        maxQueryExecutionTime: 5000,
-        connectTimeout: 15000,
-        waitForConnections: true,
-        queueLimit: 0,
-        extra: {
-          connectionLimit: 20,
-          waitForConnections: true,
-          queueLimit: 0,
-        },
-      },
-    },
-  },
-  cool: {
-    // 实体与路径，跟生成代码、前端请求、swagger 文档相关 注意：线上不建议开启，以免暴露敏感信息
-    eps: true,
-    // 是否自动导入模块数据库
-    initDB: false,
-    // 判断是否初始化的方式
-    initJudge: 'db',
-    // 是否自动导入模块菜单
-    initMenu: false,
-  } as CoolConfig,
-} as MidwayConfig;
+@Provide()
+export class CollectionLogService extends BaseService {
+  @InjectEntityModel(CollectionLogEntity)
+  collectionLogEntity: Repository<CollectionLogEntity>;
+
+  async addLog(data: Partial<CollectionLogEntity>): Promise<void> {
+    if (!data) {
+      return;
+    }
+    await this.collectionLogEntity.insert(data);
+  }
+
+  async page(query: any): Promise<any> {
+    const find = this.collectionLogEntity.createQueryBuilder('a');
+    find.leftJoin(CollectionEntity, 'b', 'a.collection_id = b.id');
+    find.select([
+      'a.*',
+      'b.name as collectionName',
+    ]);
+    if (query?.collection_id !== undefined && query?.collection_id !== null && query.collection_id !== '') {
+      find.andWhere('a.collection_id = :collection_id', {
+        collection_id: query.collection_id,
+      });
+    }
+    if (query?.status !== undefined && query?.status !== null && query?.status !== '') {
+      find.andWhere('a.status = :status', { status: query.status });
+    }
+    if (query?.task_type) {
+      find.andWhere('a.task_type = :task_type', { task_type: query.task_type });
+    }
+    return this.entityRenderPage(find, query);
+  }
+
+  async delete(ids: number[]): Promise<void> {
+    if (!ids || !ids.length) {
+      return;
+    }
+    await this.collectionLogEntity.delete({ id: In(ids) });
+  }
+}

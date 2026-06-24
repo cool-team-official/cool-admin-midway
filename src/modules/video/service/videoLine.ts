@@ -331,33 +331,45 @@ export class VideoLineService extends BaseService {
         return;
       }
 
-      // 插入或更新数据（优化：使用 upsert 避免重复查询）
-      const upsertResult = await this.videoLineEntity.upsert({
+      // 先查再写，兼容部分驱动下 upsert 返回实体 id 为空导致的报错
+      const existing = await this.videoLineEntity.findOne({
+        where: {
+          video_id: videoId,
+          collection_id: collectionId,
+        },
+      });
+
+      const writeData = {
         collection_name: collectionEntity.name,
         tag: collectionEntity.param,
         video_id: videoId,
         video_name: videoEntity.title,
         collection_id: collectionId,
         sort: collectionEntity.sort,
-      }, ['collection_id', 'video_id']);
+      };
 
-      // 从 upsert 结果中获取 videoLineEntity id
-      let videoLineEntityId = upsertResult.identifiers[0]?.id || upsertResult.raw?.insertId;
+      let videoLineEntityId = existing?.id;
 
-      if (!videoLineEntityId) {
-        // 如果 upsert 没有返回 ID，则查询获取
-        const videoLineEntity = await this.videoLineEntity.findOne({
+      if (existing && existing.id) {
+        await this.videoLineEntity.update(
+          {
+            id: existing.id,
+          },
+          writeData
+        );
+      } else {
+        const inserted = await this.videoLineEntity.save(writeData as VideoLineEntity);
+        videoLineEntityId = inserted?.id || (await this.videoLineEntity.findOne({
           where: {
             video_id: videoId,
             collection_id: collectionId,
           },
-        });
+        }))?.id;
+      }
 
-        if (!videoLineEntity || !videoLineEntity.id) {
-          this.logger.error(TAG, `无法获取 videoLineEntity id: ${videoEntity.title}`);
-          return;
-        }
-        videoLineEntityId = videoLineEntity.id;
+      if (!videoLineEntityId) {
+        this.logger.error(TAG, `无法获取 videoLineEntity id: ${videoEntity.title}`);
+        return;
       }
 
       const playLines = this.parseVideoList(

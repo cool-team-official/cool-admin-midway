@@ -148,7 +148,7 @@ export class CollectionService extends BaseService {
 
   private readonly CACHE_TTL = 300; // 缓存时间5分钟
   private readonly REDIS_EXPIRY = 60 * 60 * 2; // Redis过期时间2小时
-  private readonly BATCH_PUSH_SIZE = 500; // Redis批量推送大小
+  private readonly BATCH_PUSH_SIZE = 1000; // Redis批量推送大小
   private readonly BATCH_PROCESS_SIZE = 20; // 批量处理大小
   private readonly MEMORY_THRESHOLD = 300; // 内存使用阈值(MB)
 
@@ -156,10 +156,10 @@ export class CollectionService extends BaseService {
   private collectionProcessing = false;
 
   // 单次处理的最大数量，防止长时间阻塞
-  private readonly maxProcessPerBatch = 100;
+  private readonly maxProcessPerBatch = 500;
 
   // 单次处理的最大时间，防止长时间阻塞（毫秒）
-  private readonly maxProcessTimePerBatch = 30000; // 30秒
+  private readonly maxProcessTimePerBatch = 60000; // 60秒
 
   /**
    * 处理按天同步视频的业务逻辑
@@ -431,6 +431,7 @@ export class CollectionService extends BaseService {
         limit: limit,
         ac: 'detail',
         total: total,
+        pagecount: pagecount,
       };
 
       for (page; page <= pagecount; page++) {
@@ -453,7 +454,7 @@ export class CollectionService extends BaseService {
 
         // 达到批次大小时，批量推送到Redis
         if (batchCount >= this.BATCH_PUSH_SIZE) {
-          await this.batchPushToRedis(batchData, page);
+          await this.batchPushToRedis(batchData);
           batchData.length = 0;
           batchCount = 0;
 
@@ -480,17 +481,13 @@ export class CollectionService extends BaseService {
   /**
    * 批量推送到Redis
    */
-  private async batchPushToRedis(batchData: string[], page?: number): Promise<void> {
-    // 批量推送：使用Promise.all并发推送，大幅提升性能
-    const pushPromises = batchData.map(data =>
-      this.redisService.lpush('video:collection', data)
-    );
-    await Promise.all(pushPromises);
-
-    // 设置过期时间（只在第一批设置即可）
-    if (page && page < this.BATCH_PUSH_SIZE) {
-      await this.redisService.expire('video:collection', this.REDIS_EXPIRY);
+  private async batchPushToRedis(batchData: string[]): Promise<void> {
+    if (!batchData.length) {
+      return;
     }
+
+    await this.redisService.lpush('video:collection', ...batchData);
+    await this.redisService.expire('video:collection', this.REDIS_EXPIRY);
   }
 
   /**
@@ -656,9 +653,11 @@ export class CollectionService extends BaseService {
             return; // 结束当前处理函数
           }
 
-          await this.concurrencyService.syncVideoPageList();
-          await this.sleep(50);
-          processedCount++;
+          const handledCount = await this.concurrencyService.syncVideoPageList();
+          if (handledCount === 0) {
+            break;
+          }
+          processedCount += handledCount;
         }
 
         // 检查内存使用情况

@@ -84,7 +84,7 @@
 
 import {ILogger, Inject, InjectClient, Provide} from '@midwayjs/core';
 import {CollectionEntity} from '../entity/collection';
-import {VideoParams} from '../bean/VideoParams';
+import {VIDEOPARAMS, VideoParams} from '../bean/VideoParams';
 import {VideoBean} from '../bean/VideoBean';
 import {CollectionCategoryEntity} from '../entity/collection_category';
 import {InjectEntityModel} from '@midwayjs/typeorm';
@@ -98,6 +98,7 @@ import {RedisService} from '@midwayjs/redis';
 import {VIDEO_RESPONSE} from '../bean/video_response';
 import {NetworkErrorHandler} from './networkErrorHandler';
 import {CachingFactory, MidwayCache} from '@midwayjs/cache-manager';
+import {CollectionLogService} from './collection_log';
 
 const TAG = 'ConcurrencyService';
 
@@ -124,21 +125,26 @@ export class ConcurrencyService {
   @Inject()
   networkErrorHandler: NetworkErrorHandler;
 
+  @Inject()
+  collectionLogService: CollectionLogService;
+
   @InjectClient(CachingFactory, 'default')
   midwayCache: MidwayCache;
 
   private readonly CACHE_TTL = 300; // 缓存时间5分钟
   private readonly NETWORK_TIMEOUT = 30000; // 网络请求超时时间（毫秒）
-  private readonly MAX_RETRIES = 100; // 最大处理次数，防止无限循环
+  private readonly MAX_RETRIES = 500; // 最大处理次数，防止无限循环
 
-  private readonly yieldThreshold = 5;
-  private readonly listYieldThreshold = 50;
+  private readonly yieldThreshold = 20;
+  private readonly listYieldThreshold = 100;
+  private readonly redisPopBatchSize = 40;
+  private readonly pageWorkerCount = 8;
 
   // 单次处理的最大数量，防止长时间阻塞
-  private readonly maxProcessPerCall = 20;
+  private readonly maxProcessPerCall = 200;
 
   // 单次处理的最大时间，防止长时间阻塞（毫秒）
-  private readonly maxProcessTimePerCall = 10000; // 10秒
+  private readonly maxProcessTimePerCall = 30000; // 30秒
 
   /**
    * 从Redis获取采集数据
@@ -165,9 +171,42 @@ export class ConcurrencyService {
   }
 
   /**
+   * 从Redis批量获取采集数据，减少队列往返次数
+   */
+  async getRedisDataBatch(count = this.redisPopBatchSize): Promise<any[]> {
+    try {
+      const pipeline = this.redisService.pipeline();
+      for (let i = 0; i < count; i++) {
+        pipeline.lpop('video:collection');
+      }
+
+      const queueData = await pipeline.exec();
+      const result = [];
+      for (const [error, raw] of queueData) {
+        if (error) {
+          this.logger.error(TAG, 'Redis数据获取失败', error);
+          continue;
+        }
+        if (!raw) {
+          continue;
+        }
+        try {
+          result.push(JSON.parse(raw as string));
+        } catch (parseError) {
+          this.logger.error(TAG, 'Redis数据解析失败', parseError);
+        }
+      }
+      return result;
+    } catch (error) {
+      this.logger.error(TAG, 'Redis批量数据获取失败', error);
+      return [];
+    }
+  }
+
+  /**
    * 处理Redis中的视频采集数据
    */
-  async syncVideoPageList(): Promise<void> {
+  async syncVideoPageList(): Promise<number> {
     try {
       this.logger.debug(TAG, '开始处理Redis中的视频采集数据');
 
@@ -183,8 +222,13 @@ export class ConcurrencyService {
           break; // 退出循环，让其他任务有机会执行
         }
 
-        const data: any = await this.getRedisData();
-        if (!data) {
+        const remaining = Math.min(
+          this.redisPopBatchSize,
+          this.maxProcessPerCall - processedCount,
+          this.MAX_RETRIES - processedCount
+        );
+        const dataList = await this.getRedisDataBatch(remaining);
+        if (!dataList.length) {
           if (processedCount === 0) {
             this.logger.debug(TAG, 'Redis中没有可处理的数据');
           } else {
@@ -193,55 +237,14 @@ export class ConcurrencyService {
           break;
         }
 
-        // 验证数据结构
-        if (!this.validateRedisData(data)) {
-          this.logger.warn(TAG, `第${processedCount + 1}条数据格式无效，跳过`);
-          processedCount++;
-          // 及时释放 data 内存
-          data.collectionEntity = null;
-          data.videoParams = null;
-          continue;
-        }
+        const batchHandledCount = await this.processRedisDataBatch(
+          dataList,
+          processedCount
+        );
+        processedCount += batchHandledCount;
 
-        try {
-          this.logger.debug(TAG, `开始处理第${processedCount + 1}条数据`);
-
-          const {
-            collectionCategoryEntityList,
-            categoryMap,
-            areaMap,
-            languageMap,
-          } = await this.fetchCategoryAndDictData(
-            data.collectionEntity as CollectionEntity
-          );
-
-          await this.processVideoParamsItems(
-            new VideoParams(data.videoParams),
-            data.collectionEntity as CollectionEntity,
-            categoryMap,
-            areaMap,
-            languageMap
-          );
-
-          // 及时释放 data 内存
-          data.collectionEntity = null;
-          data.videoParams = null;
-
-          processedCount++;
-          this.logger.debug(TAG, `第${processedCount}条数据处理完成`);
-
-          // 防止内存溢出，每处理一条数据后添加小延时
-          await this.sleep(100);
-          if (processedCount % this.yieldThreshold === 0) {
-            await this.yieldToEventLoop();
-          }
-
-        } catch (error) {
-          this.logger.error(TAG, `处理第${processedCount + 1}条数据失败`, error);
-          processedCount++; // 即使失败也计数，避免无限循环
-          // 及时释放 data 内存
-          data.collectionEntity = null;
-          data.videoParams = null;
+        if (processedCount % this.yieldThreshold === 0) {
+          await this.yieldToEventLoop();
         }
       }
 
@@ -249,8 +252,192 @@ export class ConcurrencyService {
         this.logger.warn(TAG, `达到最大处理次数${this.MAX_RETRIES}，停止处理`);
       }
 
+      return processedCount;
     } catch (error) {
       this.logger.error(TAG, '处理Redis数据失败', error);
+      return 0;
+    }
+  }
+
+  private async processRedisDataBatch(
+    dataList: any[],
+    processedOffset: number
+  ): Promise<number> {
+    let cursor = 0;
+    let handledCount = 0;
+    const workerCount = Math.min(this.pageWorkerCount, dataList.length);
+
+    const worker = async () => {
+      while (cursor < dataList.length) {
+        const index = cursor++;
+        const data = dataList[index];
+        const sequence = processedOffset + index + 1;
+
+        if (!this.validateRedisData(data)) {
+          this.logger.warn(TAG, `第${sequence}条数据格式无效，跳过`);
+          handledCount++;
+          this.releaseRedisData(data);
+          continue;
+        }
+
+        try {
+          this.logger.debug(TAG, `开始处理第${sequence}条数据`);
+
+          const pageStart = Date.now();
+          const pageParams = new VideoParams(data.videoParams);
+          pageParams.setPagecount(Number(data.videoParams?.pagecount || 0));
+          data.__pageStart = pageStart;
+          const {
+            categoryMap,
+            areaMap,
+            languageMap,
+          } = await this.fetchCategoryAndDictData(
+            data.collectionEntity as CollectionEntity
+          );
+
+          const pageResult = await this.processSinglePage(
+            pageParams,
+            data.collectionEntity as CollectionEntity,
+            categoryMap,
+            areaMap,
+            languageMap
+          );
+
+          await this.recordCollectionLog({
+            collectionEntity: data.collectionEntity,
+            videoParams: data.videoParams,
+            status: pageResult.status,
+            duration: Date.now() - pageStart,
+            pageCount: pageResult.pagecount,
+            pageSize: pageResult.pageSize,
+            videoCount: pageResult.videoCount,
+            errorMessage: pageResult.errorMessage,
+            requestUrl: pageResult.requestUrl,
+            taskType: pageResult.taskType,
+          });
+
+          this.logger.debug(TAG, `第${sequence}条数据处理完成`);
+        } catch (error) {
+          this.logger.error(TAG, `处理第${sequence}条数据失败`, error);
+          if (data?.collectionEntity && data?.videoParams) {
+            const pageParams = new VideoParams(data.videoParams);
+            pageParams.setPagecount(Number(data.videoParams?.pagecount || 0));
+            await this.recordCollectionLog({
+              collectionEntity: data.collectionEntity,
+              videoParams: data.videoParams,
+              status: 0,
+              duration: Date.now() - (data.__pageStart || Date.now()),
+              pageCount: pageParams.getPagecount(),
+              pageSize: pageParams.getPagesize() || pageParams.getPs() || 0,
+              videoCount: 0,
+              errorMessage: error?.message || String(error),
+              requestUrl: `${data.collectionEntity.address}?${pageParams.getQueryString()}`.replace(/\s+/g, ''),
+              taskType: pageParams.getOp() || 'all',
+            });
+          }
+        } finally {
+          handledCount++;
+          this.releaseRedisData(data);
+        }
+      }
+    };
+
+    await Promise.all(Array.from({ length: workerCount }, () => worker()));
+    return handledCount;
+  }
+
+  private releaseRedisData(data: any): void {
+    if (!data || typeof data !== 'object') {
+      return;
+    }
+    data.collectionEntity = null;
+    data.videoParams = null;
+  }
+
+  private async processSinglePage(
+    item: VideoParams,
+    collectionEntity: CollectionEntity,
+    categoryMap: Map<
+      number,
+      { categoryId: number; categoryPid: number }
+    >,
+    areaMap: Map<string, number>,
+    languageMap: Map<string, number>
+  ): Promise<{
+    status: number;
+    pagecount: number;
+    pageSize: number;
+    videoCount: number;
+    errorMessage?: string;
+    requestUrl: string;
+    taskType: string;
+  }> {
+    const requestUrl = `${collectionEntity.address}?${item.getQueryString()}`.replace(/\s+/g, '');
+    try {
+      const result = await this.processSingleVideoItem(item, collectionEntity);
+      const videoCount = Array.isArray(result.data?.list) ? result.data.list.length : 0;
+      const errorMessage = result.success
+        ? ''
+        : result.error?.message || '采集失败';
+
+      await this.handleResultsAndSaves(
+        result,
+        collectionEntity,
+        categoryMap,
+        areaMap,
+        languageMap
+      );
+
+      return {
+        status: result.success ? 1 : 0,
+        pagecount: item.getPagecount(),
+        pageSize: item.getPagesize() || item.getPs() || 0,
+        videoCount,
+        requestUrl,
+        taskType: item.getOp() || 'all',
+        errorMessage,
+      };
+    } catch (error) {
+      return {
+        status: 0,
+        pagecount: item.getPagecount(),
+        pageSize: item.getPagesize() || item.getPs() || 0,
+        videoCount: 0,
+        errorMessage: error?.message || String(error),
+        requestUrl,
+        taskType: item.getOp() || 'all',
+      };
+    }
+  }
+
+  private async recordCollectionLog(data: {
+    collectionEntity: CollectionEntity;
+    videoParams: VIDEOPARAMS;
+    status: number;
+    duration: number;
+    pageCount: number;
+    pageSize: number;
+    videoCount: number;
+    errorMessage?: string;
+    requestUrl: string;
+    taskType: string;
+  }): Promise<void> {
+    try {
+      await this.collectionLogService.addLog({
+        collection_id: data.collectionEntity?.id,
+        collection_name: data.collectionEntity?.name,
+        page: data.videoParams?.page ?? data.videoParams?.pg ?? 0,
+        pagecount: data.pageCount,
+        page_size: data.pageSize,
+        video_count: data.videoCount,
+        status: data.status,
+        duration: data.duration,
+        error_message: data.errorMessage || '',
+        request_url: data.requestUrl,
+        task_type: data.taskType,
+      });
+    } catch (error) {
+      this.logger.error(TAG, '记录采集日志失败', error);
     }
   }
 
@@ -328,7 +515,7 @@ export class ConcurrencyService {
         `request error ${uri || 'unknown URL'} - ${errorMessage}`
       );
 
-      return {};
+      throw error;
     }
   }
 

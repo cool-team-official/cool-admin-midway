@@ -84,6 +84,8 @@
 
 import { App, ILogger, Inject, IMidwayApplication, Provide } from '@midwayjs/core';
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import * as http from 'http';
+import * as https from 'https';
 
 const TAG = 'NetworkErrorHandler';
 
@@ -95,10 +97,21 @@ export class NetworkErrorHandler {
   @App()
   app: IMidwayApplication;
 
-  private readonly maxConcurrentRequests = 4;
+  private readonly maxConcurrentRequests = 12;
   private pendingRequests = 0;
   private readonly requestQueue: Array<() => void> = [];
-  private axiosClient: AxiosInstance = axios.create();
+  private axiosClient: AxiosInstance = axios.create({
+    httpAgent: new http.Agent({
+      keepAlive: true,
+      maxSockets: 64,
+      maxFreeSockets: 16,
+    }),
+    httpsAgent: new https.Agent({
+      keepAlive: true,
+      maxSockets: 64,
+      maxFreeSockets: 16,
+    }),
+  });
 
   /**
    * 判断是否为网络相关错误

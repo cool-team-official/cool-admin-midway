@@ -118,8 +118,8 @@ export class TaskCollectService extends BaseService {
 
 
   // 分批处理配置
-  private readonly BATCH_SIZE = 5; // 每批处理的采集源数量
-  private readonly BATCH_DELAY = 1000; // 批次之间的延迟（毫秒）
+  private readonly BATCH_SIZE = 10; // 每批处理的采集源数量
+  private readonly BATCH_DELAY = 0; // 批次之间的延迟（毫秒）
 
   async startCollection(): Promise<void> {
     try {
@@ -179,7 +179,7 @@ export class TaskCollectService extends BaseService {
 
         await Promise.all(promises);
 
-        if (i + this.BATCH_SIZE < allCollections.length) {
+        if (this.BATCH_DELAY > 0 && i + this.BATCH_SIZE < allCollections.length) {
           this.logger.info(TAG, `批次处理完成，等待 ${this.BATCH_DELAY}ms 后继续下一批`);
           await this.delay(this.BATCH_DELAY);
         }

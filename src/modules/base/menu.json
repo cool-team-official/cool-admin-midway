@@ -698,6 +698,31 @@
                 ]
             },
             {
+                "name": "采集日志",
+                "router": "/video/collection_log",
+                "perms": null,
+                "type": 1,
+                "icon": "icon-log",
+                "orderNum": 7,
+                "viewPath": "modules/video/views/collection_log/index.vue",
+                "keepAlive": true,
+                "isShow": true,
+                "childMenus": [
+                    {
+                        "name": "查看",
+                        "router": null,
+                        "perms": "video:collection_log:page,video:collection_log:info,video:collection_log:delete",
+                        "type": 2,
+                        "icon": null,
+                        "orderNum": 0,
+                        "viewPath": null,
+                        "keepAlive": true,
+                        "isShow": true,
+                        "childMenus": []
+                    }
+                ]
+            },
+            {
                 "name": "文件管理",
                 "router": "/upload/list",
                 "perms": null,

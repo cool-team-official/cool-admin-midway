@@ -82,58 +82,24 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import { CoolConfig } from '@cool-midway/core';
-import { MidwayConfig } from '@midwayjs/core';
-import { TenantSubscriber } from '../modules/base/db/tenant';
-import { entities } from '../entities';
+import { BaseController, CoolController } from '@cool-midway/core';
+import { CollectionLogEntity } from '../../entity/collection_log';
+import { CollectionLogService } from '../../service/collection_log';
+import { Inject } from '@midwayjs/core';
 
-/**
- * 本地开发 npm run dev 读取的配置文件
- */
-export default {
-  typeorm: {
-    dataSource: {
-      default: {
-        type: 'mysql',
-        host: '127.0.0.1',
-        port: 3306,
-        username: 'root',
-        password: 'admin',
-        database: 'cms',
-        // 自动建表 注意：线上部署的时候不要使用，有可能导致数据丢失
-        synchronize: true,
-        // 打印日志
-        logging: false,
-        // 字符集
-        charset: 'utf8mb4',
-        // 是否开启缓存
-        cache: true,
-        // 实体路径
-        entities,
-        // 订阅者
-        subscribers: [TenantSubscriber],
-        // 连接池配置（优化：增加连接池大小，提高并发处理能力）
-        poolSize: 20,
-        maxQueryExecutionTime: 5000,
-        connectTimeout: 15000,
-        waitForConnections: true,
-        queueLimit: 0,
-        extra: {
-          connectionLimit: 20,
-          waitForConnections: true,
-          queueLimit: 0,
-        },
-      },
+@CoolController({
+  api: ['page', 'info', 'delete'],
+  entity: CollectionLogEntity,
+  service: CollectionLogService,
+  pageQueryOp: {
+    fieldEq: ['collection_id', 'status', 'task_type', 'page'],
+    keyWordLikeFields: ['collection_name', 'error_message', 'request_url'],
+    addOrderBy: {
+      id: 'desc',
     },
   },
-  cool: {
-    // 实体与路径，跟生成代码、前端请求、swagger 文档相关 注意：线上不建议开启，以免暴露敏感信息
-    eps: true,
-    // 是否自动导入模块数据库
-    initDB: false,
-    // 判断是否初始化的方式
-    initJudge: 'db',
-    // 是否自动导入模块菜单
-    initMenu: false,
-  } as CoolConfig,
-} as MidwayConfig;
+})
+export class AdminCollectionLogController extends BaseController {
+  @Inject()
+  collectionLogService: CollectionLogService;
+}

@@ -82,24 +82,24 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import {InjectEntityModel} from '@midwayjs/typeorm';
-import {In, Repository} from 'typeorm';
-import {VideoEntity} from '../entity/videos';
-import {VideoAlbumEntity} from '../entity/album';
-import {VideoAlbumRelationship} from '../entity/video_album_relationship';
-import {VideoWeekEntity} from '../entity/week_video';
-import {WeekEntity} from '../entity/week';
-import {ILogger, Inject, InjectClient, Provide} from '@midwayjs/core';
-import {CollectionEntity} from '../entity/collection';
-import {VideoLineService} from './videoLine';
-import {PlayLineService} from './play_line';
-import {PlayLineEntity} from '../entity/play_line';
-import {DuplicateKeyHandler} from './duplicateKeyHandler';
-import {MemberService} from '../../member/service/member';
-import {BaseService} from '../../base/service/base';
-import {DictInfoEntity} from '../../dict/entity/info';
-import {DictInfoService} from '../../dict/service/info';
-import {CachingFactory, MidwayCache} from '@midwayjs/cache-manager';
+import { InjectEntityModel } from '@midwayjs/typeorm';
+import { In, Repository } from 'typeorm';
+import { VideoEntity } from '../entity/videos';
+import { VideoAlbumEntity } from '../entity/album';
+import { VideoAlbumRelationship } from '../entity/video_album_relationship';
+import { VideoWeekEntity } from '../entity/week_video';
+import { WeekEntity } from '../entity/week';
+import { ILogger, Inject, InjectClient, Provide } from '@midwayjs/core';
+import { CollectionEntity } from '../entity/collection';
+import { VideoLineService } from './videoLine';
+import { PlayLineService } from './play_line';
+import { PlayLineEntity } from '../entity/play_line';
+import { DuplicateKeyHandler } from './duplicateKeyHandler';
+import { MemberService } from '../../member/service/member';
+import { BaseService } from '../../base/service/base';
+import { DictInfoEntity } from '../../dict/entity/info';
+import { DictInfoService } from '../../dict/service/info';
+import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 import * as crypto from 'crypto';
 
 const TAG = 'VideosService';
@@ -127,7 +127,6 @@ export class VideosService extends BaseService {
   @Inject()
   VideoLineService: VideoLineService;
 
-
   @Inject()
   memberService: MemberService;
 
@@ -153,7 +152,10 @@ export class VideosService extends BaseService {
    * @param data 数据
    * @param type 操作类型
    */
-  async modifyAfter(data: any, type: 'delete' | 'update' | 'add'): Promise<void> {
+  async modifyAfter(
+    data: any,
+    type: 'delete' | 'update' | 'add'
+  ): Promise<void> {
     if (!data) {
       this.logger.warn(TAG, '操作数据不能为空');
       return;
@@ -176,7 +178,12 @@ export class VideosService extends BaseService {
   /**
    * 排序查询
    */
-  async sort(query: any): Promise<{ list: VideoEntity[]; pagination: { page: number; size: number } }> {
+  async sort(
+    query: any
+  ): Promise<{
+    list: VideoEntity[];
+    pagination: { page: number; size: number };
+  }> {
     if (!query) {
       query = {};
     }
@@ -297,7 +304,11 @@ export class VideosService extends BaseService {
           );
 
           // 检查是否是数据源错误
-          if (lineError && lineError.message && lineError.message.includes('DataSource undefined not found')) {
+          if (
+            lineError &&
+            lineError.message &&
+            lineError.message.includes('DataSource undefined not found')
+          ) {
             this.logger.error(
               TAG,
               `数据源错误，无法保存视频线路: ${videoEntity.title}`,
@@ -350,13 +361,21 @@ export class VideosService extends BaseService {
     videoEntities: VideoEntity[],
     collectionEntity: CollectionEntity
   ): Promise<{ successCount: number; skipCount: number; errorCount: number }> {
-    if (!videoEntities || !Array.isArray(videoEntities) || videoEntities.length === 0) {
+    if (
+      !videoEntities ||
+      !Array.isArray(videoEntities) ||
+      videoEntities.length === 0
+    ) {
       return { successCount: 0, skipCount: 0, errorCount: 0 };
     }
 
     if (!collectionEntity || !collectionEntity.id) {
       this.logger.warn(TAG, '集合实体无效');
-      return { successCount: 0, skipCount: videoEntities.length, errorCount: 0 };
+      return {
+        successCount: 0,
+        skipCount: videoEntities.length,
+        errorCount: 0,
+      };
     }
 
     let successCount = 0;
@@ -370,7 +389,11 @@ export class VideosService extends BaseService {
       const isProcessing = await this.midwayCache.get(cacheKey);
       if (isProcessing) {
         this.logger.debug(TAG, '批量插入任务正在进行，跳过本次处理');
-        return { successCount: 0, skipCount: videoEntities.length, errorCount: 0 };
+        return {
+          successCount: 0,
+          skipCount: videoEntities.length,
+          errorCount: 0,
+        };
       }
 
       await this.midwayCache.set(cacheKey, true, 300);
@@ -403,19 +426,31 @@ export class VideosService extends BaseService {
 
         if (validVideos.length === 0) {
           this.logger.info(TAG, '没有有效的视频需要插入');
-          return { successCount: 0, skipCount: videoEntities.length, errorCount: 0 };
+          return {
+            successCount: 0,
+            skipCount: videoEntities.length,
+            errorCount: 0,
+          };
         }
 
         // 使用批量插入
         try {
           const insertedVideos = await this.videoEntity.insert(validVideos);
 
-          if (insertedVideos && insertedVideos.identifiers && insertedVideos.identifiers.length > 0) {
+          if (
+            insertedVideos &&
+            insertedVideos.identifiers &&
+            insertedVideos.identifiers.length > 0
+          ) {
             successCount = insertedVideos.identifiers.length;
 
             // 批量保存视频线路信息
             const videosWithIds: VideoEntity[] = [];
-            for (let i = 0; i < validVideos.length && i < insertedVideos.identifiers.length; i++) {
+            for (
+              let i = 0;
+              i < validVideos.length && i < insertedVideos.identifiers.length;
+              i++
+            ) {
               const videoEntity = validVideos[i];
               const insertedId = insertedVideos.identifiers[i].id;
 
@@ -427,25 +462,41 @@ export class VideosService extends BaseService {
 
             // 批量插入视频线路
             if (videosWithIds.length > 0) {
-              await this.VideoLineService.batchInsert(videosWithIds, collectionEntity);
+              await this.VideoLineService.batchInsert(
+                videosWithIds,
+                collectionEntity
+              );
             }
 
-            this.logger.info(TAG, `批量插入视频完成，成功${successCount}条，跳过${skipCount}条`);
+            this.logger.info(
+              TAG,
+              `批量插入视频完成，成功${successCount}条，跳过${skipCount}条`
+            );
           }
         } catch (insertError) {
           // 如果批量插入失败（如重复键错误），回退到逐个插入
-          if (this.duplicateKeyHandler.isDuplicateKeyError(insertError) ||
+          if (
+            this.duplicateKeyHandler.isDuplicateKeyError(insertError) ||
             insertError.code === 'ER_DUP_ENTRY' ||
-              insertError.errno === 1062) {
+            insertError.errno === 1062
+          ) {
             this.logger.warn(TAG, '批量插入遇到重复键，回退到逐个插入');
 
             for (const videoEntity of validVideos) {
               try {
-                const savedVideo = await this.duplicateKeyHandler.safeVideoInsert(videoEntity);
+                const savedVideo =
+                  await this.duplicateKeyHandler.safeVideoInsert(videoEntity);
                 if (savedVideo && savedVideo.id) {
                   videoEntity.id = savedVideo.id;
-                  await this.VideoLineService.insert(videoEntity, collectionEntity).catch(lineError => {
-                    this.logger.error(TAG, `视频线路保存失败: ${videoEntity.title}`, lineError);
+                  await this.VideoLineService.insert(
+                    videoEntity,
+                    collectionEntity
+                  ).catch(lineError => {
+                    this.logger.error(
+                      TAG,
+                      `视频线路保存失败: ${videoEntity.title}`,
+                      lineError
+                    );
                   });
                   successCount++;
                 }
@@ -454,7 +505,11 @@ export class VideosService extends BaseService {
                   skipCount++;
                 } else {
                   errorCount++;
-                  this.logger.error(TAG, `插入视频失败: ${videoEntity.title}`, singleError);
+                  this.logger.error(
+                    TAG,
+                    `插入视频失败: ${videoEntity.title}`,
+                    singleError
+                  );
                 }
               }
             }
@@ -478,7 +533,10 @@ export class VideosService extends BaseService {
    * @param id 视频ID
    * @param createUserId 用户ID
    */
-  async getVideoDetail(id: number, createUserId?: number): Promise<{ video: VideoEntity; lines: any[] }> {
+  async getVideoDetail(
+    id: number,
+    createUserId?: number
+  ): Promise<{ video: VideoEntity; lines: any[] }> {
     if (!id || typeof id !== 'number') {
       throw new Error('视频ID无效');
     }
@@ -495,7 +553,7 @@ export class VideosService extends BaseService {
       this.VideoLineService.videoLineEntity.find({
         where: { video_id: id },
         order: { sort: 'DESC' },
-      })
+      }),
     ]);
     if (!video) {
       throw new Error('视频不存在');
@@ -579,7 +637,11 @@ export class VideosService extends BaseService {
 
       // 尝试从缓存获取数据
       const cachedData = await this.midwayCache.get(cacheKey);
-      if (cachedData && typeof cachedData === 'object' && Array.isArray((cachedData as any).list)) {
+      if (
+        cachedData &&
+        typeof cachedData === 'object' &&
+        Array.isArray((cachedData as any).list)
+      ) {
         this.logger.debug(TAG, '从缓存获取视频排行信息');
         return cachedData as { list: any[] };
       }
@@ -729,17 +791,17 @@ export class VideosService extends BaseService {
         // 将 video_class 按逗号分割成标签数组（去除空格）
         const videoClassTags = videoClass
           ? videoClass
-            .split(',')
-            .map(tag => tag.trim())
-            .filter(tag => tag)
+              .split(',')
+              .map(tag => tag.trim())
+              .filter(tag => tag)
           : [];
 
         // 将 video_tag 按逗号分割成标签数组（去除空格）
         const videoTagTags = videoTag
           ? videoTag
-            .split(',')
-            .map(tag => tag.trim())
-            .filter(tag => tag)
+              .split(',')
+              .map(tag => tag.trim())
+              .filter(tag => tag)
           : [];
 
         // 合并 video_class 和 video_tag 的标签数组
@@ -759,9 +821,9 @@ export class VideosService extends BaseService {
           // 将 categoryRemark 按逗号分割成标签数组（去除空格）
           const categoryRemarkTags = categoryRemark
             ? categoryRemark
-              .split(',')
-              .map(tag => tag.trim())
-              .filter(tag => tag)
+                .split(',')
+                .map(tag => tag.trim())
+                .filter(tag => tag)
             : [];
 
           // 检查是否有共同的标签（支持智能匹配，包括相似词匹配）
@@ -884,7 +946,7 @@ export class VideosService extends BaseService {
       if (videoEntity[field] && typeof videoEntity[field] === 'string') {
         const limit = fieldLimits[field];
         if (videoEntity[field].length > limit) {
-          videoEntity[field] = 
+          videoEntity[field] =
             videoEntity[field].substring(0, limit - 3) + '...';
           this.logger.warn(TAG, `字段 ${field} 已截断至 ${limit} 字符`);
         }
@@ -914,7 +976,7 @@ export class VideosService extends BaseService {
     if (!videoEntity) {
       return {};
     }
-    const { id, createTime, updateTime, createUserId, ...updateData } = 
+    const { id, createTime, updateTime, createUserId, ...updateData } =
       videoEntity;
     return updateData;
   }

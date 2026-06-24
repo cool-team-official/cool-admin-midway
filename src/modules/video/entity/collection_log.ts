@@ -82,58 +82,46 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import { CoolConfig } from '@cool-midway/core';
-import { MidwayConfig } from '@midwayjs/core';
-import { TenantSubscriber } from '../modules/base/db/tenant';
-import { entities } from '../entities';
+import { Column, Entity, Index } from 'typeorm';
+import { BaseEntity } from '../../base/entity/base';
 
 /**
- * 本地开发 npm run dev 读取的配置文件
+ * 采集日志
  */
-export default {
-  typeorm: {
-    dataSource: {
-      default: {
-        type: 'mysql',
-        host: '127.0.0.1',
-        port: 3306,
-        username: 'root',
-        password: 'admin',
-        database: 'cms',
-        // 自动建表 注意：线上部署的时候不要使用，有可能导致数据丢失
-        synchronize: true,
-        // 打印日志
-        logging: false,
-        // 字符集
-        charset: 'utf8mb4',
-        // 是否开启缓存
-        cache: true,
-        // 实体路径
-        entities,
-        // 订阅者
-        subscribers: [TenantSubscriber],
-        // 连接池配置（优化：增加连接池大小，提高并发处理能力）
-        poolSize: 20,
-        maxQueryExecutionTime: 5000,
-        connectTimeout: 15000,
-        waitForConnections: true,
-        queueLimit: 0,
-        extra: {
-          connectionLimit: 20,
-          waitForConnections: true,
-          queueLimit: 0,
-        },
-      },
-    },
-  },
-  cool: {
-    // 实体与路径，跟生成代码、前端请求、swagger 文档相关 注意：线上不建议开启，以免暴露敏感信息
-    eps: true,
-    // 是否自动导入模块数据库
-    initDB: false,
-    // 判断是否初始化的方式
-    initJudge: 'db',
-    // 是否自动导入模块菜单
-    initMenu: false,
-  } as CoolConfig,
-} as MidwayConfig;
+@Entity('video_collection_log')
+export class CollectionLogEntity extends BaseEntity {
+  @Index()
+  @Column({ comment: '采集源ID', nullable: true, type: 'bigint' })
+  collection_id: number;
+
+  @Column({ comment: '采集源名称', nullable: true, length: 191 })
+  collection_name: string;
+
+  @Index()
+  @Column({ comment: '页码', nullable: true, type: 'int' })
+  page: number;
+
+  @Column({ comment: '总页数', nullable: true, type: 'int' })
+  pagecount: number;
+
+  @Column({ comment: '每页数量', nullable: true, type: 'int' })
+  page_size: number;
+
+  @Column({ comment: '本页视频数量', nullable: true, type: 'int' })
+  video_count: number;
+
+  @Column({ comment: '状态 0-失败 1-成功', default: 1 })
+  status: number;
+
+  @Column({ comment: '耗时毫秒', nullable: true, type: 'int' })
+  duration: number;
+
+  @Column({ comment: '错误信息', nullable: true, type: 'text' })
+  error_message: string;
+
+  @Column({ comment: '请求地址', nullable: true, length: 500 })
+  request_url: string;
+
+  @Column({ comment: '任务标识', nullable: true, length: 50 })
+  task_type: string;
+}
