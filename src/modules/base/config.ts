@@ -86,6 +86,7 @@ import { BaseLogMiddleware } from './middleware/log';
 import { BaseAuthorityMiddleware } from './middleware/authority';
 import { ModuleConfig } from '@cool-midway/core';
 import { BaseTranslateMiddleware } from './middleware/translate';
+import { BaseEncryptionMiddleware } from './middleware/encryption';
 
 /**
  * 模块的配置
@@ -101,6 +102,7 @@ export default () => {
       BaseTranslateMiddleware,
       BaseAuthorityMiddleware,
       BaseLogMiddleware,
+      BaseEncryptionMiddleware,
     ],
     // 模块加载顺序，默认为0，值越大越优先加载
     order: 10,

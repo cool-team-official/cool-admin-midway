@@ -10,7 +10,7 @@
  ============================================================================
 
 
- 本软件（以下简称"本软件"）受中华人民共和国著作权法及国际著作权条约保护。
+ 本软件（以下简称"本软件")受中华人民共和国著作权法及国际著作权条约保护。
 
 
  【版权人】橘子视频 (Juzi Video)
@@ -25,7 +25,7 @@
  本软件仅授权用户进行以下操作：
 
 
-  ✓ 可免费试用：下载并运行本软件，仅限个人非商业用途
+  ✓ 可免费试用：下载并运行本软件,仅限个人非商业用途
   ✓ 可学习研究：查看和学习本软件源代码，仅供个人研究
 
 
@@ -82,86 +82,54 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-// src/utils/crypto.util.ts
-import { Config, ILogger, Inject, Provide } from '@midwayjs/core';
-import * as crypto from 'crypto';
+import { App, Config, Inject, Middleware } from '@midwayjs/core';
+import { NextFunction, Context } from '@midwayjs/koa';
+import { IMiddleware, IMidwayApplication } from '@midwayjs/core';
+import { CryptoUtil } from '../../../comm/crypto';
 
-@Provide()
-export class CryptoUtil {
-  @Inject()
-  logger: ILogger;
-  @Config('cryptoConfig')
-  cryptoConfig: {
-    aesKey?: string;
-    rsaPrivateKey?: string;
-    rsaPublicKey?: string;
-    defaultSalt: string;
-  };
+/**
+ * 响应数据加密中间件
+ * 用于对 /app/xx 路径的响应数据进行加密
+ */
+@Middleware()
+export class BaseEncryptionMiddleware
+  implements IMiddleware<Context, NextFunction>
+{
+  @Config('koa.globalPrefix')
+  prefix;
 
-  async aesEncrypt(text: string, key?: string): Promise<string> {
-    const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv(
-      'aes-256-gcm',
-      Buffer.from(key || this.cryptoConfig.aesKey, 'hex'),
-      iv
-    );
-    let encrypted = cipher.update(text, 'utf8');
-    encrypted = Buffer.concat([encrypted, cipher.final()]);
-    const authTag = cipher.getAuthTag();
-    return Buffer.concat([iv, authTag, encrypted]).toString('base64');
-  }
+  @App()
+  app: IMidwayApplication;
 
-  async aesDecrypt(encryptedText: string, key?: string): Promise<string> {
-    const buffer = Buffer.from(encryptedText, 'base64');
-    const iv = buffer.slice(0, 16);
-    const authTag = buffer.slice(16, 32);
-    const content = buffer.slice(32);
-    const decipher = crypto.createDecipheriv(
-      'aes-256-gcm',
-      Buffer.from(key || this.cryptoConfig.aesKey, 'hex'),
-      iv
-    );
-    decipher.setAuthTag(authTag);
-    let decrypted = decipher.update(content);
-    decrypted = Buffer.concat([decrypted, decipher.final()]);
-    return decrypted.toString('utf8');
-  }
+  resolve() {
+    return async (ctx: Context, next: NextFunction) => {
+      await next();
 
-  // RSA 非对称加密
-  async rsaEncrypt(text: string): Promise<string> {
-    return crypto
-      .publicEncrypt(
-        {
-          key: this.cryptoConfig.rsaPublicKey,
-          padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
-        },
-        Buffer.from(text)
-      )
-      .toString('base64');
-  }
+      let { url } = ctx;
+      url = url.replace(this.prefix, '').split('?')[0];
 
-  // RSA 非对称解密
-  async rsaDecrypt(encryptedText: string): Promise<string> {
-    return crypto
-      .privateDecrypt(
-        {
-          key: this.cryptoConfig.rsaPrivateKey,
-          padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
-        },
-        Buffer.from(encryptedText, 'base64')
-      )
-      .toString('utf8');
-  }
+      if (url.startsWith('/app/')) {
+        try {
+          const body = ctx.body;
 
-  // SHA256 哈希加盐
-  async sha256(text: string, salt?: string): Promise<string> {
-    const hash = crypto.createHash('sha256');
-    hash.update(text + (salt || this.cryptoConfig.defaultSalt));
-    return hash.digest('hex');
-  }
+          if (body) {
+            const cryptoUtil = await ctx.requestContext.getAsync(CryptoUtil);
+            const dataString =
+              typeof body === 'string' ? body : JSON.stringify(body);
 
-  // 生成随机盐值
-  generateSalt(length = 16): string {
-    return crypto.randomBytes(length).toString('hex');
+            const encryptedData = await cryptoUtil.aesEncrypt(dataString);
+
+            ctx.body = {
+              encrypted: true,
+              data: encryptedData,
+            };
+
+            ctx.set('X-Response-Encrypted', 'true');
+          }
+        } catch (error) {
+          ctx.logger.error('响应数据加密失败:', error);
+        }
+      }
+    };
   }
 }
