@@ -2,6 +2,11 @@ import { App, Config, Inject, Middleware } from '@midwayjs/core';
 import { NextFunction, Context } from '@midwayjs/koa';
 import { IMiddleware, IMidwayApplication } from '@midwayjs/core';
 import { CryptoUtil } from '../../../comm/crypto';
+import * as zlib from 'zlib';
+import { promisify } from 'util';
+
+const gzipAsync = promisify(zlib.gzip);
+const gunzipAsync = promisify(zlib.gunzip);
 
 /**
  * 响应数据加密中间件
@@ -44,9 +49,19 @@ export class BaseEncryptionMiddleware
         if (sessionKeyHex && ['POST', 'PUT', 'PATCH'].includes(ctx.method.toUpperCase())) {
           try {
             const body = ctx.request.body;
-            if (body && body['encrypted'] === true && body['data']) {
-              const decryptedText = await cryptoUtil.aesDecrypt(body['data'], sessionKeyHex);
-              ctx.request.body = JSON.parse(decryptedText);
+            // 兼容新旧字段名：{encrypted|e, data|d, compressed|c}
+            const isEncrypted = body?.['e'] === true || body?.['encrypted'] === true;
+            const rawData = body?.['d'] ?? body?.['data'];
+            const isCompressed = body?.['c'] === true || body?.['compressed'] === true;
+            if (isEncrypted && rawData) {
+              const decryptedText = await cryptoUtil.aesDecrypt(rawData, sessionKeyHex);
+              if (isCompressed) {
+                const compressedBuf = Buffer.from(decryptedText, 'base64');
+                const decompressed = await gunzipAsync(compressedBuf);
+                ctx.request.body = JSON.parse(decompressed.toString('utf8'));
+              } else {
+                ctx.request.body = JSON.parse(decryptedText);
+              }
             }
           } catch (error) {
             ctx.logger.warn('请求体 AES 解密失败，将使用原始 body:', error.message);
@@ -56,7 +71,7 @@ export class BaseEncryptionMiddleware
         // 执行后续中间件/控制器
         await next();
 
-        // 3. 响应阶段：用 AES 会话密钥加密响应体
+        // 3. 响应阶段：gzip 压缩 → AES-GCM 加密 → JSON base64 传输
         try {
           const body = ctx.body;
 
@@ -64,15 +79,21 @@ export class BaseEncryptionMiddleware
             const dataString =
               typeof body === 'string' ? body : JSON.stringify(body);
 
-            const keyToUse = sessionKeyHex;
-            const encryptedData = await cryptoUtil.aesEncrypt(dataString, keyToUse);
+            // Step 1: gzip 压缩（二进制 Buffer）
+            const compressed = await gzipAsync(Buffer.from(dataString, 'utf8'));
 
+            // Step 2: AES-GCM 加密（二进制 Buffer）
+            const encryptedBuffer = await cryptoUtil.aesEncryptBuffer(compressed, sessionKeyHex || undefined);
+
+            // Step 3: JSON 包装（base64 字符串），避免 application/octet-stream 流的兼容问题
+            const encryptedBase64 = encryptedBuffer.toString('base64');
             ctx.body = {
-              encrypted: true,
-              data: encryptedData,
+              e: true,
+              c: true,
+              d: encryptedBase64,
             };
-
             ctx.set('X-Response-Encrypted', 'true');
+            ctx.set('X-Response-Compressed', 'gzip');
           }
         } catch (error) {
           ctx.logger.error('响应数据加密失败:', error);

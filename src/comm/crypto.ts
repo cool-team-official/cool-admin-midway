@@ -99,37 +99,107 @@ export class CryptoUtil {
   };
 
   async aesEncrypt(text: string, key?: string): Promise<string> {
+    const keyBuffer = Buffer.from(key || this.cryptoConfig.aesKey, 'hex');
     const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv(
-      'aes-256-gcm',
-      Buffer.from(key || this.cryptoConfig.aesKey, 'hex'),
-      iv
+    const cryptoKey = await crypto.webcrypto.subtle.importKey(
+      'raw', keyBuffer, { name: 'AES-GCM' }, false, ['encrypt']
     );
-    let encrypted = cipher.update(text, 'utf8');
-    encrypted = Buffer.concat([encrypted, cipher.final()]);
-    const authTag = cipher.getAuthTag();
-    // 标准 AES-GCM 格式：iv(16) + ciphertext + authTag(16)
-    return Buffer.concat([iv, encrypted, authTag]).toString('base64');
+    const encoded = new TextEncoder().encode(text);
+    const encrypted = await crypto.webcrypto.subtle.encrypt(
+      { name: 'AES-GCM', iv }, cryptoKey, encoded
+    );
+    const buf = Buffer.from(encrypted);
+    return Buffer.concat([iv, buf.slice(0, -16), buf.slice(-16)]).toString('base64');
   }
 
   async aesDecrypt(encryptedText: string, key?: string): Promise<string> {
+    const keyBuffer = Buffer.from(key || this.cryptoConfig.aesKey, 'hex');
     const buffer = Buffer.from(encryptedText, 'base64');
     const iv = buffer.slice(0, 16);
-    // 标准 AES-GCM 格式：iv(16) + ciphertext + authTag(16)
     const authTag = buffer.slice(-16);
-    const content = buffer.slice(16, -16);
-    const decipher = crypto.createDecipheriv(
-      'aes-256-gcm',
-      Buffer.from(key || this.cryptoConfig.aesKey, 'hex'),
-      iv
+    const ciphertext = buffer.slice(16, -16);
+    const cryptoKey = await crypto.webcrypto.subtle.importKey(
+      'raw', keyBuffer, { name: 'AES-GCM' }, false, ['decrypt']
     );
-    decipher.setAuthTag(authTag);
-    let decrypted = decipher.update(content);
-    decrypted = Buffer.concat([decrypted, decipher.final()]);
-    return decrypted.toString('utf8');
+    const decrypted = await crypto.webcrypto.subtle.decrypt(
+      { name: 'AES-GCM', iv }, cryptoKey, Buffer.concat([ciphertext, authTag])
+    );
+    return new TextDecoder().decode(decrypted);
+  }
+
+  async aesEncryptBuffer(data: Buffer, key?: string): Promise<Buffer> {
+    const keyBuffer = Buffer.from(key || this.cryptoConfig.aesKey, 'hex');
+    // 使用 16 字节 IV，与客户端 pointycastle GCMBlockCipher 一致
+    const iv = crypto.randomBytes(16);
+    const cryptoKey = await crypto.webcrypto.subtle.importKey(
+      'raw', keyBuffer, { name: 'AES-GCM' }, false, ['encrypt']
+    );
+    const encrypted = await crypto.webcrypto.subtle.encrypt(
+      { name: 'AES-GCM', iv }, cryptoKey, data
+    );
+    const buf = Buffer.from(encrypted);
+    return Buffer.concat([iv, buf.slice(0, -16), buf.slice(-16)]);
+  }
+
+  async aesDecryptBuffer(encryptedBuffer: Buffer, key?: string): Promise<Buffer> {
+    const keyBuffer = Buffer.from(key || this.cryptoConfig.aesKey, 'hex');
+    // 16 字节 IV，与客户端一致
+    const iv = encryptedBuffer.slice(0, 16);
+    const authTag = encryptedBuffer.slice(-16);
+    const ciphertext = encryptedBuffer.slice(16, -16);
+    const cryptoKey = await crypto.webcrypto.subtle.importKey(
+      'raw', keyBuffer, { name: 'AES-GCM' }, false, ['decrypt']
+    );
+    const decrypted = await crypto.webcrypto.subtle.decrypt(
+      { name: 'AES-GCM', iv }, cryptoKey, Buffer.concat([ciphertext, authTag])
+    );
+    return Buffer.from(decrypted);
   }
 
   // RSA 非对称加密
+  // ---------------------------------------------------------------------------
+  // AES-256-GCM 原始字节加解密（无 Base64 编码，为二进制传输铺路）
+  // ---------------------------------------------------------------------------
+
+  /**
+   * AES-256-GCM 加密原始字节，返回 raw(iv + ciphertext + authTag)
+   * 与 aesEncrypt 的区别：输入/输出均为 Buffer，跳过中间的 utf8/base64 转换
+   */
+  async aesEncryptRaw(data: Buffer, key?: string): Promise<Buffer> {
+    const keyBuffer = Buffer.from(key || this.cryptoConfig.aesKey, 'hex');
+    const iv = crypto.randomBytes(16);
+    const cryptoKey = await crypto.webcrypto.subtle.importKey(
+      'raw', keyBuffer, { name: 'AES-GCM' }, false, ['encrypt']
+    );
+    const encrypted = await crypto.webcrypto.subtle.encrypt(
+      { name: 'AES-GCM', iv }, cryptoKey, data
+    );
+    const buf = Buffer.from(encrypted);
+    return Buffer.concat([iv, buf.slice(0, -16), buf.slice(-16)]);
+  }
+
+  /**
+   * AES-256-GCM 同步解密原始字节，输入 raw(iv + ciphertext + authTag)，输出原始明文
+   * 与 aesDecrypt 的区别：输入/输出均为 Buffer，跳过中间的 base64/utf8 转换
+   */
+  async aesDecryptRaw(encryptedData: Buffer, key?: string): Promise<Buffer> {
+    const keyBuffer = Buffer.from(key || this.cryptoConfig.aesKey, 'hex');
+    const iv = encryptedData.slice(0, 16);
+    const authTag = encryptedData.slice(-16);
+    const ciphertext = encryptedData.slice(16, -16);
+    const cryptoKey = await crypto.webcrypto.subtle.importKey(
+      'raw', keyBuffer, { name: 'AES-GCM' }, false, ['decrypt']
+    );
+    const decrypted = await crypto.webcrypto.subtle.decrypt(
+      { name: 'AES-GCM', iv }, cryptoKey, Buffer.concat([ciphertext, authTag])
+    );
+    return Buffer.from(decrypted);
+  }
+
+  // ---------------------------------------------------------------------------
+  // RSA 非对称加密
+  // ---------------------------------------------------------------------------
+
   async rsaEncrypt(text: string): Promise<string> {
     return crypto
       .publicEncrypt(
