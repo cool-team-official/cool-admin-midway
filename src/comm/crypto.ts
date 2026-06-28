@@ -108,14 +108,16 @@ export class CryptoUtil {
     let encrypted = cipher.update(text, 'utf8');
     encrypted = Buffer.concat([encrypted, cipher.final()]);
     const authTag = cipher.getAuthTag();
-    return Buffer.concat([iv, authTag, encrypted]).toString('base64');
+    // 标准 AES-GCM 格式：iv(16) + ciphertext + authTag(16)
+    return Buffer.concat([iv, encrypted, authTag]).toString('base64');
   }
 
   async aesDecrypt(encryptedText: string, key?: string): Promise<string> {
     const buffer = Buffer.from(encryptedText, 'base64');
     const iv = buffer.slice(0, 16);
-    const authTag = buffer.slice(16, 32);
-    const content = buffer.slice(32);
+    // 标准 AES-GCM 格式：iv(16) + ciphertext + authTag(16)
+    const authTag = buffer.slice(-16);
+    const content = buffer.slice(16, -16);
     const decipher = crypto.createDecipheriv(
       'aes-256-gcm',
       Buffer.from(key || this.cryptoConfig.aesKey, 'hex'),
@@ -134,6 +136,7 @@ export class CryptoUtil {
         {
           key: this.cryptoConfig.rsaPublicKey,
           padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+          oaepHash: 'sha256',
         },
         Buffer.from(text)
       )
@@ -147,6 +150,7 @@ export class CryptoUtil {
         {
           key: this.cryptoConfig.rsaPrivateKey,
           padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+          oaepHash: 'sha256',
         },
         Buffer.from(encryptedText, 'base64')
       )

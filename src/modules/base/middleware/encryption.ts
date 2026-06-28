@@ -1,87 +1,3 @@
-/*
- Copyright © 2024-2026 Juzi Video. All rights reserved.
- 版权所有 © 2024-2026 橘子视频。保留所有权利。
- 作者：xiaoliwanshui
- 邮箱：chocolaer@126.com
-
-
- ============================================================================
-                                版权声明
- ============================================================================
-
-
- 本软件（以下简称"本软件")受中华人民共和国著作权法及国际著作权条约保护。
-
-
- 【版权人】橘子视频 (Juzi Video)
- 【权利范围】本软件的全部源代码、二进制文件、文档及相关材料
-
-
- ============================================================================
-                                许可证协议
- ============================================================================
-
-
- 本软件仅授权用户进行以下操作：
-
-
-  ✓ 可免费试用：下载并运行本软件,仅限个人非商业用途
-  ✓ 可学习研究：查看和学习本软件源代码，仅供个人研究
-
-
- ============================================================================
-                                禁止事项
- ============================================================================
-
-
-  ✗ 禁止商业使用：未经授权，不得对本软件进行销售、授权、出租或商业利用
-  ✗ 禁止修改演绎：未经授权，不得对本软件进行修改、反向工程或创作衍生作品
-  ✗ 禁止分发传播：未经授权，不得以任何形式向第三方分发或公开本软件
-  ✗ 禁止删除版权：不得移除或篡改本软件中的任何版权声明或知识产权标识
-
-
- ============================================================================
-                                免责声明
- ============================================================================
-
-
- 本软件按"原样"提供，不提供任何明示或暗示的保证，包括但不限于：
- 对适销性、特定用途适用性、非侵权性的保证。在任何情况下，
- 版权持有人均不对因使用本软件而产生的任何索赔、损害或损失承担责任。
-
-
- ============================================================================
-                                终止条款
- ============================================================================
-
-
- 若您违反本协议的任何条款，本许可证将自动终止。
- 终止后，您必须立即停止使用本软件，并销毁所有相关副本。
-
-
- ============================================================================
-                                法律适用
- ============================================================================
-
-
- 本协议受中华人民共和国法律管辖，并按其解释。
-
-
- ============================================================================
-                                联系我们
- ============================================================================
-
-
- 如需商业授权或其他合作事宜，请联系版权方。
-
-
- ---
-
-
- 本软件受著作权法和国际条约保护。
- 未经授权的复制、修改、分发或商业使用将被追究法律责任。
-*/
-
 import { App, Config, Inject, Middleware } from '@midwayjs/core';
 import { NextFunction, Context } from '@midwayjs/koa';
 import { IMiddleware, IMidwayApplication } from '@midwayjs/core';
@@ -90,6 +6,10 @@ import { CryptoUtil } from '../../../comm/crypto';
 /**
  * 响应数据加密中间件
  * 用于对 /app/xx 路径的响应数据进行加密
+ * 支持 RSA + 一次性 AES 会话密钥方案：
+ * - 客户端通过 X-Session-Key 请求头发送 RSA 加密的 AES 密钥
+ * - 服务端用 RSA 私钥解密得到 AES 会话密钥
+ * - 使用该会话密钥解密请求体、加密响应体
  */
 @Middleware()
 export class BaseEncryptionMiddleware
@@ -103,21 +23,49 @@ export class BaseEncryptionMiddleware
 
   resolve() {
     return async (ctx: Context, next: NextFunction) => {
-      await next();
-
       let { url } = ctx;
       url = url.replace(this.prefix, '').split('?')[0];
 
       if (url.startsWith('/app/')) {
+        const cryptoUtil = await ctx.requestContext.getAsync(CryptoUtil);
+        let sessionKeyHex: string | null = null;
+
+        // 1. 请求阶段：解析 X-Session-Key，解密得到 AES 会话密钥
+        const encryptedSessionKey = ctx.get('X-Session-Key');
+        if (encryptedSessionKey) {
+          try {
+            sessionKeyHex = await cryptoUtil.rsaDecrypt(encryptedSessionKey);
+          } catch (error) {
+            ctx.logger.warn('X-Session-Key RSA 解密失败，将使用默认密钥:', error.message);
+          }
+        }
+
+        // 2. 请求阶段：解密请求体（POST/PUT/PATCH 的加密 body）
+        if (sessionKeyHex && ['POST', 'PUT', 'PATCH'].includes(ctx.method.toUpperCase())) {
+          try {
+            const body = ctx.request.body;
+            if (body && body['encrypted'] === true && body['data']) {
+              const decryptedText = await cryptoUtil.aesDecrypt(body['data'], sessionKeyHex);
+              ctx.request.body = JSON.parse(decryptedText);
+            }
+          } catch (error) {
+            ctx.logger.warn('请求体 AES 解密失败，将使用原始 body:', error.message);
+          }
+        }
+
+        // 执行后续中间件/控制器
+        await next();
+
+        // 3. 响应阶段：用 AES 会话密钥加密响应体
         try {
           const body = ctx.body;
 
           if (body) {
-            const cryptoUtil = await ctx.requestContext.getAsync(CryptoUtil);
             const dataString =
               typeof body === 'string' ? body : JSON.stringify(body);
 
-            const encryptedData = await cryptoUtil.aesEncrypt(dataString);
+            const keyToUse = sessionKeyHex;
+            const encryptedData = await cryptoUtil.aesEncrypt(dataString, keyToUse);
 
             ctx.body = {
               encrypted: true,
@@ -129,6 +77,8 @@ export class BaseEncryptionMiddleware
         } catch (error) {
           ctx.logger.error('响应数据加密失败:', error);
         }
+      } else {
+        await next();
       }
     };
   }
