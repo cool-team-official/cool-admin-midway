@@ -93,7 +93,7 @@ import * as path from 'path';
  * 所有非 API、非静态资源的路径都返回 index.html，让 Vue Router 接管
  */
 @Middleware()
-export class BaseSpaHistoryFallbackMiddleware
+export class SpaHistoryFallbackMiddleware
   implements IMiddleware<Context, NextFunction>
 {
   @Config('koa.globalPrefix')
@@ -130,37 +130,67 @@ export class BaseSpaHistoryFallbackMiddleware
     /\.gz$/, // gzip 文件
   ];
 
-  // SPA 入口 HTML 文件路径
-  private spaIndexHtml = path.join(
-    process.cwd(),
-    'public',
-    'dist',
-    'index.html'
-  );
+  // 获取 SPA 入口 HTML 文件路径
+  private getSpaIndexHtml(): string | null {
+    // 尝试多种路径查找 index.html
+    const possiblePaths = [
+      path.join(process.cwd(), 'public', 'dist', 'index.html'),
+      path.join(
+        __dirname,
+        '..',
+        '..',
+        '..',
+        '..',
+        'public',
+        'dist',
+        'index.html'
+      ),
+      path.join(__dirname, '..', '..', '..', 'public', 'dist', 'index.html'),
+    ];
+
+    for (const htmlPath of possiblePaths) {
+      if (fs.existsSync(htmlPath)) {
+        return htmlPath;
+      }
+    }
+    return null;
+  }
 
   resolve() {
     return async (ctx: Context, next: NextFunction) => {
-      let url = ctx.url.split('?')[0]; // 去除查询参数
-      url = url.replace(this.prefix, '').split('?')[0]; // 去除 prefix
-
-      // 检查是否应该忽略（API、静态资源等）
-      for (const pattern of this.ignorePatterns) {
-        if (pattern.test(url)) {
+      try {
+        // 只处理 GET 和 HEAD 请求
+        if (ctx.method !== 'GET' && ctx.method !== 'HEAD') {
           await next();
           return;
         }
-      }
 
-      // 所有非 API、非静态资源的路径，都返回 index.html（SPA 入口）
-      // 这样 Vue Router 可以接管所有前端路由，如 /video/videos、/dist 等
-      if (fs.existsSync(this.spaIndexHtml)) {
-        ctx.set('Content-Type', 'text/html');
-        ctx.body = fs.readFileSync(this.spaIndexHtml, 'utf-8');
-        return;
-      }
+        let url = ctx.url.split('?')[0]; // 去除查询参数
+        url = url.replace(this.prefix, '').split('?')[0]; // 去除 prefix
 
-      // index.html 不存在，继续正常处理
-      await next();
+        // 检查是否应该忽略（API、静态资源等）
+        for (const pattern of this.ignorePatterns) {
+          if (pattern.test(url)) {
+            await next();
+            return;
+          }
+        }
+
+        // 所有非 API、非静态资源的路径，都返回 index.html（SPA 入口）
+        // 这样 Vue Router 可以接管所有前端路由，如 /video/videos、/dist 等
+        const htmlPath = this.getSpaIndexHtml();
+        if (htmlPath) {
+          ctx.set('Content-Type', 'text/html');
+          ctx.body = fs.readFileSync(htmlPath, 'utf-8');
+          return;
+        }
+
+        // index.html 不存在，继续正常处理
+        await next();
+      } catch (error) {
+        // 发生错误，继续正常处理
+        await next();
+      }
     };
   }
 }

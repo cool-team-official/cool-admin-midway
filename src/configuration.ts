@@ -106,6 +106,7 @@ import * as upload from '@midwayjs/upload';
 // import * as rpc from '@cool-midway/rpc';
 import * as prometheus from '@midwayjs/prometheus'; // 导入模块
 import * as redis from '@midwayjs/redis';
+import { SpaHistoryFallbackMiddleware } from './modules/base/middleware/spaHistoryFallback';
 
 @Configuration({
   imports: [
@@ -155,6 +156,9 @@ export class MainConfiguration {
   logger: ILogger;
 
   async onReady() {
+    // 注册 SPA History 回退中间件，确保在最前面执行
+    this.app.useMiddleware(SpaHistoryFallbackMiddleware);
+
     // 处理未捕获的 Promise rejection
     process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
       this.logger.error('未处理的 Promise Rejection', {

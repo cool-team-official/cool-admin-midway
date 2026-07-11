@@ -87,7 +87,6 @@ import { BaseAuthorityMiddleware } from './middleware/authority';
 import { ModuleConfig } from '@cool-midway/core';
 import { BaseTranslateMiddleware } from './middleware/translate';
 import { BaseEncryptionMiddleware } from './middleware/encryption';
-import { BaseSpaHistoryFallbackMiddleware } from './middleware/spaHistoryFallback';
 
 /**
  * 模块的配置
@@ -98,9 +97,8 @@ export default () => {
     name: '权限管理',
     // 模块描述
     description: '基础的权限管理功能，包括登录，权限校验',
-    // 中间件（SPA 回退中间件需要最先执行）
+    // 中间件
     globalMiddlewares: [
-      BaseSpaHistoryFallbackMiddleware,
       BaseTranslateMiddleware,
       BaseAuthorityMiddleware,
       BaseLogMiddleware,
