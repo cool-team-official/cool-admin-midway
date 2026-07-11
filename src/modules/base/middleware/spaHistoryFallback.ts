@@ -82,47 +82,85 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import { BaseLogMiddleware } from './middleware/log';
-import { BaseAuthorityMiddleware } from './middleware/authority';
-import { ModuleConfig } from '@cool-midway/core';
-import { BaseTranslateMiddleware } from './middleware/translate';
-import { BaseEncryptionMiddleware } from './middleware/encryption';
-import { BaseSpaHistoryFallbackMiddleware } from './middleware/spaHistoryFallback';
+import { IMiddleware, Middleware, Config } from '@midwayjs/core';
+import { Context, NextFunction } from '@midwayjs/koa';
+import * as fs from 'fs';
+import * as path from 'path';
 
 /**
- * 模块的配置
+ * SPA History 模式回退中间件
+ * 类似 connect-history-api-fallback，解决前端路由刷新 404 问题
+ * 所有非 API、非静态资源的路径都返回 index.html，让 Vue Router 接管
  */
-export default () => {
-  return {
-    // 模块名称
-    name: '权限管理',
-    // 模块描述
-    description: '基础的权限管理功能，包括登录，权限校验',
-    // 中间件（SPA 回退中间件需要最先执行）
-    globalMiddlewares: [
-      BaseSpaHistoryFallbackMiddleware,
-      BaseTranslateMiddleware,
-      BaseAuthorityMiddleware,
-      BaseLogMiddleware,
-      BaseEncryptionMiddleware,
-    ],
-    // 模块加载顺序，默认为0，值越大越优先加载
-    order: 10,
-    // app参数配置允许读取的key
-    allowKeys: [],
-    // jwt 生成解密token的
-    jwt: {
-      // 单点登录
-      sso: false,
-      // 注意： 最好重新修改，防止破解
-      secret: 'c85b223d-3d19-41f7-9f9e-de68f8da559e',
-      // token
-      token: {
-        // 2小时过期，需要用刷新token
-        expire: 2 * 3600,
-        // 15天内，如果没操作过就需要重新登录
-        refreshExpire: 24 * 3600 * 15,
-      },
-    },
-  } as ModuleConfig;
-};
+@Middleware()
+export class BaseSpaHistoryFallbackMiddleware
+  implements IMiddleware<Context, NextFunction>
+{
+  @Config('koa.globalPrefix')
+  prefix;
+
+  // 需要忽略的路径（API、静态资源等）
+  // 这些路径不返回 index.html，继续正常处理
+  private ignorePatterns = [
+    /^\/admin\//, // 后台 API（所有 /admin/ 开头的都是 API）
+    /^\/app\//, // 移动端 API
+    /^\/upload\//, // 上传文件
+    /^\/static\//, // 静态资源
+    /\.js$/, // JS 文件
+    /\.css$/, // CSS 文件
+    /\.png$/, // 图片
+    /\.jpg$/, // 图片
+    /\.gif$/, // 图片
+    /\.ico$/, // favicon
+    /\.svg$/, // SVG
+    /\.woff/, // 字体
+    /\.ttf$/, // 字体
+    /\.eot$/, // 字体
+    /\.json$/, // JSON 文件
+    /\.m3u8$/, // 视频流
+    /\.ts$/, // 视频分片（注意：不匹配 /video/videos 这种路由）
+    /\.mp4$/, // 视频
+    /\.apk$/, // APK
+    /\.xlsx$/, // Excel
+    /\.pdf$/, // PDF
+    /\.html$/, // HTML 文件（直接访问的）
+    /\.xml$/, // XML
+    /\.txt$/, // 文本文件
+    /\.zip$/, // ZIP
+    /\.gz$/, // gzip 文件
+  ];
+
+  // SPA 入口 HTML 文件路径
+  private spaIndexHtml = path.join(
+    process.cwd(),
+    'public',
+    'dist',
+    'index.html'
+  );
+
+  resolve() {
+    return async (ctx: Context, next: NextFunction) => {
+      let url = ctx.url.split('?')[0]; // 去除查询参数
+      url = url.replace(this.prefix, '').split('?')[0]; // 去除 prefix
+
+      // 检查是否应该忽略（API、静态资源等）
+      for (const pattern of this.ignorePatterns) {
+        if (pattern.test(url)) {
+          await next();
+          return;
+        }
+      }
+
+      // 所有非 API、非静态资源的路径，都返回 index.html（SPA 入口）
+      // 这样 Vue Router 可以接管所有前端路由，如 /video/videos、/dist 等
+      if (fs.existsSync(this.spaIndexHtml)) {
+        ctx.set('Content-Type', 'text/html');
+        ctx.body = fs.readFileSync(this.spaIndexHtml, 'utf-8');
+        return;
+      }
+
+      // index.html 不存在，继续正常处理
+      await next();
+    };
+  }
+}

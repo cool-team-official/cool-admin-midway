@@ -156,6 +156,10 @@ fwIDAQAB
         prefix: '/upload',
         dir: pUploadPath(),
       },
+      distStatic: {
+        prefix: '/static',
+        dir: path.join(__dirname, '..', '..', 'public', 'dist', 'static'),
+      },
     },
   },
   // 文件上传
