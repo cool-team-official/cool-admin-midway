@@ -158,18 +158,49 @@ export class VideoLineService extends BaseService {
     }
 
     try {
+      // 检查 play_url 是否存在
+      if (!videoEntity.play_url) {
+        this.logger.warn(
+          TAG,
+          `视频 [${videoEntity.title}] play_url 为空，无法解析播放线路`
+        );
+        return [];
+      }
+
       // 使用 '#' 分割字符串，得到每一集的字符串
-      const episodes = videoEntity.play_url?.split('#') || [];
+      const episodes = videoEntity.play_url.split('#');
+
+      // 检查是否有有效的集数数据
+      if (episodes.length === 0 || (episodes.length === 1 && !episodes[0])) {
+        this.logger.warn(
+          TAG,
+          `视频 [${videoEntity.title}] play_url 格式错误，无法解析: ${videoEntity.play_url.substring(0, 100)}`
+        );
+        return [];
+      }
 
       // 初始化结果数组
       const result: Array<Line> = [];
+      let skippedCount = 0;
 
       // 遍历每一集的字符串
       episodes.forEach((episode, index) => {
         if (!episode) return;
-        
+
         // 使用 '$' 分割字符串，分离出集数和 URL
-        const [title, url] = episode.split('$');
+        const parts = episode.split('$');
+
+        // 检查分割结果
+        if (parts.length !== 2) {
+          this.logger.warn(
+            TAG,
+            `视频 [${videoEntity.title}] 第${index + 1}集格式错误，缺少$分隔符: ${episode.substring(0, 50)}`
+          );
+          skippedCount++;
+          return;
+        }
+
+        const [title, url] = parts;
         // 去除可能存在的多余空格
         const trimmedTitle = title?.trim();
         const trimmedUrl = url?.trim();
@@ -188,11 +219,30 @@ export class VideoLineService extends BaseService {
             collection_id: collectionEntity.id,
             collection_name: collectionEntity.name,
           });
+        } else {
+          this.logger.warn(
+            TAG,
+            `视频 [${videoEntity.title}] 第${index + 1}集标题或URL为空，已跳过`
+          );
+          skippedCount++;
         }
       });
+
+      // 输出解析统计
+      if (skippedCount > 0) {
+        this.logger.warn(
+          TAG,
+          `视频 [${videoEntity.title}] 解析完成：成功${result.length}集，跳过${skippedCount}集`
+        );
+      }
+
       return result;
     } catch (error) {
-      this.logger.error(TAG, '解析视频列表失败', error);
+      this.logger.error(
+        TAG,
+        `解析视频列表失败 [${videoEntity.title}]:`,
+        error
+      );
       return [];
     }
   }
@@ -201,11 +251,13 @@ export class VideoLineService extends BaseService {
    * 批量插入视频线路
    * @param videoEntities 视频实体数组
    * @param collectionEntity 集合实体
+   * @param forceUpdate 是否强制更新（忽略缓存）
    * @returns 插入结果统计
    */
   async batchInsert(
     videoEntities: VideoEntity[],
-    collectionEntity: CollectionEntity
+    collectionEntity: CollectionEntity,
+    forceUpdate = false
   ): Promise<{ successCount: number; skipCount: number }> {
     if (!videoEntities || videoEntities.length === 0) {
       return { successCount: 0, skipCount: 0 };
@@ -231,14 +283,18 @@ export class VideoLineService extends BaseService {
           continue;
         }
 
-        const cacheKey = `${cacheKeyPrefix}${videoEntity.id}`;
-        const existsInCache = await this.midwayCache.get(cacheKey);
+        // 如果强制更新，跳过缓存检查
+        if (!forceUpdate) {
+          const cacheKey = `${cacheKeyPrefix}${videoEntity.id}`;
+          const existsInCache = await this.midwayCache.get(cacheKey);
 
-        if (existsInCache) {
-          this.logger.debug(TAG, `视频线路已存在，跳过: ${videoEntity.title}`);
-          skipCount++;
-          continue;
+          if (existsInCache) {
+            this.logger.debug(TAG, `视频线路已存在，跳过: ${videoEntity.title}`);
+            skipCount++;
+            continue;
+          }
         }
+
         validVideos.push(videoEntity);
       }
 
@@ -246,6 +302,8 @@ export class VideoLineService extends BaseService {
         this.logger.debug(TAG, '没有有效的视频线路需要插入');
         return { successCount: 0, skipCount: videoEntities.length };
       }
+
+      this.logger.info(TAG, `准备插入 ${validVideos.length} 条视频线路`);
 
       // 批量准备 video_line 数据
       const videoLineData = validVideos.map(videoEntity => ({
@@ -258,46 +316,170 @@ export class VideoLineService extends BaseService {
       }));
 
       // 批量 upsert video_line 记录
-      const upsertResult = await this.videoLineEntity.upsert(
-        videoLineData,
-        ['collection_id', 'video_id']
+      try {
+        await this.videoLineEntity.upsert(
+          videoLineData,
+          ['collection_id', 'video_id']
+        );
+      } catch (upsertError) {
+        this.logger.error(TAG, '批量 upsert video_line 失败:', upsertError);
+        throw upsertError;
+      }
+
+      this.logger.info(TAG, `upsert video_line 完成，开始查询生成的 ID`);
+
+      // 批量查询刚插入的 video_line 记录获取 ID
+      const videoIds = validVideos.map(v => v.id);
+
+      this.logger.debug(
+        TAG,
+        `准备查询 video_line，videoIds 数量: ${videoIds.length}, collection_id: ${collectionId}, 示例 IDs: ${videoIds.slice(0, 3).join(', ')}`
       );
 
-      if (upsertResult.identifiers && upsertResult.identifiers.length > 0) {
-        successCount = upsertResult.identifiers.length;
+      const insertedVideoLines = await this.videoLineEntity.find({
+        where: {
+          video_id: In(videoIds),
+          collection_id: collectionId,
+        },
+      });
 
-        // 批量准备 play_line 数据
-        const allPlayLines: Array<Line> = [];
-        const videoLineIdMap = new Map<number, number>();
-
-        for (let i = 0; i < validVideos.length && i < upsertResult.identifiers.length; i++) {
-          const videoEntity = validVideos[i];
-          const videoLineEntityId = upsertResult.identifiers[i]?.id;
-
-          if (videoLineEntityId) {
-            videoLineIdMap.set(videoEntity.id, videoLineEntityId);
-            const playLines = this.parseVideoList(
-              videoEntity,
-              collectionEntity,
-              videoLineEntityId
-            );
-            allPlayLines.push(...playLines);
-          }
-        }
-
-        // 批量插入 play_line 记录
-        if (allPlayLines.length > 0) {
-          await this.playLineService.batchInsert(allPlayLines);
-        }
-
-        // 批量缓存存在标记
-        const cachePromises = validVideos.map(videoEntity => 
-          this.midwayCache.set(`${cacheKeyPrefix}${videoEntity.id}`, true, this.CACHE_TTL)
+      if (!insertedVideoLines || insertedVideoLines.length === 0) {
+        this.logger.error(TAG, '查询 video_line 记录失败，未找到任何记录');
+        this.logger.error(
+          TAG,
+          `调试信息：videoIds=${JSON.stringify(videoIds.slice(0, 10))}, collection_id=${collectionId}`
         );
-        await Promise.all(cachePromises);
-
-        this.logger.info(TAG, `批量插入视频线路完成，成功${successCount}条，跳过${skipCount}条`);
+        return { successCount: 0, skipCount: validVideos.length };
       }
+
+      this.logger.info(
+        TAG,
+        `查询到 ${insertedVideoLines.length} 条 video_line 记录（期望 ${videoIds.length} 条）`
+      );
+
+      // 如果查询结果数量不匹配，记录详细日志
+      if (insertedVideoLines.length !== videoIds.length) {
+        const foundIds = new Set(insertedVideoLines.map(vl => vl.video_id));
+        const missingVideos = validVideos.filter(v => !foundIds.has(v.id));
+
+        this.logger.warn(
+          TAG,
+          `有 ${missingVideos.length} 条视频线路查询失败`
+        );
+
+        // 记录前10个失败的 ID
+        this.logger.warn(
+          TAG,
+          `失败的 video_id 示例：${missingVideos.slice(0, 10).map(v => v.id).join(', ')}`
+        );
+
+        // 尝试单独查询第一个失败的记录，验证是否存在
+        if (missingVideos.length > 0) {
+          const firstMissing = missingVideos[0];
+          const singleCheck = await this.videoLineEntity.findOne({
+            where: {
+              video_id: firstMissing.id,
+              collection_id: collectionId,
+            },
+          });
+          this.logger.warn(
+            TAG,
+            `单独查询 [${firstMissing.id}] ${firstMissing.title} 结果：${singleCheck ? '存在' : '不存在'}`
+          );
+        }
+      }
+
+      successCount = insertedVideoLines.length;
+
+      // 构建 videoId -> videoLineId 映射
+      // 注意：video_id 在数据库中是 bigint，返回时可能是字符串，需要统一转换为字符串作为键
+      const videoLineIdMap = new Map<string, number>();
+      insertedVideoLines.forEach(vl => {
+        if (vl.video_id && vl.id) {
+          // 统一转换为字符串作为 Map 键，避免类型不匹配问题
+          videoLineIdMap.set(String(vl.video_id), vl.id);
+        }
+      });
+
+      this.logger.debug(
+        TAG,
+        `构建映射完成，map 大小: ${videoLineIdMap.size}, 示例键: ${Array.from(videoLineIdMap.keys()).slice(0, 3).join(', ')}`
+      );
+
+      // 批量准备 play_line 数据
+      const allPlayLines: Array<Line> = [];
+      let parseErrorCount = 0;
+      let missingIdCount = 0;
+
+      for (const videoEntity of validVideos) {
+        // 统一转换为字符串查找
+        const videoLineEntityId = videoLineIdMap.get(String(videoEntity.id));
+
+        if (!videoLineEntityId) {
+          missingIdCount++;
+          this.logger.warn(
+            TAG,
+            `视频 [${videoEntity.id}] ${videoEntity.title} 未找到对应的 video_line ID`
+          );
+          continue;
+        }
+
+        try {
+          const playLines = this.parseVideoList(
+            videoEntity,
+            collectionEntity,
+            videoLineEntityId
+          );
+
+          if (playLines.length === 0) {
+            parseErrorCount++;
+            this.logger.warn(
+              TAG,
+              `视频 [${videoEntity.title}] 没有解析出播放线路`
+            );
+          }
+
+          allPlayLines.push(...playLines);
+        } catch (error) {
+          parseErrorCount++;
+          this.logger.error(
+            TAG,
+            `解析视频 [${videoEntity.title}] 播放线路异常:`,
+            error
+          );
+        }
+      }
+
+      // 批量插入 play_line 记录
+      if (allPlayLines.length > 0) {
+        this.logger.info(TAG, `准备插入 ${allPlayLines.length} 条播放线路`);
+        await this.playLineService.batchInsert(allPlayLines);
+      } else {
+        this.logger.warn(TAG, '没有有效的播放线路需要插入');
+      }
+
+      if (parseErrorCount > 0) {
+        this.logger.warn(
+          TAG,
+          `批量插入完成：成功 ${successCount} 条，解析失败 ${parseErrorCount} 条，缺失 ID ${missingIdCount} 条`
+        );
+      } else if (missingIdCount > 0) {
+        this.logger.warn(
+          TAG,
+          `批量插入完成：成功 ${successCount} 条，缺失 ID ${missingIdCount} 条`
+        );
+      } else {
+        this.logger.info(
+          TAG,
+          `批量插入视频线路完成，成功${successCount}条，跳过${skipCount}条`
+        );
+      }
+
+      // 批量缓存存在标记
+      const cachePromises = validVideos.map(videoEntity =>
+        this.midwayCache.set(`${cacheKeyPrefix}${videoEntity.id}`, true, this.CACHE_TTL)
+      );
+      await Promise.all(cachePromises);
     } catch (error) {
       this.logger.error(TAG, '批量插入视频线路异常', error);
       throw error;
