@@ -102,7 +102,7 @@ import * as LocalConfig from './config/config.local';
 import * as ProdConfig from './config/config.prod';
 import * as cool from '@cool-midway/core';
 import * as upload from '@midwayjs/upload';
-// import * as task from '@cool-midway/task';
+import * as task from '@cool-midway/task';
 // import * as rpc from '@cool-midway/rpc';
 import * as prometheus from '@midwayjs/prometheus'; // 导入模块
 import * as redis from '@midwayjs/redis';
@@ -129,7 +129,7 @@ import { SpaHistoryFallbackMiddleware } from './modules/base/middleware/spaHisto
     // rpc 微服务 远程调用
     // rpc,
     // 任务与队列
-    // task,
+    task,
     {
       component: info,
       enabledEnvironment: ['local', 'prod'],

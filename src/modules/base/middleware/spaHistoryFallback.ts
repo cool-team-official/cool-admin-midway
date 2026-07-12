@@ -158,39 +158,37 @@ export class SpaHistoryFallbackMiddleware
 
   resolve() {
     return async (ctx: Context, next: NextFunction) => {
+      // 只处理 GET 和 HEAD 请求
+      if (ctx.method !== 'GET' && ctx.method !== 'HEAD') {
+        return await next();
+      }
+
+      let url = ctx.url.split('?')[0]; // 去除查询参数
+      url = url.replace(this.prefix, '').split('?')[0]; // 去除 prefix
+
+      // 检查是否应该忽略（API、静态资源等）
+      for (const pattern of this.ignorePatterns) {
+        if (pattern.test(url)) {
+          return await next();
+        }
+      }
+
+      // 所有非 API、非静态资源的路径，都返回 index.html（SPA 入口）
+      // 这样 Vue Router 可以接管所有前端路由，如 /video/videos、/dist 等
       try {
-        // 只处理 GET 和 HEAD 请求
-        if (ctx.method !== 'GET' && ctx.method !== 'HEAD') {
-          await next();
-          return;
-        }
-
-        let url = ctx.url.split('?')[0]; // 去除查询参数
-        url = url.replace(this.prefix, '').split('?')[0]; // 去除 prefix
-
-        // 检查是否应该忽略（API、静态资源等）
-        for (const pattern of this.ignorePatterns) {
-          if (pattern.test(url)) {
-            await next();
-            return;
-          }
-        }
-
-        // 所有非 API、非静态资源的路径，都返回 index.html（SPA 入口）
-        // 这样 Vue Router 可以接管所有前端路由，如 /video/videos、/dist 等
         const htmlPath = this.getSpaIndexHtml();
         if (htmlPath) {
           ctx.set('Content-Type', 'text/html');
           ctx.body = fs.readFileSync(htmlPath, 'utf-8');
           return;
         }
-
-        // index.html 不存在，继续正常处理
-        await next();
       } catch (error) {
-        // 发生错误，继续正常处理
-        await next();
+        // index.html 读取失败，记录错误后继续正常处理
+        ctx.logger?.error('读取 SPA index.html 失败:', error);
       }
+
+      // index.html 不存在或读取失败，继续正常处理
+      return await next();
     };
   }
 }

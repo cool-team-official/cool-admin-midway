@@ -202,6 +202,13 @@ fwIDAQAB
     },
   },
   cool: {
+    // Redis 配置（任务队列需要）
+    redis: {
+      host: '127.0.0.1',
+      port: 6379,
+      password: '',
+      db: 0,
+    },
     // 已经插件化，本地文件上传查看 plugin/config.ts，其他云存储查看对应插件的使用
     file: {},
     // 是否开启多租户
