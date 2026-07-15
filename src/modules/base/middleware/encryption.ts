@@ -41,20 +41,31 @@ export class BaseEncryptionMiddleware
           try {
             sessionKeyHex = await cryptoUtil.rsaDecrypt(encryptedSessionKey);
           } catch (error) {
-            ctx.logger.warn('X-Session-Key RSA 解密失败，将使用默认密钥:', error.message);
+            ctx.logger.warn(
+              'X-Session-Key RSA 解密失败，将使用默认密钥:',
+              error.message
+            );
           }
         }
 
         // 2. 请求阶段：解密请求体（POST/PUT/PATCH 的加密 body）
-        if (sessionKeyHex && ['POST', 'PUT', 'PATCH'].includes(ctx.method.toUpperCase())) {
+        if (
+          sessionKeyHex &&
+          ['POST', 'PUT', 'PATCH'].includes(ctx.method.toUpperCase())
+        ) {
           try {
             const body = ctx.request.body;
             // 兼容新旧字段名：{encrypted|e, data|d, compressed|c}
-            const isEncrypted = body?.['e'] === true || body?.['encrypted'] === true;
+            const isEncrypted =
+              body?.['e'] === true || body?.['encrypted'] === true;
             const rawData = body?.['d'] ?? body?.['data'];
-            const isCompressed = body?.['c'] === true || body?.['compressed'] === true;
+            const isCompressed =
+              body?.['c'] === true || body?.['compressed'] === true;
             if (isEncrypted && rawData) {
-              const decryptedText = await cryptoUtil.aesDecrypt(rawData, sessionKeyHex);
+              const decryptedText = await cryptoUtil.aesDecrypt(
+                rawData,
+                sessionKeyHex
+              );
               if (isCompressed) {
                 const compressedBuf = Buffer.from(decryptedText, 'base64');
                 const decompressed = await gunzipAsync(compressedBuf);
@@ -64,7 +75,10 @@ export class BaseEncryptionMiddleware
               }
             }
           } catch (error) {
-            ctx.logger.warn('请求体 AES 解密失败，将使用原始 body:', error.message);
+            ctx.logger.warn(
+              '请求体 AES 解密失败，将使用原始 body:',
+              error.message
+            );
           }
         }
 
@@ -83,7 +97,10 @@ export class BaseEncryptionMiddleware
             const compressed = await gzipAsync(Buffer.from(dataString, 'utf8'));
 
             // Step 2: AES-GCM 加密（二进制 Buffer）
-            const encryptedBuffer = await cryptoUtil.aesEncryptBuffer(compressed, sessionKeyHex || undefined);
+            const encryptedBuffer = await cryptoUtil.aesEncryptBuffer(
+              compressed,
+              sessionKeyHex || undefined
+            );
 
             // Step 3: JSON 包装（base64 字符串），避免 application/octet-stream 流的兼容问题
             const encryptedBase64 = encryptedBuffer.toString('base64');

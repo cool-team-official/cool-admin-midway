@@ -90,11 +90,16 @@
  * @FilePath: src/modules/task/controller/app/info.ts
  * @Description: 这是默认设置,可以在设置》工具》File Description中进行配置
  */
-import {Body, Get, Inject, Post, Provide, Query} from '@midwayjs/core';
-import {CoolController, BaseController, CoolTag, TagTypes} from '@cool-midway/core';
-import {TaskInfoEntity} from '../../entity/info';
-import {TaskInfoService} from '../../service/info';
-import {TaskCollectService} from "../../service/collect";
+import { Body, Get, Inject, Post, Provide, Query } from '@midwayjs/core';
+import {
+  CoolController,
+  BaseController,
+  CoolTag,
+  TagTypes,
+} from '@cool-midway/core';
+import { TaskInfoEntity } from '../../entity/info';
+import { TaskInfoService } from '../../service/info';
+import { TaskCollectService } from '../../service/collect';
 
 /**
  * 任务
@@ -105,12 +110,11 @@ export class AppTaskInfoController extends BaseController {
   @Inject()
   TaskCollectService: TaskCollectService;
 
-
   /**
    * 手动任务
    */
   @CoolTag(TagTypes.IGNORE_TOKEN)
-  @Get('/startCollection', {summary: '开始采集任务'})
+  @Get('/startCollection', { summary: '开始采集任务' })
   async startCollection(@Query() params: any) {
     return this.ok(await this.TaskCollectService.startCollection());
   }
@@ -119,7 +123,7 @@ export class AppTaskInfoController extends BaseController {
    * 手动任务
    */
   @CoolTag(TagTypes.IGNORE_TOKEN)
-  @Get('/dayCollectionTask', {summary: '开始日采集任务'})
+  @Get('/dayCollectionTask', { summary: '开始日采集任务' })
   async dayCollectionTask(@Query() params: any) {
     return this.ok(await this.TaskCollectService.dayCollectionTask());
   }
@@ -128,7 +132,7 @@ export class AppTaskInfoController extends BaseController {
    * 手动任务
    */
   @CoolTag(TagTypes.IGNORE_TOKEN)
-  @Get('/filterTask', {summary: '开始入库检查任务'})
+  @Get('/filterTask', { summary: '开始入库检查任务' })
   async filterTask(@Query() params: any) {
     return this.ok(await this.TaskCollectService.filterTask());
   }
@@ -137,7 +141,7 @@ export class AppTaskInfoController extends BaseController {
    * 手动任务
    */
   @CoolTag(TagTypes.IGNORE_TOKEN)
-  @Get('/playLineTask', {summary: '开始线路合并任务'})
+  @Get('/playLineTask', { summary: '开始线路合并任务' })
   async playLineTask(@Query() params: any) {
     return this.ok(await this.TaskCollectService.playLineTask());
   }

@@ -82,7 +82,13 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import { BaseController, CoolController, CoolTag, CoolUrlTag, TagTypes } from '@cool-midway/core';
+import {
+  BaseController,
+  CoolController,
+  CoolTag,
+  CoolUrlTag,
+  TagTypes,
+} from '@cool-midway/core';
 import { VideoHostKeyWordEntity } from '../../entity/hot_keyword';
 import { HotKeywordService } from '../../service/hot_keyword';
 import { Get, Inject } from '@midwayjs/core';
@@ -96,14 +102,13 @@ import { Get, Inject } from '@midwayjs/core';
     keyWordLikeFields: ['keyWord'],
     fieldEq: ['category_id', 'tag'],
     addOrderBy: {
-      sort: 'desc'
-    }
-  }
+      sort: 'desc',
+    },
+  },
 })
-
 @CoolUrlTag({
   key: TagTypes.IGNORE_TOKEN,
-  value: ['page', 'info']
+  value: ['page', 'info'],
 })
 @CoolUrlTag()
 /**

@@ -113,7 +113,9 @@ export class MemberExchangeConfigService {
     }
 
     try {
-      const config = await this.memberExchangeConfigEntity.findOne({ where: { id } });
+      const config = await this.memberExchangeConfigEntity.findOne({
+        where: { id },
+      });
       if (!config) {
         this.logger.debug(this.TAG, `配置ID ${id} 不存在`);
       }

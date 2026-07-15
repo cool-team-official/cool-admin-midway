@@ -92,6 +92,4 @@ import { ScoreWithdrawalEntity } from '../../entity/scoreWithdrawal';
   api: ['info', 'list', 'page', 'add', 'update', 'delete'],
   entity: ScoreWithdrawalEntity,
 })
-export class AdminScoreWithdrawalController extends BaseController {
-
-}
+export class AdminScoreWithdrawalController extends BaseController {}

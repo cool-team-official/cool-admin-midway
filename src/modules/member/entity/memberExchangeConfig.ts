@@ -99,7 +99,7 @@ export class MemberExchangeConfigEntity extends BaseEntity {
   @Column({ comment: '兑换天数', default: 0 })
   days: number;
 
-  @Column({ comment: '是否启用', default: 0, })
+  @Column({ comment: '是否启用', default: 0 })
   enabled: number;
 
   @Column({ comment: '排序', default: 0 })

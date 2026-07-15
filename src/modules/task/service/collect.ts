@@ -101,6 +101,20 @@ export class TaskCollectService extends BaseService {
   @Inject()
   collectQueue: CollectQueue;
 
+  private async addCollectJob(
+    taskType: string,
+    taskId: number,
+    data: Record<string, any> = {}
+  ): Promise<void> {
+    const job = await this.collectQueue.add({
+      taskType,
+      taskId,
+      ...data,
+    });
+
+    this.logger.info(TAG, `任务已添加到队列，任务ID: ${job.id}`);
+  }
+
   /**
    * 启动采集任务
    * 添加任务到队列，立即返回，不阻塞主线程
@@ -108,29 +122,18 @@ export class TaskCollectService extends BaseService {
   async startCollection(): Promise<void> {
     this.logger.info(TAG, '启动采集任务已添加到队列');
 
-    // 添加任务到队列，任务将在独立进程中执行
-    await this.collectQueue.add({
-      taskType: 'startCollection',
-      taskId: 1,
-    });
-
-    this.logger.info(TAG, '任务已成功添加到队列，将在后台执行');
+    return this.addCollectJob('startCollection', 1);
   }
 
   /**
    * 执行所有采集源的日常任务
    * 添加任务到队列，立即返回，不阻塞主线程
+   * @param collectionId 指定的采集源ID，不传则处理所有
    */
-  async dayCollectionTask(): Promise<void> {
+  async dayCollectionTask(collectionId?: number): Promise<void> {
     this.logger.info(TAG, '日常采集任务已添加到队列');
 
-    // 添加任务到队列，任务将在独立进程中执行
-    await this.collectQueue.add({
-      taskType: 'dayAllCollections',
-      taskId: 2,
-    });
-
-    this.logger.info(TAG, '任务已成功添加到队列，将在后台执行');
+    return this.addCollectJob('dayAllCollections', 2, { collectionId });
   }
 
   /**
@@ -140,13 +143,7 @@ export class TaskCollectService extends BaseService {
   async filterTask(): Promise<void> {
     this.logger.info(TAG, '过滤任务已添加到队列');
 
-    // 添加任务到队列，任务将在独立进程中执行
-    await this.collectQueue.add({
-      taskType: 'filterTask',
-      taskId: 3,
-    });
-
-    this.logger.info(TAG, '任务已成功添加到队列，将在后台执行');
+    return this.addCollectJob('filterTask', 3);
   }
 
   /**
@@ -156,12 +153,17 @@ export class TaskCollectService extends BaseService {
   async playLineTask(): Promise<void> {
     this.logger.info(TAG, '播放线路任务已添加到队列');
 
-    // 添加任务到队列，任务将在独立进程中执行
-    await this.collectQueue.add({
-      taskType: 'playLineTask',
-      taskId: 4,
-    });
+    return this.addCollectJob('playLineTask', 4);
+  }
 
-    this.logger.info(TAG, '任务已成功添加到队列，将在后台执行');
+  /**
+   * 根据关键字采集
+   * 添加任务到队列，立即返回，不阻塞主线程
+   * @param keyWord 关键字数组
+   */
+  async keyWordCollection(keyWord: string[]): Promise<void> {
+    this.logger.info(TAG, '关键字采集任务已添加到队列');
+
+    return this.addCollectJob('keyWordCollection', 5, { keyWord });
   }
 }

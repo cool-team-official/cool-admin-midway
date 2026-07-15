@@ -82,23 +82,23 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import {ILogger, Inject, InjectClient, Provide} from '@midwayjs/core';
-import {CollectionEntity} from '../entity/collection';
-import {VIDEOPARAMS, VideoParams} from '../bean/VideoParams';
-import {VideoBean} from '../bean/VideoBean';
-import {CollectionCategoryEntity} from '../entity/collection_category';
-import {InjectEntityModel} from '@midwayjs/typeorm';
-import {Repository} from 'typeorm';
-import {VideoEntity} from '../entity/videos';
-import {VideosService} from './videos';
-import {CoolCommException} from '@cool-midway/core';
-import {DictInfoService} from '../../dict/service/info';
-import {DictInfoEntity} from '../../dict/entity/info';
-import {RedisService} from '@midwayjs/redis';
-import {VIDEO_RESPONSE} from '../bean/video_response';
-import {NetworkErrorHandler} from './networkErrorHandler';
-import {CachingFactory, MidwayCache} from '@midwayjs/cache-manager';
-import {CollectionLogService} from './collection_log';
+import { ILogger, Inject, InjectClient, Provide } from '@midwayjs/core';
+import { CollectionEntity } from '../entity/collection';
+import { VIDEOPARAMS, VideoParams } from '../bean/VideoParams';
+import { VideoBean } from '../bean/VideoBean';
+import { CollectionCategoryEntity } from '../entity/collection_category';
+import { InjectEntityModel } from '@midwayjs/typeorm';
+import { Repository } from 'typeorm';
+import { VideoEntity } from '../entity/videos';
+import { VideosService } from './videos';
+import { CoolCommException } from '@cool-midway/core';
+import { DictInfoService } from '../../dict/service/info';
+import { DictInfoEntity } from '../../dict/entity/info';
+import { RedisService } from '@midwayjs/redis';
+import { VIDEO_RESPONSE } from '../bean/video_response';
+import { NetworkErrorHandler } from './networkErrorHandler';
+import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
+import { CollectionLogService } from './collection_log';
 
 const TAG = 'ConcurrencyService';
 
@@ -106,7 +106,7 @@ const TAG = 'ConcurrencyService';
 export class ConcurrencyService {
   @Inject()
   logger: ILogger;
-  
+
   @InjectEntityModel(CollectionCategoryEntity)
   collectionCategoryEntity: Repository<CollectionCategoryEntity>;
 
@@ -219,9 +219,16 @@ export class ConcurrencyService {
 
       while (processedCount < this.MAX_RETRIES) {
         // 检查是否超出处理限制
-        if (processedCount >= this.maxProcessPerCall ||
-          Date.now() - startTime > this.maxProcessTimePerCall) {
-          this.logger.info(TAG, `达到单次处理限制，已处理: ${processedCount} 项，用时: ${Date.now() - startTime}ms`);
+        if (
+          processedCount >= this.maxProcessPerCall ||
+          Date.now() - startTime > this.maxProcessTimePerCall
+        ) {
+          this.logger.info(
+            TAG,
+            `达到单次处理限制，已处理: ${processedCount} 项，用时: ${
+              Date.now() - startTime
+            }ms`
+          );
           break; // 退出循环，让其他任务有机会执行
         }
 
@@ -235,7 +242,10 @@ export class ConcurrencyService {
           if (processedCount === 0) {
             this.logger.debug(TAG, 'Redis中没有可处理的数据');
           } else {
-            this.logger.info(TAG, `Redis数据处理完成，共处理${processedCount}条数据`);
+            this.logger.info(
+              TAG,
+              `Redis数据处理完成，共处理${processedCount}条数据`
+            );
           }
           break;
         }
@@ -295,13 +305,10 @@ export class ConcurrencyService {
           const pageParams = new VideoParams(data.videoParams);
           pageParams.setPagecount(Number(data.videoParams?.pagecount || 0));
           data.__pageStart = pageStart;
-          const {
-            categoryMap,
-            areaMap,
-            languageMap,
-          } = await this.fetchCategoryAndDictData(
-            data.collectionEntity as CollectionEntity
-          );
+          const { categoryMap, areaMap, languageMap } =
+            await this.fetchCategoryAndDictData(
+              data.collectionEntity as CollectionEntity
+            );
 
           const pageResult = await this.processSinglePage(
             pageParams,
@@ -339,7 +346,9 @@ export class ConcurrencyService {
               pageSize: pageParams.getPagesize() || pageParams.getPs() || 0,
               videoCount: 0,
               errorMessage: error?.message || String(error),
-              requestUrl: `${data.collectionEntity.address}?${pageParams.getQueryString()}`.replace(/\s+/g, ''),
+              requestUrl: `${
+                data.collectionEntity.address
+              }?${pageParams.getQueryString()}`.replace(/\s+/g, ''),
               taskType: pageParams.getOp() || 'all',
             });
           }
@@ -365,10 +374,7 @@ export class ConcurrencyService {
   private async processSinglePage(
     item: VideoParams,
     collectionEntity: CollectionEntity,
-    categoryMap: Map<
-      number,
-      { categoryId: number; categoryPid: number }
-    >,
+    categoryMap: Map<number, { categoryId: number; categoryPid: number }>,
     areaMap: Map<string, number>,
     languageMap: Map<string, number>
   ): Promise<{
@@ -380,10 +386,14 @@ export class ConcurrencyService {
     requestUrl: string;
     taskType: string;
   }> {
-    const requestUrl = `${collectionEntity.address}?${item.getQueryString()}`.replace(/\s+/g, '');
+    const requestUrl = `${
+      collectionEntity.address
+    }?${item.getQueryString()}`.replace(/\s+/g, '');
     try {
       const result = await this.processSingleVideoItem(item, collectionEntity);
-      const videoCount = Array.isArray(result.data?.list) ? result.data.list.length : 0;
+      const videoCount = Array.isArray(result.data?.list)
+        ? result.data.list.length
+        : 0;
       const errorMessage = result.success
         ? ''
         : result.error?.message || '采集失败';
@@ -477,7 +487,7 @@ export class ConcurrencyService {
     collectionEntity: CollectionEntity,
     params: VideoParams
   ): Promise<VIDEO_RESPONSE | Object> {
-    let uri: string = '';
+    let uri = '';
 
     try {
       if (!collectionEntity || !collectionEntity.address) {
@@ -496,7 +506,7 @@ export class ConcurrencyService {
           url: uri,
           method: 'GET',
           timeout: this.NETWORK_TIMEOUT,
-          ...this.networkErrorHandler.getCollectionAxiosConfig()
+          ...this.networkErrorHandler.getCollectionAxiosConfig(),
         },
         2, // 最大重试2次（减少重试次数，因为是在循环中）
         1500 // 初始延迟1.5秒
@@ -510,8 +520,14 @@ export class ConcurrencyService {
         errorMessage = this.networkErrorHandler.getNetworkErrorDetails(error);
         this.logger.error(TAG, `网络请求失败: ${errorMessage}`);
 
-        if (this.networkErrorHandler.isDnsError(error) && collectionEntity?.name) {
-          this.logger.warn(TAG, `采集源 "${collectionEntity.name}" 域名解析失败，可能需要检查URL配置`);
+        if (
+          this.networkErrorHandler.isDnsError(error) &&
+          collectionEntity?.name
+        ) {
+          this.logger.warn(
+            TAG,
+            `采集源 "${collectionEntity.name}" 域名解析失败，可能需要检查URL配置`
+          );
         }
       } else {
         errorMessage = error.message || error.toString();
@@ -530,7 +546,10 @@ export class ConcurrencyService {
   /**
    * 保存视频数据
    */
-  async saveVideo(videoList: VideoBean[], collectionEntity: CollectionEntity): Promise<void> {
+  async saveVideo(
+    videoList: VideoBean[],
+    collectionEntity: CollectionEntity
+  ): Promise<void> {
     try {
       if (!videoList || videoList.length === 0) {
         this.logger.warn(TAG, '视频列表为空，跳过保存');
@@ -538,7 +557,7 @@ export class ConcurrencyService {
       }
 
       this.logger.info(TAG, `开始保存视频数据，共${videoList.length}条`);
-      
+
       // 转换 VideoBean 为 VideoEntity
       const videoEntities: VideoEntity[] = [];
       for (const item of videoList) {
@@ -546,7 +565,7 @@ export class ConcurrencyService {
           const videoEntity = item as unknown as VideoEntity;
           videoEntities.push(videoEntity);
         } catch (error) {
-          this.logger.error(TAG, `转换视频数据失败`, error);
+          this.logger.error(TAG, '转换视频数据失败', error);
         }
       }
 
@@ -556,10 +575,16 @@ export class ConcurrencyService {
       }
 
       // 使用批量插入方法
-      const result = await this.videosService.batchInsert(videoEntities, collectionEntity);
-      
-      this.logger.info(TAG, `视频保存完成，成功${result.successCount}条，跳过${result.skipCount}条，失败${result.errorCount}条`);
-      
+      const result = await this.videosService.batchInsert(
+        videoEntities,
+        collectionEntity
+      );
+
+      this.logger.info(
+        TAG,
+        `视频保存完成，成功${result.successCount}条，跳过${result.skipCount}条，失败${result.errorCount}条`
+      );
+
       // 显式清空数组，释放内存
       videoList = null;
       collectionEntity = null;
@@ -577,7 +602,10 @@ export class ConcurrencyService {
     }
 
     if (!data.collectionEntity || !data.videoParams) {
-      this.logger.warn(TAG, 'Redis数据缺少必要字段: collectionEntity 或 videoParams');
+      this.logger.warn(
+        TAG,
+        'Redis数据缺少必要字段: collectionEntity 或 videoParams'
+      );
       return false;
     }
 
@@ -593,15 +621,19 @@ export class ConcurrencyService {
    * 判断是否为重复键错误
    */
   private isDuplicateKeyError(error: any): boolean {
-    return error.code === 'ER_DUP_ENTRY' ||
+    return (
+      error.code === 'ER_DUP_ENTRY' ||
       error.errno === 1062 ||
-      (error.message && error.message.includes('Duplicate entry'));
+      (error.message && error.message.includes('Duplicate entry'))
+    );
   }
 
   /**
    * 获取分类和字典数据（带缓存优化）
    */
-  private async fetchCategoryAndDictData(collectionEntity: CollectionEntity): Promise<{
+  private async fetchCategoryAndDictData(
+    collectionEntity: CollectionEntity
+  ): Promise<{
     collectionCategoryEntityList: CollectionCategoryEntity[];
     categoryMap: Map<number, { categoryId: number; categoryPid: number }>;
     areaMap: Map<string, number>;
@@ -637,17 +669,29 @@ export class ConcurrencyService {
       this.dictInfoService.data(['language']),
     ]);
 
-    this.logger.info(TAG, `采集源 "${collectionEntity.name}" 匹配到 ${collectionCategoryEntityList.length} 个分类`);
+    this.logger.info(
+      TAG,
+      `采集源 "${collectionEntity.name}" 匹配到 ${collectionCategoryEntityList.length} 个分类`
+    );
 
     if (!collectionCategoryEntityList.length) {
-      this.logger.error(TAG, `采集源 "${collectionEntity.name}" (ID: ${collectionEntity.id}) 未匹配系统分类，无法入库`);
+      this.logger.error(
+        TAG,
+        `采集源 "${collectionEntity.name}" (ID: ${collectionEntity.id}) 未匹配系统分类，无法入库`
+      );
       this.logger.error(TAG, '请先在后台管理系统中为该采集源配置分类映射关系');
-      throw new CoolCommException(`采集源 "${collectionEntity.name}" 未匹配系统分类，无法入库`);
+      throw new CoolCommException(
+        `采集源 "${collectionEntity.name}" 未匹配系统分类，无法入库`
+      );
     }
 
     const categoryMap = this.buildCategoryMap(collectionCategoryEntityList);
-    const areaMap = this.buildDictMap((areaEntityList['area'] ?? []) as DictInfoEntity[]);
-    const languageMap = this.buildDictMap((languageEntityList['language'] ?? []) as DictInfoEntity[]);
+    const areaMap = this.buildDictMap(
+      (areaEntityList['area'] ?? []) as DictInfoEntity[]
+    );
+    const languageMap = this.buildDictMap(
+      (languageEntityList['language'] ?? []) as DictInfoEntity[]
+    );
 
     const result = {
       collectionCategoryEntityList,
@@ -669,10 +713,7 @@ export class ConcurrencyService {
   private async processVideoParamsItems(
     item: VideoParams,
     collectionEntity: CollectionEntity,
-    categoryMap: Map<
-      number,
-      { categoryId: number; categoryPid: number }
-    >,
+    categoryMap: Map<number, { categoryId: number; categoryPid: number }>,
     areaMap: Map<string, number>,
     languageMap: Map<string, number>
   ): Promise<void> {
@@ -695,13 +736,10 @@ export class ConcurrencyService {
   ): Promise<{ success: boolean; data?: any; error?: any }> {
     try {
       const result = await this.syncVideoPage(collectionEntity, item);
-      return {success: true, data: result};
+      return { success: true, data: result };
     } catch (error) {
-      this.logger.error(
-        TAG,
-        `采集失败 syncVideoPage error: ${error.message}`
-      );
-      return {success: false, error};
+      this.logger.error(TAG, `采集失败 syncVideoPage error: ${error.message}`);
+      return { success: false, error };
     }
   }
 
@@ -711,10 +749,7 @@ export class ConcurrencyService {
   private async handleResultsAndSaves(
     result: any,
     collectionEntity: CollectionEntity,
-    categoryMap: Map<
-      number,
-      { categoryId: number; categoryPid: number }
-    >,
+    categoryMap: Map<number, { categoryId: number; categoryPid: number }>,
     areaMap: Map<string, number>,
     languageMap: Map<string, number>
   ): Promise<void> {
@@ -725,7 +760,10 @@ export class ConcurrencyService {
 
     const videoList: VideoBean[] = [];
     if (result.success && result.data?.list) {
-      this.logger.info(TAG, `开始处理视频列表，共${result.data.list.length}条数据`);
+      this.logger.info(
+        TAG,
+        `开始处理视频列表，共${result.data.list.length}条数据`
+      );
 
       let processedCount = 0;
       while (result.data.list.length) {
@@ -747,13 +785,16 @@ export class ConcurrencyService {
       // 及时释放 result.data.list 内存
       result.data.list = null;
 
-      this.logger.info(TAG, `视频数据处理完成，处理${processedCount}条，有效${videoList.length}条`);
+      this.logger.info(
+        TAG,
+        `视频数据处理完成，处理${processedCount}条，有效${videoList.length}条`
+      );
     } else {
       this.logger.warn(TAG, '无效的视频数据响应', {
         success: result.success,
         hasData: !!result.data,
         hasList: !!result.data?.list,
-        listLength: result.data?.list?.length
+        listLength: result.data?.list?.length,
       });
     }
 
@@ -770,10 +811,7 @@ export class ConcurrencyService {
   private async handleResultsAndSave(
     results: any[],
     collectionEntity: CollectionEntity,
-    categoryMap: Map<
-      number,
-      { categoryId: number; categoryPid: number }
-    >,
+    categoryMap: Map<number, { categoryId: number; categoryPid: number }>,
     areaMap: Map<string, number>,
     languageMap: Map<string, number>
   ): Promise<void> {
@@ -803,7 +841,7 @@ export class ConcurrencyService {
     }
     // 及时释放 results 数组
     results = null;
-    
+
     if (videoList.length > 0) {
       await this.saveVideo(videoList, collectionEntity);
     } else {
@@ -828,10 +866,15 @@ export class ConcurrencyService {
 
     const category = categoryMap.get(this.safeNumber(item.type_id) ?? -1);
     if (!category) {
-      this.logger.warn(TAG, `分类不存在：${item.type_name} ${item.type_id}，跳过该视频: ${item.vod_name || item.name}`);
+      this.logger.warn(
+        TAG,
+        `分类不存在：${item.type_name} ${item.type_id}，跳过该视频: ${
+          item.vod_name || item.name
+        }`
+      );
       return;
     }
-    
+
     item.categoryId = category.categoryId;
     item.categoryPid = category.categoryPid;
     item.collectionName = collectionEntity.name;
@@ -842,18 +885,18 @@ export class ConcurrencyService {
       languageMap,
       611
     );
-    item.area = this.resolveDictId(
-      item.vod_area || item.area,
-      areaMap,
-      570
-    );
+    item.area = this.resolveDictId(item.vod_area || item.area, areaMap, 570);
 
     try {
       const videoBean = new VideoBean(item);
       videoList.push(videoBean);
       this.logger.debug(TAG, `视频数据处理成功: ${item.vod_name || item.name}`);
     } catch (error) {
-      this.logger.error(TAG, `创建 VideoBean 失败: ${item.vod_name || item.name}`, error);
+      this.logger.error(
+        TAG,
+        `创建 VideoBean 失败: ${item.vod_name || item.name}`,
+        error
+      );
     }
   }
 

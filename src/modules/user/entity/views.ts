@@ -100,10 +100,10 @@ export class ViewsEntity extends BaseEntity {
   @Column({ comment: '关联id' })
   associationId: number;
 
-  @Column({ comment: '视频时长' , nullable: true, })
+  @Column({ comment: '视频时长', nullable: true })
   duration: number;
 
-  @Column({ comment: '观看时长', nullable: true,  })
+  @Column({ comment: '观看时长', nullable: true })
   viewingDuration: number;
 
   @Column({ comment: '当前观看索引' })

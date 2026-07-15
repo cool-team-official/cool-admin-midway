@@ -82,7 +82,12 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import { BaseController, CoolController, CoolUrlTag, TagTypes } from '@cool-midway/core';
+import {
+  BaseController,
+  CoolController,
+  CoolUrlTag,
+  TagTypes,
+} from '@cool-midway/core';
 import { NoticeInfoEntity } from '../../entity/noticeInfo';
 
 /**
@@ -95,13 +100,12 @@ import { NoticeInfoEntity } from '../../entity/noticeInfo';
     keyWordLikeFields: ['title'],
     fieldEq: ['type', 'status'],
     addOrderBy: {
-      createTime: 'desc'
-    }
-  }
+      createTime: 'desc',
+    },
+  },
 })
 @CoolUrlTag({
   key: TagTypes.IGNORE_TOKEN,
-  value: ['page', 'info']
+  value: ['page', 'info'],
 })
-export class AppNoticeInfoController extends BaseController {
-}
+export class AppNoticeInfoController extends BaseController {}

@@ -94,7 +94,11 @@ export class InviteCodeEntity extends BaseEntity {
   @Column({ comment: '邀请码', length: 50 })
   code: string;
 
-  @Column({ comment: '最大使用次数 0 表示无限制',dict: ['禁用', '启用'], default: 0, })
+  @Column({
+    comment: '最大使用次数 0 表示无限制',
+    dict: ['禁用', '启用'],
+    default: 0,
+  })
   maxUsage: number;
 
   @Column({ comment: '已使用次数', default: 0 })

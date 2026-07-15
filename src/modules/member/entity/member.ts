@@ -90,11 +90,16 @@ import { BaseEntity } from '../../base/entity/base';
  */
 @Entity('user_member')
 export class MemberEntity extends BaseEntity {
-
   @Column({ comment: '积分', default: 0 })
   score: number;
 
-  @Column({ comment: '余额', type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({
+    comment: '余额',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: 0,
+  })
   balance: number;
 
   @Column({ comment: '会员等级', default: 0 })

@@ -166,7 +166,7 @@ export class TaskInfoService extends BaseService {
    */
   async start(id, type?) {
     this.type === 'bull'
-      ? await this.taskBullService.start(id)
+      ? await this.taskBullService.start(id, type)
       : await this.taskLocalService.start(id, type);
   }
 
@@ -176,8 +176,8 @@ export class TaskInfoService extends BaseService {
    */
   async once(id) {
     this.type === 'bull'
-      ? this.taskBullService.once(id)
-      : this.taskLocalService.once(id);
+      ? await this.taskBullService.once(id)
+      : await this.taskLocalService.once(id);
   }
 
   /**
@@ -185,7 +185,7 @@ export class TaskInfoService extends BaseService {
    * @param jobId
    */
   async exist(jobId) {
-    this.type === 'bull'
+    return this.type === 'bull'
       ? this.taskBullService.exist(jobId)
       : this.taskLocalService.exist(jobId);
   }
@@ -195,8 +195,7 @@ export class TaskInfoService extends BaseService {
    * @param params
    */
   async addOrUpdate(params) {
-    console.log('params', params);
-    this.type === 'bull'
+    return this.type === 'bull'
       ? this.taskBullService.addOrUpdate(params)
       : this.taskLocalService.addOrUpdate(params);
   }
@@ -206,7 +205,7 @@ export class TaskInfoService extends BaseService {
    * @param ids
    */
   async delete(ids) {
-    this.type === 'bull'
+    return this.type === 'bull'
       ? this.taskBullService.delete(ids)
       : this.taskLocalService.delete(ids);
   }
@@ -232,7 +231,7 @@ export class TaskInfoService extends BaseService {
    * 初始化任务
    */
   async initTask() {
-    this.type === 'bull'
+    return this.type === 'bull'
       ? this.taskBullService.initTask()
       : this.taskLocalService.initTask();
   }
@@ -243,7 +242,7 @@ export class TaskInfoService extends BaseService {
    * @returns
    */
   async info(id: any): Promise<any> {
-    this.type === 'bull'
+    return this.type === 'bull'
       ? this.taskBullService.info(id)
       : this.taskLocalService.info(id);
   }

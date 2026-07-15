@@ -150,7 +150,10 @@ export class AlbumVideoServer {
     query = this.setPageDefault(query);
     const data: VideoAlbumEntity[] = await this.albumEntity.find({
       where: {
-        category_id: query.category_id instanceof Array ? In(query.category_id) : query.category_id,
+        category_id:
+          query.category_id instanceof Array
+            ? In(query.category_id)
+            : query.category_id,
       },
       order: {
         sort: 'DESC',

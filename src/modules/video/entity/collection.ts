@@ -102,15 +102,14 @@ export class CollectionEntity extends BaseEntity {
   @Column({ comment: '参数', type: 'text', nullable: true })
   param: string;
 
-  @Column({comment: '解析地址', type: 'text', nullable: true})
+  @Column({ comment: '解析地址', type: 'text', nullable: true })
   parseAddress: string;
 
-  @Column({comment: 'apiKey', type: 'text', nullable: true})
+  @Column({ comment: 'apiKey', type: 'text', nullable: true })
   apiKey: string;
 
-  @Column({comment: 'isVip', default: 0})
+  @Column({ comment: 'isVip', default: 0 })
   isVip: number;
-
 
   @Column({ comment: '说明', length: 191, nullable: true })
   desc: string;
@@ -124,6 +123,6 @@ export class CollectionEntity extends BaseEntity {
   @Column({ comment: '排序', nullable: true, default: 0 })
   sort: number;
 
-  @Column({comment: '是否支持模糊查询', nullable: true, default: 0})
+  @Column({ comment: '是否支持模糊查询', nullable: true, default: 0 })
   isKeyWord: number;
 }

@@ -99,6 +99,6 @@ export default () => {
     // 中间件，全局有效
     globalMiddlewares: [BaseLogMiddleware],
     // 模块加载顺序，默认为0，值越大越优先加载
-    order: 0
+    order: 0,
   } as ModuleConfig;
 };

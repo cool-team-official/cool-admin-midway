@@ -99,17 +99,16 @@ export class WeekEntity extends BaseEntity {
   @Column({
     comment: '备注',
     nullable: true,
-    type: 'text'
+    type: 'text',
   })
   remarks: string;
 
   @Column({
     comment: '时间',
     nullable: true,
-    type: 'time'
+    type: 'time',
   })
   time: string;
-
 
   @Column({ comment: '排序', nullable: false, default: 0 })
   sort: number;

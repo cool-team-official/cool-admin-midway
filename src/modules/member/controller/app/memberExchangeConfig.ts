@@ -82,7 +82,12 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import { BaseController, CoolController, CoolUrlTag, TagTypes } from '@cool-midway/core';
+import {
+  BaseController,
+  CoolController,
+  CoolUrlTag,
+  TagTypes,
+} from '@cool-midway/core';
 import { MemberExchangeConfigEntity } from '../../entity/memberExchangeConfig';
 
 /**
@@ -92,13 +97,11 @@ import { MemberExchangeConfigEntity } from '../../entity/memberExchangeConfig';
  * 会员兑换配置管理控制器
  */
 @CoolController({
-  api: [ 'info', 'list', 'page'],
+  api: ['info', 'list', 'page'],
   entity: MemberExchangeConfigEntity,
 })
-
 @CoolUrlTag({
   key: TagTypes.IGNORE_TOKEN,
   value: ['page', 'info'],
 })
-export class AppUserMemberExchangeConfigController extends BaseController {
-}
+export class AppUserMemberExchangeConfigController extends BaseController {}

@@ -82,10 +82,16 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import {BaseController, CoolController, CoolTag, TagTypes,} from '@cool-midway/core';
-import {CollectionEntity} from '../../entity/collection';
-import {CollectionService} from '../../service/collection';
-import {Body, Inject, Post} from '@midwayjs/core';
+import {
+  BaseController,
+  CoolController,
+  CoolTag,
+  TagTypes,
+} from '@cool-midway/core';
+import { CollectionEntity } from '../../entity/collection';
+import { CollectionService } from '../../service/collection';
+import { Body, Inject, Post } from '@midwayjs/core';
+import { TaskCollectService } from '../../../task/service/collect';
 
 @CoolController({
   api: ['add', 'delete', 'update', 'info', 'list', 'page'],
@@ -105,30 +111,34 @@ export class AdminCollectionController extends BaseController {
   @Inject()
   collectionService: CollectionService;
 
+  @Inject()
+  taskCollectService: TaskCollectService;
+
   @CoolTag(TagTypes.IGNORE_TOKEN)
-  @Post('/collection_day', {summary: '日更新'})
+  @Post('/collection_day', { summary: '日更新' })
   async collection(
     @Body('params') params: any,
     @Body('collection') collection: any
   ): Promise<unknown> {
     try {
-      return this.ok({
-        data: await this.collectionService.syncVideo(collection, params),
-      });
+      // 提取 collectionId
+      const collectionId = collection?.id ? Number(collection.id) : undefined;
+
+      // 使用任务队列执行，返回 taskId 用于进度查询
+      const result = await this.taskCollectService.dayCollectionTask(collectionId);
+      return this.ok(result);
     } catch (error) {
       return this.fail(error);
     }
   }
 
   @CoolTag(TagTypes.IGNORE_TOKEN)
-  @Post('/collection_keyword', {summary: '根据关键字采集'})
-  async keyWord(
-    @Body('keyWord') keyWord: string[]
-  ): Promise<unknown> {
+  @Post('/collection_keyword', { summary: '根据关键字采集' })
+  async keyWord(@Body('keyWord') keyWord: string[]): Promise<unknown> {
     try {
-      return this.ok({
-        data: await this.collectionService.asyncKeyWord(keyWord),
-      });
+      // 使用任务队列执行，返回 taskId 用于 SSE 订阅进度
+      const result = await this.taskCollectService.keyWordCollection(keyWord);
+      return this.ok(result);
     } catch (error) {
       return this.fail(error);
     }

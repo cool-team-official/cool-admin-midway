@@ -85,7 +85,12 @@
 import { MonthlyCheckinConfigEntity } from '../../entity/monthlyCheckinConfig';
 import { Get, Inject, Post, Body, Context } from '@midwayjs/core';
 import { MonthlyCheckinConfigService } from '../../service/monthlyCheckinConfig';
-import {BaseController, CoolController, CoolTag, TagTypes} from '@cool-midway/core';
+import {
+  BaseController,
+  CoolController,
+  CoolTag,
+  TagTypes,
+} from '@cool-midway/core';
 
 /**
  * 月签到配置管理控制器
@@ -113,11 +118,11 @@ export class AdminUserMonthlyCheckinConfigController extends BaseController {
   @CoolTag(TagTypes.IGNORE_TOKEN)
   @Post('/getByMonth', { summary: '获取指定月份的签到配置' })
   async getByMonth(@Body('month') month: number) {
-    const configs = await this.monthlyCheckinConfigService.getConfigByMonth(month);
+    const configs = await this.monthlyCheckinConfigService.getConfigByMonth(
+      month
+    );
     try {
-      return this.ok(
-        {list:configs}
-      );
+      return this.ok({ list: configs });
     } catch (error) {
       return this.fail(error);
     }

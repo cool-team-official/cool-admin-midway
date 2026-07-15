@@ -82,7 +82,14 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import { Provide, Config, Inject, Init, InjectClient, Logger } from '@midwayjs/core';
+import {
+  Provide,
+  Config,
+  Inject,
+  Init,
+  InjectClient,
+  Logger,
+} from '@midwayjs/core';
 import { BaseService, CoolCommException } from '@cool-midway/core';
 import * as _ from 'lodash';
 import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
@@ -133,8 +140,15 @@ export class UserSmsService extends BaseService {
       return true;
     } catch (error) {
       // 如果Redis是只读副本，记录错误但不抛出
-      if (error.message && (error.message.includes('READONLY') || error.message.includes('read only'))) {
-        this.logger.warn(`Redis is in read-only mode, skipping cache set for key: ${key}`, error.message);
+      if (
+        error.message &&
+        (error.message.includes('READONLY') ||
+          error.message.includes('read only'))
+      ) {
+        this.logger.warn(
+          `Redis is in read-only mode, skipping cache set for key: ${key}`,
+          error.message
+        );
         return false;
       } else {
         this.logger.error(`Failed to set cache for key: ${key}`, error);
@@ -168,7 +182,10 @@ export class UserSmsService extends BaseService {
     } catch (error) {
       // 检查是否是Redis只读错误
       if (error.message && error.message.includes('READONLY')) {
-        this.logger.warn('短信验证码缓存失败，Redis处于只读模式', error.message);
+        this.logger.warn(
+          '短信验证码缓存失败，Redis处于只读模式',
+          error.message
+        );
         // 在只读模式下，我们可以跳过缓存，但仍然发送短信
         return;
       }
@@ -192,7 +209,10 @@ export class UserSmsService extends BaseService {
     } catch (error) {
       // 如果Redis是只读副本，记录错误但继续执行
       if (error.message && error.message.includes('READONLY')) {
-        this.logger.warn('短信验证码验证失败，Redis处于只读模式', error.message);
+        this.logger.warn(
+          '短信验证码验证失败，Redis处于只读模式',
+          error.message
+        );
         return false; // 在只读模式下无法验证验证码
       } else {
         this.logger.error('Failed to get SMS code from cache', error);

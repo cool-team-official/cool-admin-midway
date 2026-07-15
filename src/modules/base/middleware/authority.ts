@@ -141,7 +141,10 @@ export class BaseAuthorityMiddleware
           ctx.admin = jwt.verify(token, this.jwtConfig.jwt.secret);
           if (ctx.admin.isRefresh) {
             ctx.status = 401;
-            throw new CoolCommException('登录失效~'+JSON.stringify(this.ignoreUrls), ctx.status);
+            throw new CoolCommException(
+              '登录失效~' + JSON.stringify(this.ignoreUrls),
+              ctx.status
+            );
           }
         } catch (error) {}
         // 使用matchUrl方法来检查URL是否应该被忽略

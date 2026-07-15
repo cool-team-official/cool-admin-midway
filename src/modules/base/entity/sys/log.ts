@@ -106,7 +106,7 @@ export class BaseSysLogEntity extends BaseEntity {
     comment: '参数',
     nullable: true,
     type: 'json',
-    transformer: transformerJson
+    transformer: transformerJson,
   })
   params: string;
 
@@ -114,7 +114,7 @@ export class BaseSysLogEntity extends BaseEntity {
     comment: '头部信息',
     nullable: true,
     type: 'json',
-    transformer: transformerJson
+    transformer: transformerJson,
   })
   headers: string;
 }

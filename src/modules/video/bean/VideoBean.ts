@@ -462,7 +462,7 @@ export class VideoBean {
       // directors字段是text类型，但为了防止数据过大，限制在500字符内
       if (value.length > 500) {
         this.directors = value.substring(0, 497) + '...';
-        console.warn(TAG, `directors字段过长，已截断`);
+        console.warn(TAG, 'directors字段过长，已截断');
       } else {
         this.directors = value;
       }
@@ -478,7 +478,7 @@ export class VideoBean {
       // actors字段是text类型，但为了防止数据过大，限制在500字符内
       if (value.length > 500) {
         this.actors = value.substring(0, 497) + '...';
-        console.warn(TAG, `actors字段过长，已截断`);
+        console.warn(TAG, 'actors字段过长，已截断');
       } else {
         this.actors = value;
       }

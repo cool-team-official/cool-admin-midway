@@ -83,7 +83,14 @@
 */
 
 import { DemoCacheService } from '../../service/cache';
-import { Inject, Post, Provide, Get, InjectClient, Logger } from '@midwayjs/core';
+import {
+  Inject,
+  Post,
+  Provide,
+  Get,
+  InjectClient,
+  Logger,
+} from '@midwayjs/core';
 import { CoolController, BaseController } from '@cool-midway/core';
 import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 import { ILogger } from '@midwayjs/logger';
@@ -115,8 +122,15 @@ export class OpenDemoCacheController extends BaseController {
       return true;
     } catch (error) {
       // 如果Redis是只读副本，记录错误但不抛出
-      if (error.message && (error.message.includes('READONLY') || error.message.includes('read only'))) {
-        this.logger.warn(`Redis is in read-only mode, skipping cache set for key: ${key}`, error.message);
+      if (
+        error.message &&
+        (error.message.includes('READONLY') ||
+          error.message.includes('read only'))
+      ) {
+        this.logger.warn(
+          `Redis is in read-only mode, skipping cache set for key: ${key}`,
+          error.message
+        );
         return false;
       } else {
         this.logger.error(`Failed to set cache for key: ${key}`, error);
@@ -134,11 +148,11 @@ export class OpenDemoCacheController extends BaseController {
     const success1 = await this.safeCacheSet('a', 1);
     // 缓存10秒
     const success2 = await this.safeCacheSet('a', 1, 10 * 1000);
-    
+
     if (!success1 || !success2) {
       return this.fail('缓存操作失败，Redis可能处于只读模式');
     }
-    
+
     return this.ok(await this.midwayCache.get('a'));
   }
 

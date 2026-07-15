@@ -4,7 +4,7 @@
  作者：xiaoliwanshui
  邮箱：chocolaer@126.com
 
- ... 
+ ...
 */
 
 import { Inject, Provide } from '@midwayjs/core';
@@ -41,8 +41,12 @@ export class CollectionLogService extends BaseService {
       find.andWhere(
         new Brackets(qb => {
           qb.where('b.name like :keyWord', { keyWord: `%${keyWord}%` })
-            .orWhere('a.error_message like :keyWord', { keyWord: `%${keyWord}%` })
-            .orWhere('a.request_url like :keyWord', { keyWord: `%${keyWord}%` });
+            .orWhere('a.error_message like :keyWord', {
+              keyWord: `%${keyWord}%`,
+            })
+            .orWhere('a.request_url like :keyWord', {
+              keyWord: `%${keyWord}%`,
+            });
         })
       );
     }

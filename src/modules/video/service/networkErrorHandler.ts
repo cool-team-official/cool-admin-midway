@@ -82,8 +82,19 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import { App, ILogger, Inject, IMidwayApplication, Provide } from '@midwayjs/core';
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import {
+  App,
+  ILogger,
+  Inject,
+  IMidwayApplication,
+  Provide,
+} from '@midwayjs/core';
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+} from 'axios';
 import * as http from 'http';
 import * as https from 'https';
 
@@ -124,7 +135,10 @@ export class NetworkErrorHandler {
         return true;
       }
       // 连接超时
-      if (axiosError.code === 'ECONNABORTED' || axiosError.code === 'ETIMEDOUT') {
+      if (
+        axiosError.code === 'ECONNABORTED' ||
+        axiosError.code === 'ETIMEDOUT'
+      ) {
         return true;
       }
       // 连接被拒绝
@@ -136,8 +150,10 @@ export class NetworkErrorHandler {
         return true;
       }
       // SSL/TLS相关错误
-      if (axiosError.code === 'DEPTH_ZERO_SELF_SIGNED_CERT' || 
-          axiosError.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') {
+      if (
+        axiosError.code === 'DEPTH_ZERO_SELF_SIGNED_CERT' ||
+        axiosError.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE'
+      ) {
         return true;
       }
     }
@@ -155,8 +171,10 @@ export class NetworkErrorHandler {
    * 判断是否为超时错误
    */
   isTimeoutError(error: any): boolean {
-    return error.isAxiosError && 
-           (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT');
+    return (
+      error.isAxiosError &&
+      (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT')
+    );
   }
 
   /**
@@ -164,8 +182,8 @@ export class NetworkErrorHandler {
    */
   async requestWithRetry(
     config: AxiosRequestConfig,
-    maxRetries: number = 3,
-    retryDelay: number = 1000
+    maxRetries = 3,
+    retryDelay = 1000
   ): Promise<AxiosResponse> {
     if (!config) {
       throw new Error('请求配置不能为空');
@@ -179,7 +197,11 @@ export class NetworkErrorHandler {
       const task = () => {
         this.runInBackground(async () => {
           try {
-            const response = await this.executeRequest(config, maxRetries, retryDelay);
+            const response = await this.executeRequest(
+              config,
+              maxRetries,
+              retryDelay
+            );
             resolve(response);
           } catch (error) {
             reject(error);
@@ -290,14 +312,15 @@ export class NetworkErrorHandler {
     return {
       timeout: 30000, // 30秒超时
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept': 'application/json, text/plain, */*',
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        Accept: 'application/json, text/plain, */*',
         'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
         'Accept-Encoding': 'gzip, deflate, br',
-        'Connection': 'keep-alive',
+        Connection: 'keep-alive',
       },
       maxRedirects: 5,
-      validateStatus: (status) => status >= 200 && status < 300,
+      validateStatus: status => status >= 200 && status < 300,
     };
   }
 
@@ -319,11 +342,20 @@ export class NetworkErrorHandler {
 
         if (this.isNetworkError(error)) {
           if (this.isDnsError(error)) {
-            this.logger.warn(TAG, `DNS解析失败 ${config.url}: ${error.message}, 第${attempt}次尝试`);
+            this.logger.warn(
+              TAG,
+              `DNS解析失败 ${config.url}: ${error.message}, 第${attempt}次尝试`
+            );
           } else if (this.isTimeoutError(error)) {
-            this.logger.warn(TAG, `请求超时 ${config.url}: ${error.message}, 第${attempt}次尝试`);
+            this.logger.warn(
+              TAG,
+              `请求超时 ${config.url}: ${error.message}, 第${attempt}次尝试`
+            );
           } else {
-            this.logger.warn(TAG, `网络错误 ${config.url}: ${error.message}, 第${attempt}次尝试`);
+            this.logger.warn(
+              TAG,
+              `网络错误 ${config.url}: ${error.message}, 第${attempt}次尝试`
+            );
           }
 
           if (attempt < maxRetries) {
@@ -339,7 +371,10 @@ export class NetworkErrorHandler {
       }
     }
 
-    this.logger.error(TAG, `请求最终失败 ${config.url}, 已重试${maxRetries}次: ${lastError?.message}`);
+    this.logger.error(
+      TAG,
+      `请求最终失败 ${config.url}, 已重试${maxRetries}次: ${lastError?.message}`
+    );
     throw lastError;
   }
 
@@ -354,7 +389,9 @@ export class NetworkErrorHandler {
   }
 
   private runInBackground(task: () => Promise<void>) {
-    const runner = this.app as unknown as { runInBackground?: (fn: () => Promise<void>) => void };
+    const runner = this.app as unknown as {
+      runInBackground?: (fn: () => Promise<void>) => void;
+    };
     const runBackground =
       typeof runner?.runInBackground === 'function'
         ? runner.runInBackground.bind(runner)

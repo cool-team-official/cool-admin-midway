@@ -82,7 +82,7 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-export const tagSQLQuery: string = `SELECT DISTINCT
+export const tagSQLQuery = `SELECT DISTINCT
   TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(cleaned_tags, ',', n), ',', -1)) AS tag
 FROM (
   SELECT

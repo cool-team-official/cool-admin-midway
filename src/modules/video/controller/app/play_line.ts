@@ -82,7 +82,12 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import { BaseController, CoolController, CoolUrlTag, TagTypes } from '@cool-midway/core';
+import {
+  BaseController,
+  CoolController,
+  CoolUrlTag,
+  TagTypes,
+} from '@cool-midway/core';
 import { PlayLineEntity } from '../../entity/play_line';
 
 /**
@@ -94,7 +99,7 @@ import { PlayLineEntity } from '../../entity/play_line';
   insertParam: ctx => {
     return {
       // 获得当前登录的后台用户ID，需要请求头传Authorization参数
-      createUserId: ctx.user.id
+      createUserId: ctx.user.id,
     };
   },
   pageQueryOp: {
@@ -104,16 +109,15 @@ import { PlayLineEntity } from '../../entity/play_line';
       'video_id',
       'video_name',
       'collection_id',
-      'collection_name'
+      'collection_name',
     ],
     addOrderBy: {
-      sort: 'asc'
-    }
-  }
+      sort: 'asc',
+    },
+  },
 })
 @CoolUrlTag({
   key: TagTypes.IGNORE_TOKEN,
-  value: ['page', 'info', 'update']
+  value: ['page', 'info', 'update'],
 })
-export class AppPlayLineController extends BaseController {
-}
+export class AppPlayLineController extends BaseController {}

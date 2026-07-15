@@ -91,13 +91,13 @@
  * @Description: 这是默认设置,可以在设置》工具》File Description中进行配置
  */
 
-import {ILogger, Inject, Provide} from "@midwayjs/core";
-import {BaseService} from "@cool-midway/core";
-import {InjectEntityModel} from "@midwayjs/typeorm";
-import {Repository} from "typeorm";
-import {InviteCodeEntity} from "../entity/inviteCode";
-import {InviteRecordEntity} from "../entity/inviteRecord";
-import {ScoreService} from "../../member/service/score";
+import { ILogger, Inject, Provide } from '@midwayjs/core';
+import { BaseService } from '@cool-midway/core';
+import { InjectEntityModel } from '@midwayjs/typeorm';
+import { Repository } from 'typeorm';
+import { InviteCodeEntity } from '../entity/inviteCode';
+import { InviteRecordEntity } from '../entity/inviteRecord';
+import { ScoreService } from '../../member/service/score';
 
 @Provide()
 export class InviteCodeService extends BaseService {
@@ -107,12 +107,11 @@ export class InviteCodeService extends BaseService {
   @InjectEntityModel(InviteRecordEntity)
   inviteRecordEntity: Repository<InviteRecordEntity>;
 
-
   @Inject()
   logger: ILogger;
 
   @Inject()
-  scoreService: ScoreService
+  scoreService: ScoreService;
 
   //创建InviteCodeEntity
   async createInviteCodeEntity(params) {
@@ -136,18 +135,15 @@ export class InviteCodeService extends BaseService {
       createUserId: params.userId,
       ipAddress: params.ipAddress,
     });
-    return this.scoreService.addScore(params.userId, 4, 4,)
+    return this.scoreService.addScore(params.userId, 4, 4);
   }
 
   //创建新用户使用邀请码
   async create(params) {
-
     if (params.inviteCode) {
       await this.createInviteCodeEntity(params);
       await this.createInviteRecordEntity(params);
     }
     await this.createInviteCodeEntity(params);
   }
-
-
 }

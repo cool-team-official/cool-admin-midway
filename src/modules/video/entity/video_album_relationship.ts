@@ -82,8 +82,8 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import {Column, Entity, Index} from 'typeorm';
-import {BaseEntity} from '../../base/entity/base';
+import { Column, Entity, Index } from 'typeorm';
+import { BaseEntity } from '../../base/entity/base';
 
 /**
  *  视频专辑关系
@@ -91,11 +91,11 @@ import {BaseEntity} from '../../base/entity/base';
 @Entity('video_album_relationship')
 export class VideoAlbumRelationship extends BaseEntity {
   @Index()
-  @Column({comment: '专辑id', nullable: true, type: 'bigint'})
+  @Column({ comment: '专辑id', nullable: true, type: 'bigint' })
   album_id: number;
   @Index()
-  @Column({comment: '影片id', nullable: true, type: 'bigint'})
+  @Column({ comment: '影片id', nullable: true, type: 'bigint' })
   videos_id: number;
-  @Column({comment: '排序', nullable: true, default: 0})
+  @Column({ comment: '排序', nullable: true, default: 0 })
   sort: number;
 }

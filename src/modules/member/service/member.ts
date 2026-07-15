@@ -82,13 +82,13 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import {ILogger, Inject, Provide} from '@midwayjs/core';
-import {MemberEntity} from '../entity/member';
-import {InjectEntityModel} from '@midwayjs/typeorm';
-import {Repository} from 'typeorm';
-import {CoolCommException} from '@cool-midway/core';
-import {BusinessType, ScoreService} from './score';
-import {MemberExchangeConfigService} from './memberExchangeConfig';
+import { ILogger, Inject, Provide } from '@midwayjs/core';
+import { MemberEntity } from '../entity/member';
+import { InjectEntityModel } from '@midwayjs/typeorm';
+import { Repository } from 'typeorm';
+import { CoolCommException } from '@cool-midway/core';
+import { BusinessType, ScoreService } from './score';
+import { MemberExchangeConfigService } from './memberExchangeConfig';
 
 /**
  * 会员服务类
@@ -114,7 +114,10 @@ export class MemberService {
    * @param createUserId 用户ID
    * @param userMmemberExchangeId 兑换配置ID
    */
-  async exchangeByScore(createUserId: number, userMmemberExchangeId: number): Promise<{
+  async exchangeByScore(
+    createUserId: number,
+    userMmemberExchangeId: number
+  ): Promise<{
     success: boolean;
     message: string;
     member: MemberEntity;
@@ -194,7 +197,10 @@ export class MemberService {
     // 保存会员信息
     await this.memberEntity.save(member);
 
-    this.logger.info(this.TAG, `用户${createUserId}成功兑换${days}天会员，消耗积分${requiredScore}`);
+    this.logger.info(
+      this.TAG,
+      `用户${createUserId}成功兑换${days}天会员，消耗积分${requiredScore}`
+    );
 
     return {
       success: true,

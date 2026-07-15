@@ -180,14 +180,20 @@ export class ScoreService extends BaseService {
             businessId: businessId,
             businessType: BusinessType.ADVERTISEMENT,
           });
-          this.logger.info(this.TAG, `用户 ${createUserId} 因广告获得 ${ads.score} 积分`);
+          this.logger.info(
+            this.TAG,
+            `用户 ${createUserId} 因广告获得 ${ads.score} 积分`
+          );
           return scoreRecord;
         } else {
           throw new CoolCommException('无效广告ID');
         }
       } else if (businessType === BusinessType.SIGN) {
         this.logger.debug(this.TAG, '增加签到积分');
-        const UserSignScore = await this.getUserSignScore(businessId, createUserId);
+        const UserSignScore = await this.getUserSignScore(
+          businessId,
+          createUserId
+        );
         if (UserSignScore) {
           const scoreRecord = await this.scoreEntity.save({
             createUserId,
@@ -197,7 +203,10 @@ export class ScoreService extends BaseService {
             businessId: businessId,
             businessType: BusinessType.SIGN,
           });
-          this.logger.info(this.TAG, `用户 ${createUserId} 签到获得 ${UserSignScore.score} 积分`);
+          this.logger.info(
+            this.TAG,
+            `用户 ${createUserId} 签到获得 ${UserSignScore.score} 积分`
+          );
           return scoreRecord;
         } else {
           throw new CoolCommException('今日已签到');
@@ -211,7 +220,10 @@ export class ScoreService extends BaseService {
           businessId: businessId,
           businessType: BusinessType.PERMISSION,
         });
-        this.logger.info(this.TAG, `用户 ${createUserId} 因权限获取获得 ${this.DEFAULT_PERMISSION_SCORE} 积分`);
+        this.logger.info(
+          this.TAG,
+          `用户 ${createUserId} 因权限获取获得 ${this.DEFAULT_PERMISSION_SCORE} 积分`
+        );
         return scoreRecord;
       } else if (businessType === BusinessType.INVITE) {
         const scoreRecord = await this.scoreEntity.save({
@@ -222,7 +234,10 @@ export class ScoreService extends BaseService {
           businessId: businessId,
           businessType: BusinessType.INVITE,
         });
-        this.logger.info(this.TAG, `用户 ${createUserId} 因邀请获得 ${this.DEFAULT_INVITE_SCORE} 积分`);
+        this.logger.info(
+          this.TAG,
+          `用户 ${createUserId} 因邀请获得 ${this.DEFAULT_INVITE_SCORE} 积分`
+        );
         return scoreRecord;
       } else {
         throw new CoolCommException('不支持的业务类型');
@@ -275,7 +290,10 @@ export class ScoreService extends BaseService {
             score: -requiredScore,
             type: ScoreType.REDUCE,
           });
-          this.logger.info(this.TAG, `用户 ${createUserId} 兑换消耗 ${requiredScore} 积分`);
+          this.logger.info(
+            this.TAG,
+            `用户 ${createUserId} 兑换消耗 ${requiredScore} 积分`
+          );
           return scoreRecord;
         } else {
           this.logger.warn(this.TAG, `兑换配置不存在，ID: ${businessId}`);
@@ -295,7 +313,10 @@ export class ScoreService extends BaseService {
           score: -score,
           type: ScoreType.REDUCE,
         });
-        this.logger.info(this.TAG, `用户 ${createUserId} 提现消耗 ${score} 积分`);
+        this.logger.info(
+          this.TAG,
+          `用户 ${createUserId} 提现消耗 ${score} 积分`
+        );
         return scoreRecord;
       }
 
@@ -360,17 +381,17 @@ export class ScoreService extends BaseService {
       const startTime = moment().startOf('day').toDate();
       // 获取今天的结束时间
       const endTime = moment().endOf('day').toDate();
-      
+
       const result = await this.scoreEntity.findOneBy({
         businessId,
         businessType: BusinessType.SIGN,
         type: ScoreType.ADD,
         createTime: Between(startTime, endTime),
-        createUserId: createUserId
+        createUserId: createUserId,
       });
-      
+
       this.logger.debug(this.TAG, '获取用户签到积分记录', result);
-      
+
       if (result === null) {
         const config = await this.monthlyCheckinConfigEntity.findOneBy({
           id: businessId,
@@ -396,9 +417,14 @@ export class ScoreService extends BaseService {
    */
   async getUserScoreRecords(
     createUserId: number,
-    page: number = 1,
-    size: number = 20
-  ): Promise<{ records: ScoreEntity[]; total: number; page: number; size: number }> {
+    page = 1,
+    size = 20
+  ): Promise<{
+    records: ScoreEntity[];
+    total: number;
+    page: number;
+    size: number;
+  }> {
     // 输入验证
     if (!createUserId || typeof createUserId !== 'number') {
       throw new CoolCommException('用户ID无效');
@@ -407,13 +433,12 @@ export class ScoreService extends BaseService {
     if (size < 1 || size > 100) size = 20;
 
     try {
-      const [records, total] = await this.scoreEntity
-        .findAndCount({
-          where: { createUserId },
-          order: { id: 'DESC' },
-          skip: (page - 1) * size,
-          take: size,
-        });
+      const [records, total] = await this.scoreEntity.findAndCount({
+        where: { createUserId },
+        order: { id: 'DESC' },
+        skip: (page - 1) * size,
+        take: size,
+      });
 
       return {
         records,

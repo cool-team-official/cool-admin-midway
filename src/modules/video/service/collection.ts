@@ -162,6 +162,9 @@ export class CollectionService extends BaseService {
   // 是否正在处理采集队列
   private collectionProcessing = false;
 
+  // 后台采集处理错误，由任务队列在等待完成时统一抛出
+  private collectionProcessingError: Error | null = null;
+
   // 单次处理的最大数量，防止长时间阻塞
   private readonly maxProcessPerBatch = 500;
 
@@ -529,7 +532,7 @@ export class CollectionService extends BaseService {
         );
       }
     } else {
-      this.logger.error(TAG, `采集异常:`, error);
+      this.logger.error(TAG, '采集异常:', error);
     }
   }
 
@@ -538,6 +541,36 @@ export class CollectionService extends BaseService {
    */
   async startCollection(): Promise<void> {
     await this.triggerCollectionProcessing();
+  }
+
+  /**
+   * 等待后台采集处理完成，包含当前正在处理的数据。
+   */
+  async waitForCollectionCompletion(): Promise<void> {
+    const deadline = Date.now() + this.REDIS_EXPIRY * 1000;
+
+    while (
+      this.collectionProcessing ||
+      (await this.redisService.exists('video:collection'))
+    ) {
+      if (this.collectionProcessingError) {
+        const error = this.collectionProcessingError;
+        this.collectionProcessingError = null;
+        throw error;
+      }
+
+      if (Date.now() >= deadline) {
+        throw new Error('等待后台采集处理完成超时');
+      }
+
+      await this.sleep(500);
+    }
+
+    if (this.collectionProcessingError) {
+      const error = this.collectionProcessingError;
+      this.collectionProcessingError = null;
+      throw error;
+    }
   }
 
   /**
@@ -647,6 +680,7 @@ export class CollectionService extends BaseService {
       return;
     }
     this.collectionProcessing = true;
+    this.collectionProcessingError = null;
 
     const runner = this.app as unknown as {
       runInBackground?: (fn: () => Promise<void>) => void;
@@ -698,6 +732,8 @@ export class CollectionService extends BaseService {
         await this.checkMemoryUsage();
       } catch (error) {
         this.logger.error(TAG, '后台采集任务异常', error);
+        this.collectionProcessingError =
+          error instanceof Error ? error : new Error(String(error));
       } finally {
         this.collectionProcessing = false;
       }

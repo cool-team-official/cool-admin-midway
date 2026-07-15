@@ -82,12 +82,17 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import {Body, Inject, Post, Provide} from '@midwayjs/core';
-import {BaseController, CoolController,CoolUrlTag,
-  TagTypes, CoolTag} from '@cool-midway/core';
-import {BusinessType, ScoreService} from '../../service/score';
-import {Context} from '@midwayjs/koa';
-import {ScoreEntity} from "../../entity/score";
+import { Body, Inject, Post, Provide } from '@midwayjs/core';
+import {
+  BaseController,
+  CoolController,
+  CoolUrlTag,
+  TagTypes,
+  CoolTag,
+} from '@cool-midway/core';
+import { BusinessType, ScoreService } from '../../service/score';
+import { Context } from '@midwayjs/koa';
+import { ScoreEntity } from '../../entity/score';
 
 /**
  * APP积分控制器
@@ -98,7 +103,7 @@ import {ScoreEntity} from "../../entity/score";
   value: ['total', 'records'],
 })
 @CoolController({
-  api: [ 'info', 'list', 'page'],
+  api: ['info', 'list', 'page'],
   entity: ScoreEntity,
   insertParam: ctx => {
     return {
@@ -107,7 +112,7 @@ import {ScoreEntity} from "../../entity/score";
   },
   pageQueryOp: {
     where: async ctx => {
-      return [['createUserId =:createUserId', {createUserId: ctx.user.id}]];
+      return [['createUserId =:createUserId', { createUserId: ctx.user.id }]];
     },
   },
 })
@@ -121,7 +126,7 @@ export class ScoreAppController extends BaseController {
   /**
    * 获取当前用户积分总和
    */
-  @Post('/total',{summary: '获取当前用户积分总和'})
+  @Post('/total', { summary: '获取当前用户积分总和' })
   async getTotal() {
     const total = await this.scoreService.getUserTotalScore(this.ctx.user.id);
     return this.ok(total);
@@ -130,7 +135,7 @@ export class ScoreAppController extends BaseController {
   /**
    * 获取当前用户积分记录
    */
-  @Post('/records',{summary: '获取当前用户积分记录'})
+  @Post('/records', { summary: '获取当前用户积分记录' })
   async getRecords() {
     // 从上下文中获取当前用户ID
     const createUserId = this.ctx.state.user?.id;
@@ -147,19 +152,22 @@ export class ScoreAppController extends BaseController {
     if (isNaN(size) || size < 1) size = 20;
     if (size > 100) size = 100; // 限制每页最大记录数
 
-    const records = await this.scoreService.getUserScoreRecords(createUserId, page, size);
+    const records = await this.scoreService.getUserScoreRecords(
+      createUserId,
+      page,
+      size
+    );
     return this.ok(records);
   }
 
-
-  @Post('/addScore', {summary: '添加积分'})
+  @Post('/addScore', { summary: '添加积分' })
   async addScore(
     @Body('reason') reason: string,
     @Body('businessId') businessId: number,
     @Body('businessType') businessType?: BusinessType
   ) {
     try {
-     const createUserId = this.ctx.user.id;
+      const createUserId = this.ctx.user.id;
       return this.ok(
         await this.scoreService.addScore(
           createUserId,

@@ -82,7 +82,13 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import { BaseController, CoolController, CoolTag, CoolUrlTag, TagTypes } from '@cool-midway/core';
+import {
+  BaseController,
+  CoolController,
+  CoolTag,
+  CoolUrlTag,
+  TagTypes,
+} from '@cool-midway/core';
 import { Body, Get, Inject, Post, Query } from '@midwayjs/core';
 import { UserLoginService } from '../../service/login';
 import { BaseSysLoginService } from '../../../base/service/sys/login';
@@ -191,6 +197,14 @@ export class AppUserLoginController extends BaseController {
     @Body('code') code: string,
     @Body('inviteCode') inviteCode?: string
   ) {
-    return this.ok(await this.userLoginService.appLogin(phone, password, code, captchaId, inviteCode));
+    return this.ok(
+      await this.userLoginService.appLogin(
+        phone,
+        password,
+        code,
+        captchaId,
+        inviteCode
+      )
+    );
   }
 }
