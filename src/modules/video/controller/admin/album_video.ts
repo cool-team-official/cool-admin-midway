@@ -82,11 +82,11 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import {BaseController, CoolController} from '@cool-midway/core';
-import {VideoAlbumRelationship} from '../../entity/video_album_relationship';
-import {VideoEntity} from '../../entity/videos';
-import {Body, Inject, Post} from '@midwayjs/core';
-import {AlbumVideoServer} from '../../service/album_video';
+import { BaseController, CoolController } from '@cool-midway/core';
+import { VideoAlbumRelationship } from '../../entity/video_album_relationship';
+import { VideoEntity } from '../../entity/videos';
+import { Body, Inject, Post } from '@midwayjs/core';
+import { AlbumVideoServer } from '../../service/album_video';
 
 /**
  * 相册-专辑
@@ -103,8 +103,8 @@ import {AlbumVideoServer} from '../../service/album_video';
   pageQueryOp: {
     // fieldEq: ['album_id', 'videos_id'],
     fieldEq: [
-      {column: 'a.album_id', requestParam: 'album_id'},
-      {column: 'a.videos_id', requestParam: 'videos_id'},
+      { column: 'a.album_id', requestParam: 'album_id' },
+      { column: 'a.videos_id', requestParam: 'videos_id' },
     ],
     select: [
       'a.*',
@@ -170,7 +170,7 @@ export class AdminVideoAlbumRelationshipController extends BaseController {
   @Inject()
   albumVideoServer: AlbumVideoServer;
 
-  @Post('/add_list', {summary: '批量添加专辑'})
+  @Post('/add_list', { summary: '批量添加专辑' })
   async insertAlbumVideo(
     @Body('id') id: number,
     @Body('titles') titles: [string]

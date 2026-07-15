@@ -96,24 +96,22 @@ import { PlayLineService } from '../../service/play_line';
   insertParam: ctx => {
     return {
       // 获得当前登录的后台用户ID，需要请求头传Authorization参数
-      createUserId: ctx.admin.userId
+      createUserId: ctx.admin.userId,
     };
   },
   pageQueryOp: {
-    
     fieldEq: [
       'video_line_id',
       'status',
       'video_id',
       'video_name',
       'collection_id',
-      'collection_name'
+      'collection_name',
     ],
-    keyWordLikeFields: ['name','video_name','collection_name'],
+    keyWordLikeFields: ['name', 'video_name', 'collection_name'],
     addOrderBy: {
-      sort: 'desc'
-    }
-  }
+      sort: 'desc',
+    },
+  },
 })
-export class AdminPlayLineController extends BaseController {
-}
+export class AdminPlayLineController extends BaseController {}

@@ -82,7 +82,12 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import { BaseController, CoolController, CoolUrlTag, TagTypes } from '@cool-midway/core';
+import {
+  BaseController,
+  CoolController,
+  CoolUrlTag,
+  TagTypes,
+} from '@cool-midway/core';
 import { AdsEntity } from '../../entity/ads';
 
 /**
@@ -94,16 +99,15 @@ import { AdsEntity } from '../../entity/ads';
   insertParam: ctx => {
     return {
       // 获得当前登录的后台用户ID，需要请求头传Authorization参数
-      createUserId: ctx.user.id
+      createUserId: ctx.user.id,
     };
   },
   pageQueryOp: {
-    fieldEq: ['type', 'adsPage', 'status']
-  }
+    fieldEq: ['type', 'adsPage', 'status'],
+  },
 })
 @CoolUrlTag({
   key: TagTypes.IGNORE_TOKEN,
-  value: ['page', 'info']
+  value: ['page', 'info'],
 })
-export class AppAdsController extends BaseController {
-}
+export class AppAdsController extends BaseController {}

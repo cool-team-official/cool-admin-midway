@@ -82,8 +82,8 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import {BaseController, CoolController} from '@cool-midway/core';
-import {FeedbackInfoEntity} from "../../entity/feedbackInfo";
+import { BaseController, CoolController } from '@cool-midway/core';
+import { FeedbackInfoEntity } from '../../entity/feedbackInfo';
 
 /**
  * 反馈信息
@@ -99,7 +99,6 @@ import {FeedbackInfoEntity} from "../../entity/feedbackInfo";
   },
   pageQueryOp: {
     keyWordLikeFields: ['feedbackType', 'videoName', 'createUserId'],
-  }
+  },
 })
-export class AppFeedbackInfoController extends BaseController {
-}
+export class AppFeedbackInfoController extends BaseController {}

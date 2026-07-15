@@ -95,12 +95,11 @@ import { AdsEntity } from '../../entity/ads';
   insertParam: ctx => {
     return {
       // 获得当前登录的后台用户ID，需要请求头传Authorization参数
-      createUserId: ctx.admin.userId
+      createUserId: ctx.admin.userId,
     };
   },
   pageQueryOp: {
-    fieldEq: ['type', 'adsPage', 'status']
-  }
+    fieldEq: ['type', 'adsPage', 'status'],
+  },
 })
-export class AdminAdsController extends BaseController {
-}
+export class AdminAdsController extends BaseController {}

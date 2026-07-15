@@ -82,10 +82,16 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import {Body, Get, Inject, Post, Provide} from '@midwayjs/core';
-import {BaseController, CoolController, CoolTag, CoolUrlTag, TagTypes,} from '@cool-midway/core';
-import {DictInfoService} from '../../service/info';
-import {DictInfoEntity} from '../../entity/info';
+import { Body, Get, Inject, Post, Provide } from '@midwayjs/core';
+import {
+  BaseController,
+  CoolController,
+  CoolTag,
+  CoolUrlTag,
+  TagTypes,
+} from '@cool-midway/core';
+import { DictInfoService } from '../../service/info';
+import { DictInfoEntity } from '../../entity/info';
 
 /**
  * 字典信息
@@ -102,9 +108,9 @@ import {DictInfoEntity} from '../../entity/info';
       createTime: 'ASC',
     },
     where: ctx => {
-      const {aldult} = ctx.request.headers;
+      const { aldult } = ctx.request.headers;
       if (aldult === '0') {
-        return [['id != :id', {id: 643}]];
+        return [['id != :id', { id: 643 }]];
       }
       return [[]];
     },
@@ -123,10 +129,10 @@ export class AppDictInfoController extends BaseController {
   ctx;
 
   @CoolTag(TagTypes.IGNORE_TOKEN)
-  @Post('/data', {summary: '获得字典数据'})
+  @Post('/data', { summary: '获得字典数据' })
   async data(@Body('types') types: string[] = []) {
     const data: any = await this.dictInfoService.data(types);
-    const {aldult} = this.ctx.request.headers;
+    const { aldult } = this.ctx.request.headers;
     if ((aldult === undefined || aldult === '0') && data.video_category) {
       data.video_category = data.video_category.filter(e => e.id != 643);
     }
@@ -134,7 +140,7 @@ export class AppDictInfoController extends BaseController {
   }
 
   @CoolTag(TagTypes.IGNORE_TOKEN)
-  @Get('/types', {summary: '获得所有字典类型'})
+  @Get('/types', { summary: '获得所有字典类型' })
   async types() {
     return this.ok(await this.dictInfoService.types());
   }

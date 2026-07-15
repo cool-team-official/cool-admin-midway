@@ -82,15 +82,26 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import { App, Inject } from '@midwayjs/core';
+import { App, Inject, Logger } from '@midwayjs/core';
 import { BaseCoolQueue, CoolQueue } from '@cool-midway/task';
 import { TaskBullService } from '../service/bull';
 import { IMidwayApplication } from '@midwayjs/core';
+import { ILogger } from '@midwayjs/logger';
 
 /**
  * 任务
  */
-@CoolQueue()
+@CoolQueue({
+  queue: {
+    attempts: 3,
+    backoff: {
+      type: 'exponential',
+      delay: 10000,
+    },
+    removeOnComplete: { age: 3600, count: 1000 },
+    removeOnFail: { age: 604800, count: 1000 },
+  },
+})
 export abstract class TaskInfoQueue extends BaseCoolQueue {
   @App()
   app: IMidwayApplication;
@@ -98,16 +109,38 @@ export abstract class TaskInfoQueue extends BaseCoolQueue {
   @Inject()
   taskBullService: TaskBullService;
 
+  @Logger()
+  logger: ILogger;
+
   async data(job, done: any): Promise<void> {
+    let taskStarted = false;
     try {
-      const result = await this.taskBullService.invokeServiceWithTimeout(job.data.service);
-      this.taskBullService.record(job.data, 1, JSON.stringify(result));
+      await this.taskBullService.markTaskStarted(job.data.id);
+      taskStarted = true;
+      const result = await this.taskBullService.invokeServiceWithTimeout(
+        job.data.service
+      );
+      await this.taskBullService.record(job.data, 1, JSON.stringify(result));
+
+      if (!job.data.isOnce) {
+        try {
+          await this.taskBullService.updateStatus(job.data.id);
+        } catch (error) {
+          // 业务已完成，元数据更新失败不应触发业务重复重试。
+          this.logger.error('更新任务调度状态失败:', error);
+        }
+      }
     } catch (error) {
-      this.taskBullService.record(job.data, 0, error.message);
-    }
-    if (!job.data.isOnce) {
-      this.taskBullService.updateNextRunTime(job.data.jobId);
-      this.taskBullService.updateStatus(job.data.id);
+      await this.taskBullService.record(job.data, 0, error.message);
+      throw error;
+    } finally {
+      if (taskStarted) {
+        try {
+          await this.taskBullService.markTaskFinished(job.data.id);
+        } catch (error) {
+          this.logger.error('清理任务运行锁失败:', error);
+        }
+      }
     }
     done();
   }

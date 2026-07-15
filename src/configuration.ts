@@ -106,6 +106,7 @@ import * as task from '@cool-midway/task';
 // import * as rpc from '@cool-midway/rpc';
 import * as prometheus from '@midwayjs/prometheus'; // 导入模块
 import * as redis from '@midwayjs/redis';
+import * as socketio from '@midwayjs/socketio';
 import { SpaHistoryFallbackMiddleware } from './modules/base/middleware/spaHistoryFallback';
 
 @Configuration({
@@ -130,6 +131,8 @@ import { SpaHistoryFallbackMiddleware } from './modules/base/middleware/spaHisto
     // rpc,
     // 任务与队列
     task,
+    // socketio 即时通讯
+    socketio,
     {
       component: info,
       enabledEnvironment: ['local', 'prod'],

@@ -91,11 +91,7 @@ import { CollectionLogService } from '../../service/collection_log';
   api: ['page', 'info', 'delete'],
   entity: CollectionLogEntity,
   service: CollectionLogService,
-  serviceApis: [
-    'clear',
-    'setKeep',
-    'getKeep',
-  ],
+  serviceApis: ['clear', 'setKeep', 'getKeep'],
   pageQueryOp: {
     keyWordLikeFields: ['collection_name', 'error_message', 'request_url'],
     fieldEq: ['collection_id', 'status', 'task_type', 'page'],

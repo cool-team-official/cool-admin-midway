@@ -82,16 +82,16 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import {BaseController, CoolController} from '@cool-midway/core';
-import {Body, Inject, Post} from '@midwayjs/core';
-import {MemberEntity} from '../../entity/member';
-import {MemberService} from '../../service/member';
+import { BaseController, CoolController } from '@cool-midway/core';
+import { Body, Inject, Post } from '@midwayjs/core';
+import { MemberEntity } from '../../entity/member';
+import { MemberService } from '../../service/member';
 
 /**
  * 会员控制器
  */
 @CoolController({
-  api: [ 'info', 'list', 'page'],
+  api: ['info', 'list', 'page'],
   entity: MemberEntity,
   insertParam: ctx => {
     return {
@@ -100,7 +100,7 @@ import {MemberService} from '../../service/member';
   },
   pageQueryOp: {
     where: async ctx => {
-      return [['createUserId =:createUserId', {createUserId: ctx.user.id}]];
+      return [['createUserId =:createUserId', { createUserId: ctx.user.id }]];
     },
   },
 })
@@ -115,19 +115,22 @@ export class AppUserMemberController extends BaseController {
    * 积分兑换会员（简化版）
    * @param userMmemberExchangeId
    */
-  @Post('/exchangeByScore', {summary: '积分兑换会员'})
+  @Post('/exchangeByScore', { summary: '积分兑换会员' })
   async exchangeByScore(
     @Body('userMmemberExchangeId') userMmemberExchangeId: number
   ) {
     return this.ok(
-      await this.memberService.exchangeByScore(this.ctx.user.id, userMmemberExchangeId)
+      await this.memberService.exchangeByScore(
+        this.ctx.user.id,
+        userMmemberExchangeId
+      )
     );
   }
 
   /**
    * 检查用户是否是有效会员
    */
-  @Post('/isValidMember', {summary: '检查用户是否是有效会员'})
+  @Post('/isValidMember', { summary: '检查用户是否是有效会员' })
   async isValidMember() {
     return this.ok({
       isValidMember: await this.memberService.isValidMember(this.ctx.user.id),

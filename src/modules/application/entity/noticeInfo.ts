@@ -99,7 +99,7 @@ export class NoticeInfoEntity extends BaseEntity {
   @Column({
     comment: '类型',
     dict: ['系统公告', '版本更新', '活动通知'],
-    default: 0
+    default: 0,
   })
   type: number;
 

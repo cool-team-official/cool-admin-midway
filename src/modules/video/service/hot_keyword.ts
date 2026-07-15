@@ -113,7 +113,8 @@ export class HotKeywordService extends BaseService {
     try {
       // 获取字典数据
       const dictData = await this.dictInfoService.data(['video_category']);
-      const videoCategoryEntityList: DictInfoEntity[] = dictData['video_category'] || [];
+      const videoCategoryEntityList: DictInfoEntity[] =
+        dictData['video_category'] || [];
 
       if (!videoCategoryEntityList || videoCategoryEntityList.length === 0) {
         this.logger.debug(this.TAG, '视频分类数据为空');
@@ -121,7 +122,9 @@ export class HotKeywordService extends BaseService {
       }
 
       // 提取所有分类ID
-      const categoryIds = videoCategoryEntityList.map(item => item.id).filter(id => id);
+      const categoryIds = videoCategoryEntityList
+        .map(item => item.id)
+        .filter(id => id);
 
       if (categoryIds.length === 0) {
         this.logger.debug(this.TAG, '没有有效的分类ID');
@@ -164,7 +167,10 @@ export class HotKeywordService extends BaseService {
         })
         .filter(item => item.list.length > 0);
 
-      this.logger.debug(this.TAG, `获取视频热门关键词成功，共${videoHotWordsList.length}个分类`);
+      this.logger.debug(
+        this.TAG,
+        `获取视频热门关键词成功，共${videoHotWordsList.length}个分类`
+      );
       return { list: videoHotWordsList };
     } catch (error) {
       this.logger.error(this.TAG, '获取视频热门关键词失败', error);

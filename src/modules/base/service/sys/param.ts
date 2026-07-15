@@ -139,7 +139,7 @@ export class BaseSysParamService extends BaseService {
     try {
       info.data = JSON.parse(info.data.replace(/{/g, '[').replace(/}/g, ']'));
     } catch (error) {
-      info.data = info.data;
+      // info.data = info.data;
     }
     return info;
   }

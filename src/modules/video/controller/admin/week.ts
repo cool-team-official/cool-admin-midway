@@ -82,9 +82,9 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import {BaseController, CoolController} from '@cool-midway/core';
-import {WeekEntity} from '../../entity/week';
-import {VideoEntity} from '../../entity/videos';
+import { BaseController, CoolController } from '@cool-midway/core';
+import { WeekEntity } from '../../entity/week';
+import { VideoEntity } from '../../entity/videos';
 
 /**
  *
@@ -95,7 +95,7 @@ import {VideoEntity} from '../../entity/videos';
   insertParam: ctx => {
     return {
       // 获得当前登录的后台用户ID，需要请求头传Authorization参数
-      createUserId: ctx.admin.userId
+      createUserId: ctx.admin.userId,
     };
   },
   pageQueryOp: {
@@ -144,17 +144,16 @@ import {VideoEntity} from '../../entity/videos';
       'b.collection_name',
       'b.sub_title',
       'b.video_tag',
-      'b.video_class'
+      'b.video_class',
     ],
     join: [
       {
         entity: VideoEntity,
         alias: 'b',
         condition: 'a.videoId = b.id',
-        type: 'innerJoin'
-      }
-    ]
-  }
+        type: 'innerJoin',
+      },
+    ],
+  },
 })
-export class AdminWeekController extends BaseController {
-}
+export class AdminWeekController extends BaseController {}

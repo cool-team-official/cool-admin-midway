@@ -125,9 +125,7 @@ export class PluginAppEvent {
       await this.midwayCache.set(PLUGIN_CACHE_KEY, []);
     } catch (error) {
       // Redis可能是只读副本，写入失败时记录警告但不中断启动
-      this.coreLogger.warn(
-        `Redis写入失败，可能是只读副本: ${error.message}`
-      );
+      this.coreLogger.warn(`Redis写入失败，可能是只读副本: ${error.message}`);
     }
     this.pluginCenterService.init();
     // this.pluginTypesService.reGenerate();

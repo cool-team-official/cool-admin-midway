@@ -82,23 +82,30 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import {App, ILogger, IMidwayApplication, Inject, InjectClient, Provide} from '@midwayjs/core';
-import {InjectEntityModel} from '@midwayjs/typeorm';
-import {In, Repository} from 'typeorm';
-import {RedisService} from '@midwayjs/redis';
-import {CollectionEntity} from '../entity/collection';
-import {CollectionCategoryEntity} from '../entity/collection_category';
-import {VIDEOPARAMS, VideoParams} from '../bean/VideoParams';
-import {ConcurrencyService} from '../service/concurrencyService';
-import {CategoryService} from '../service/categoryService';
-import {VideoEntity} from '../entity/videos';
-import {VideoLineService} from './videoLine';
-import {NetworkErrorHandler} from './networkErrorHandler';
-import {PlayLineService} from './play_line';
-import {VideoRulesEntity} from '../entity/video_rules';
-import {VideosService} from './videos';
-import {BaseService} from '../../base/service/base';
-import {CachingFactory, MidwayCache} from '@midwayjs/cache-manager';
+import {
+  App,
+  ILogger,
+  IMidwayApplication,
+  Inject,
+  InjectClient,
+  Provide,
+} from '@midwayjs/core';
+import { InjectEntityModel } from '@midwayjs/typeorm';
+import { In, Repository } from 'typeorm';
+import { RedisService } from '@midwayjs/redis';
+import { CollectionEntity } from '../entity/collection';
+import { CollectionCategoryEntity } from '../entity/collection_category';
+import { VIDEOPARAMS, VideoParams } from '../bean/VideoParams';
+import { ConcurrencyService } from '../service/concurrencyService';
+import { CategoryService } from '../service/categoryService';
+import { VideoEntity } from '../entity/videos';
+import { VideoLineService } from './videoLine';
+import { NetworkErrorHandler } from './networkErrorHandler';
+import { PlayLineService } from './play_line';
+import { VideoRulesEntity } from '../entity/video_rules';
+import { VideosService } from './videos';
+import { BaseService } from '../../base/service/base';
+import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 
 const TAG = 'CollectionService';
 
@@ -155,6 +162,9 @@ export class CollectionService extends BaseService {
   // 是否正在处理采集队列
   private collectionProcessing = false;
 
+  // 后台采集处理错误，由任务队列在等待完成时统一抛出
+  private collectionProcessingError: Error | null = null;
+
   // 单次处理的最大数量，防止长时间阻塞
   private readonly maxProcessPerBatch = 500;
 
@@ -170,7 +180,7 @@ export class CollectionService extends BaseService {
    * 然后调用syncVideo方法，并传入操作类型'day'和小时数24。
    */
   async day(id: number): Promise<void> {
-    const collectionEntity = await this.collectionEntity.findOneBy({id});
+    const collectionEntity = await this.collectionEntity.findOneBy({ id });
     if (!collectionEntity) {
       this.logger.warn(TAG, `未找到ID为 ${id} 的集合实体`);
       return;
@@ -182,7 +192,7 @@ export class CollectionService extends BaseService {
   }
 
   async week(id: number): Promise<void> {
-    const collectionEntity = await this.collectionEntity.findOneBy({id});
+    const collectionEntity = await this.collectionEntity.findOneBy({ id });
     if (!collectionEntity) {
       this.logger.warn(TAG, `未找到ID为 ${id} 的集合实体`);
       return;
@@ -198,20 +208,22 @@ export class CollectionService extends BaseService {
       this.logger.warn(TAG, '关键词列表为空');
       return;
     }
-    
-    const collectionEntityList = await this.collectionEntity.findBy({isKeyWord: 1});
+
+    const collectionEntityList = await this.collectionEntity.findBy({
+      isKeyWord: 1,
+    });
     if (collectionEntityList.length === 0) {
       this.logger.warn(TAG, '没有配置关键词采集的集合');
       return;
     }
-    
+
     // 使用Promise.all并发处理，提高效率
     const promises = keyWord.flatMap(item =>
       collectionEntityList.map(collectionEntity =>
-        this.syncVideo(collectionEntity, {wd: item})
+        this.syncVideo(collectionEntity, { wd: item })
       )
     );
-    
+
     await Promise.all(promises);
   }
 
@@ -234,8 +246,8 @@ export class CollectionService extends BaseService {
     try {
       // 获取需要处理的视频列表
       const find = this.videoEntity.createQueryBuilder();
-      find.where('play_url_put_in = :play_url_put_in', {play_url_put_in: 0});
-      const data = await this.entityRenderPage(find, {page: 1, size: 10});
+      find.where('play_url_put_in = :play_url_put_in', { play_url_put_in: 0 });
+      const data = await this.entityRenderPage(find, { page: 1, size: 10 });
 
       // 处理播放线路可访问性检查
       await this.processPlayLinesAccessibility();
@@ -277,7 +289,11 @@ export class CollectionService extends BaseService {
       // 检查每个播放线路的链接是否可访问
       for (const playLine of playLines) {
         if (playLine.id && playLine.file) {
-          await this.checkPlayLineAccessibility(playLine, idsToDisable, idsToEnable);
+          await this.checkPlayLineAccessibility(
+            playLine,
+            idsToDisable,
+            idsToEnable
+          );
         }
       }
 
@@ -309,7 +325,9 @@ export class CollectionService extends BaseService {
     idsToEnable: number[]
   ): Promise<void> {
     try {
-      const isAccessible = await this.playLineService.isUrlAccessible(playLine.file);
+      const isAccessible = await this.playLineService.isUrlAccessible(
+        playLine.file
+      );
 
       // 根据访问结果收集需要更新的ID
       if (!isAccessible) {
@@ -326,7 +344,7 @@ export class CollectionService extends BaseService {
       // 发生错误时也禁用线路
       idsToDisable.push(playLine.id);
     }
-    
+
     // 每处理一条记录后稍微延迟，避免请求过于频繁
     await this.sleep(50);
   }
@@ -340,8 +358,8 @@ export class CollectionService extends BaseService {
   ): Promise<void> {
     if (idsToDisable.length > 0) {
       await this.playLineService.playLineEntity.update(
-        {id: In(idsToDisable)},
-        {status: 0}
+        { id: In(idsToDisable) },
+        { status: 0 }
       );
       this.logger.warn(
         TAG,
@@ -351,8 +369,8 @@ export class CollectionService extends BaseService {
 
     if (idsToEnable.length > 0) {
       await this.playLineService.playLineEntity.update(
-        {id: In(idsToEnable)},
-        {status: 1}
+        { id: In(idsToEnable) },
+        { status: 1 }
       );
       this.logger.info(
         TAG,
@@ -364,7 +382,9 @@ export class CollectionService extends BaseService {
   /**
    * 处理视频播放线路插入
    */
-  private async processVideoLinesInsert(videoEntities: VideoEntity[]): Promise<void> {
+  private async processVideoLinesInsert(
+    videoEntities: VideoEntity[]
+  ): Promise<void> {
     for (const videoEntity of videoEntities) {
       let collectionEntity = await this.collectionEntity.findOneBy({
         id: videoEntity.collection_id,
@@ -397,7 +417,9 @@ export class CollectionService extends BaseService {
     try {
       // 构建请求参数和URL
       const defaultParams = new VideoParams(params ? params : {});
-      const requestUrl = `${collectionEntity.address}?${defaultParams.getQueryString()}`;
+      const requestUrl = `${
+        collectionEntity.address
+      }?${defaultParams.getQueryString()}`;
 
       // 使用网络错误处理器进行请求
       const result = await this.networkErrorHandler.requestWithRetry(
@@ -416,7 +438,7 @@ export class CollectionService extends BaseService {
       const total: number = result.data.total;
 
       // 从 params 中提取参数，保留所有原始参数
-      const baseParams: VIDEOPARAMS = params ? {...params} : {};
+      const baseParams: VIDEOPARAMS = params ? { ...params } : {};
       let page = params?.page || 0;
 
       // 批量收集数据后一次性推送到Redis，大幅提升性能
@@ -493,9 +515,13 @@ export class CollectionService extends BaseService {
   /**
    * 处理同步视频时的错误
    */
-  private handleSyncVideoError(error: any, collectionEntity: CollectionEntity): void {
+  private handleSyncVideoError(
+    error: any,
+    collectionEntity: CollectionEntity
+  ): void {
     if (this.networkErrorHandler.isNetworkError(error)) {
-      const errorDetails = this.networkErrorHandler.getNetworkErrorDetails(error);
+      const errorDetails =
+        this.networkErrorHandler.getNetworkErrorDetails(error);
       this.logger.error(TAG, `采集失败 - ${errorDetails}`);
 
       // 记录采集源状态
@@ -506,7 +532,7 @@ export class CollectionService extends BaseService {
         );
       }
     } else {
-      this.logger.error(TAG, `采集异常:`, error);
+      this.logger.error(TAG, '采集异常:', error);
     }
   }
 
@@ -518,13 +544,46 @@ export class CollectionService extends BaseService {
   }
 
   /**
+   * 等待后台采集处理完成，包含当前正在处理的数据。
+   */
+  async waitForCollectionCompletion(): Promise<void> {
+    const deadline = Date.now() + this.REDIS_EXPIRY * 1000;
+
+    while (
+      this.collectionProcessing ||
+      (await this.redisService.exists('video:collection'))
+    ) {
+      if (this.collectionProcessingError) {
+        const error = this.collectionProcessingError;
+        this.collectionProcessingError = null;
+        throw error;
+      }
+
+      if (Date.now() >= deadline) {
+        throw new Error('等待后台采集处理完成超时');
+      }
+
+      await this.sleep(500);
+    }
+
+    if (this.collectionProcessingError) {
+      const error = this.collectionProcessingError;
+      this.collectionProcessingError = null;
+      throw error;
+    }
+  }
+
+  /**
    * 修改之后的处理逻辑
    * @param data - 修改的数据
    * @param type - 修改类型
    */
-  async modifyAfter(data: any, type: 'delete' | 'update' | 'add'): Promise<void> {
+  async modifyAfter(
+    data: any,
+    type: 'delete' | 'update' | 'add'
+  ): Promise<void> {
     this.logger.debug(TAG, '插入数据成功');
-    
+
     switch (type) {
       case 'add':
         await this.handleAddOperation(data);
@@ -621,11 +680,12 @@ export class CollectionService extends BaseService {
       return;
     }
     this.collectionProcessing = true;
+    this.collectionProcessingError = null;
 
     const runner = this.app as unknown as {
       runInBackground?: (fn: () => Promise<void>) => void;
     };
-    const runBackground = 
+    const runBackground =
       typeof runner?.runInBackground === 'function'
         ? runner.runInBackground.bind(runner)
         : (fn: () => Promise<void>) => setImmediate(fn);
@@ -641,9 +701,16 @@ export class CollectionService extends BaseService {
         // 循环处理，但限制单次处理的数量和时间
         while (await this.redisService.exists('video:collection')) {
           // 检查是否超出处理限制
-          if (processedCount >= this.maxProcessPerBatch ||
-            Date.now() - startTime > this.maxProcessTimePerBatch) {
-            this.logger.info(TAG, `达到单次处理限制，已处理: ${processedCount} 项，用时: ${Date.now() - startTime}ms`);
+          if (
+            processedCount >= this.maxProcessPerBatch ||
+            Date.now() - startTime > this.maxProcessTimePerBatch
+          ) {
+            this.logger.info(
+              TAG,
+              `达到单次处理限制，已处理: ${processedCount} 项，用时: ${
+                Date.now() - startTime
+              }ms`
+            );
 
             // 短暂延迟后重新调度，让其他任务有机会执行
             setTimeout(() => {
@@ -653,7 +720,8 @@ export class CollectionService extends BaseService {
             return; // 结束当前处理函数
           }
 
-          const handledCount = await this.concurrencyService.syncVideoPageList();
+          const handledCount =
+            await this.concurrencyService.syncVideoPageList();
           if (handledCount === 0) {
             break;
           }
@@ -664,6 +732,8 @@ export class CollectionService extends BaseService {
         await this.checkMemoryUsage();
       } catch (error) {
         this.logger.error(TAG, '后台采集任务异常', error);
+        this.collectionProcessingError =
+          error instanceof Error ? error : new Error(String(error));
       } finally {
         this.collectionProcessing = false;
       }

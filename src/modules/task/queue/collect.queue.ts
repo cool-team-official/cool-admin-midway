@@ -97,7 +97,17 @@ import { Repository } from 'typeorm';
  * 采集任务队列
  * 使用 BullMQ 实现异步队列处理，不阻塞主线程
  */
-@CoolQueue()
+@CoolQueue({
+  type: 'single',
+  queue: {
+    attempts: 1,
+    removeOnComplete: { age: 3600, count: 1000 },
+    removeOnFail: { age: 604800, count: 1000 },
+  },
+  worker: {
+    concurrency: 1,
+  },
+})
 export class CollectQueue extends BaseCoolQueue {
   @App()
   app: IMidwayApplication;
@@ -125,181 +135,157 @@ export class CollectQueue extends BaseCoolQueue {
    * 在独立进程中执行，不阻塞主线程
    */
   async data(job: any, done: any): Promise<void> {
-    const { taskType, taskId } = job.data;
+    const { taskType, taskId: dataTaskId, collectionId, keyWord } = job.data;
+    const taskId = dataTaskId ?? job.id;
     const TAG = 'CollectQueue';
 
     try {
-      this.logger.info(TAG, `开始执行任务: ${taskType}`);
+      this.logger.info(TAG, `开始执行任务: ${taskType}, 任务ID: ${taskId}`);
 
       switch (taskType) {
         case 'startCollection':
-          await this.handleStartCollection(taskId);
+          await this.handleStartCollection();
           break;
         case 'dayAllCollections':
-          await this.handleDayAllCollections(taskId);
+          await this.handleDayAllCollections(collectionId);
           break;
         case 'filterTask':
-          await this.handleFilterTask(taskId);
+          await this.handleFilterTask();
           break;
         case 'playLineTask':
-          await this.handlePlayLineTask(taskId);
+          await this.handlePlayLineTask();
+          break;
+        case 'singleCollection':
+          await this.handleSingleCollection(collectionId);
+          break;
+        case 'keyWordCollection':
+          await this.handleKeyWordCollection(keyWord);
           break;
         default:
-          this.logger.warn(TAG, `未知任务类型: ${taskType}`);
+          throw new Error(`未知任务类型: ${taskType}`);
       }
 
-      this.logger.info(TAG, `任务执行完成: ${taskType}`);
+      this.logger.info(TAG, `任务执行完成: ${taskType}, 任务ID: ${taskId}`);
+      await this.recordTaskLog(taskId, 1, 'success');
       done();
     } catch (error) {
       this.logger.error(TAG, `任务执行失败 [${taskType}]:`, error);
 
-      // 记录失败日志
-      await this.taskLogEntity.insert({
-        detail: error.message || 'error',
-        status: 0,
-        taskId: taskId,
-      });
+      await this.recordTaskLog(taskId, 0, error.message || 'error');
 
-      // 抛出错误让队列自动重试（默认重试5次）
+      // 抛出错误让队列按配置处理失败任务
       throw error;
+    }
+  }
+
+  private async recordTaskLog(
+    taskId: number,
+    status: number,
+    detail: string
+  ): Promise<void> {
+    try {
+      await this.taskLogEntity.insert({
+        detail,
+        status,
+        taskId,
+      });
+    } catch (error) {
+      this.logger.error('CollectQueue', '记录采集任务日志失败:', error);
     }
   }
 
   /**
    * 处理启动采集任务
    */
-  private async handleStartCollection(taskId: number): Promise<void> {
-    try {
-      await this.collectionService.startCollection();
-      await this.taskLogEntity.insert({
-        detail: 'success',
-        status: 1,
-        taskId: taskId,
-      });
-    } catch (error) {
-      await this.taskLogEntity.insert({
-        detail: error.message || 'error',
-        status: 0,
-        taskId: taskId,
-      });
-      throw error;
-    }
+  private async handleStartCollection(): Promise<void> {
+    await this.collectionService.startCollection();
+    await this.collectionService.waitForCollectionCompletion();
   }
 
   /**
    * 处理所有采集源的日常任务
    * 分批处理，每批并发执行
    */
-  private async handleDayAllCollections(taskId: number): Promise<void> {
-    try {
-      const allCollections = await this.collectionEntity.find({
-        select: ['id', 'name'],
-      });
+  private async handleDayAllCollections(
+    filterCollectionId?: number
+  ): Promise<void> {
+    // 如果指定了采集源ID，只处理该采集源
+    const allCollections = filterCollectionId
+      ? await this.collectionEntity.findBy({ id: filterCollectionId })
+      : await this.collectionEntity.find({ select: ['id', 'name'] });
 
-      if (!allCollections || allCollections.length === 0) {
-        this.logger.info('CollectQueue', '没有找到任何采集源');
-        return;
-      }
-
-      this.logger.info(
-        'CollectQueue',
-        `找到 ${allCollections.length} 个采集源，开始分批处理`
-      );
-
-      // 分批处理，避免内存占用过高
-      for (let i = 0; i < allCollections.length; i += this.BATCH_SIZE) {
-        const batch = allCollections.slice(i, i + this.BATCH_SIZE);
-
-        this.logger.info(
-          'CollectQueue',
-          `处理第 ${Math.floor(i / this.BATCH_SIZE) + 1} 批次，包含 ${batch.length} 个采集源`
-        );
-
-        // 并发处理当前批次
-        const promises = batch.map(collection =>
-          this.processSingleCollection(collection.id, collection.name)
-        );
-
-        await Promise.all(promises);
-      }
-
-      this.logger.info(
-        'CollectQueue',
-        `所有 ${allCollections.length} 个采集源处理完成`
-      );
-
-      await this.taskLogEntity.insert({
-        detail: 'success',
-        status: 1,
-        taskId: taskId,
-      });
-    } catch (error) {
-      await this.taskLogEntity.insert({
-        detail: error.message || 'error',
-        status: 0,
-        taskId: taskId,
-      });
-      throw error;
+    if (!allCollections || allCollections.length === 0) {
+      this.logger.info('CollectQueue', '没有找到任何采集源');
+      return;
     }
+
+    this.logger.info(
+      'CollectQueue',
+      `找到 ${allCollections.length} 个采集源，开始分批处理`
+    );
+
+    const failedCollections: string[] = [];
+    for (let i = 0; i < allCollections.length; i += this.BATCH_SIZE) {
+      const batch = allCollections.slice(i, i + this.BATCH_SIZE);
+      const results = await Promise.allSettled(
+        batch.map(collection => this.collectionService.day(collection.id))
+      );
+
+      results.forEach((result, index) => {
+        if (result.status === 'rejected') {
+          const collection = batch[index];
+          const detail = result.reason?.message || String(result.reason);
+          failedCollections.push(`${collection.name}: ${detail}`);
+          this.logger.error(
+            'CollectQueue',
+            `处理采集源 [${collection.id}] ${collection.name} 时发生错误:`,
+            result.reason
+          );
+        }
+      });
+    }
+
+    if (failedCollections.length > 0) {
+      throw new Error(
+        `采集源处理失败 (${failedCollections.length}): ${failedCollections.join(
+          '; '
+        )}`
+      );
+    }
+
+    this.logger.info('CollectQueue', '所有采集源数据已推送，等待数据入库...');
+    await this.collectionService.waitForCollectionCompletion();
+    this.logger.info('CollectQueue', '所有数据入库完成');
   }
 
   /**
-   * 处理单个采集源
+   * 处理单个采集源的任务
    */
-  private async processSingleCollection(id: number, name: string): Promise<void> {
-    try {
-      await this.collectionService.day(id);
-    } catch (error) {
-      this.logger.error(
-        'CollectQueue',
-        `处理采集源 [${id}] ${name} 时发生错误:`,
-        error
-      );
-      // 不抛出错误，让其他采集源继续处理
-    }
+  private async handleSingleCollection(collectionId: number): Promise<void> {
+    await this.collectionService.day(collectionId);
+    await this.collectionService.waitForCollectionCompletion();
   }
 
   /**
    * 处理过滤任务
    */
-  private async handleFilterTask(taskId: number): Promise<void> {
-    try {
-      const SQLQuery =
-        'UPDATE video v SET play_url_put_in = CASE WHEN EXISTS (SELECT 1 FROM video_line vl WHERE vl.video_id = v.id) THEN 1 ELSE 0 END;';
-      await this.collectionEntity.query(SQLQuery);
-      await this.taskLogEntity.insert({
-        detail: 'success',
-        status: 1,
-        taskId: taskId,
-      });
-    } catch (error) {
-      await this.taskLogEntity.insert({
-        detail: error.message || 'error',
-        status: 0,
-        taskId: taskId,
-      });
-      throw error;
-    }
+  private async handleFilterTask(): Promise<void> {
+    const SQLQuery =
+      'UPDATE video v SET play_url_put_in = CASE WHEN EXISTS (SELECT 1 FROM video_line vl WHERE vl.video_id = v.id) THEN 1 ELSE 0 END;';
+    await this.collectionEntity.query(SQLQuery);
   }
 
   /**
    * 处理播放线路任务
    */
-  private async handlePlayLineTask(taskId: number): Promise<void> {
-    try {
-      await this.playLineService.merge();
-      await this.taskLogEntity.insert({
-        detail: 'success',
-        status: 1,
-        taskId: taskId,
-      });
-    } catch (error) {
-      await this.taskLogEntity.insert({
-        detail: error.message || 'error',
-        status: 0,
-        taskId: taskId,
-      });
-      throw error;
-    }
+  private async handlePlayLineTask(): Promise<void> {
+    await this.playLineService.merge();
+  }
+
+  /**
+   * 处理关键字采集任务
+   */
+  private async handleKeyWordCollection(keyWord: string[]): Promise<void> {
+    await this.collectionService.asyncKeyWord(keyWord);
   }
 }

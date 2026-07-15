@@ -117,11 +117,12 @@ export class CoffeeApiUtil {
       baseURL: this.baseUrl,
       timeout: this.timeout,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Accept': 'application/json, text/plain, */*',
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        Accept: 'application/json, text/plain, */*',
         'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
       },
-      validateStatus: (status) => status >= 200 && status < 300,
+      validateStatus: status => status >= 200 && status < 300,
     });
   }
 
@@ -148,11 +149,11 @@ export class CoffeeApiUtil {
   ): Promise<AxiosResponse<any>> {
     const apiKey = key || this.defaultKey;
     const requestUrl = this.buildUrl(apiKey, url);
-    
+
     const config: AxiosRequestConfig = {
       method: 'GET',
       url: requestUrl,
-      ...options
+      ...options,
     };
 
     return await this.axiosClient.request(config);
@@ -173,12 +174,12 @@ export class CoffeeApiUtil {
   ): Promise<AxiosResponse<any>> {
     const apiKey = key || this.defaultKey;
     const requestUrl = this.buildUrl(apiKey, url);
-    
+
     const config: AxiosRequestConfig = {
       method: 'POST',
       url: requestUrl,
       data,
-      ...options
+      ...options,
     };
 
     return await this.axiosClient.request(config);
@@ -192,7 +193,7 @@ export class CoffeeApiUtil {
   async head(url: string, key?: string): Promise<boolean> {
     const apiKey = key || this.defaultKey;
     const requestUrl = this.buildUrl(apiKey, url);
-    
+
     try {
       await this.axiosClient.head(requestUrl, { timeout: 5000 });
       return true;
@@ -200,5 +201,4 @@ export class CoffeeApiUtil {
       return false;
     }
   }
-
 }

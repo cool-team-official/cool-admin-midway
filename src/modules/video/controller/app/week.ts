@@ -82,9 +82,14 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import {BaseController, CoolController, CoolUrlTag, TagTypes} from '@cool-midway/core';
-import {WeekEntity} from '../../entity/week';
-import {VideoEntity} from '../../entity/videos';
+import {
+  BaseController,
+  CoolController,
+  CoolUrlTag,
+  TagTypes,
+} from '@cool-midway/core';
+import { WeekEntity } from '../../entity/week';
+import { VideoEntity } from '../../entity/videos';
 
 /**
  *
@@ -139,24 +144,23 @@ import {VideoEntity} from '../../entity/videos';
       'b.collection_name',
       'b.sub_title',
       'b.video_tag',
-      'b.video_class'
+      'b.video_class',
     ],
     join: [
       {
         entity: VideoEntity,
         alias: 'b',
         condition: 'a.videoId = b.id',
-        type: 'innerJoin'
-      }
+        type: 'innerJoin',
+      },
     ],
     addOrderBy: {
-      sort: 'desc'
-    }
-  }
+      sort: 'desc',
+    },
+  },
 })
 @CoolUrlTag({
   key: TagTypes.IGNORE_TOKEN,
-  value: ['page', 'info']
+  value: ['page', 'info'],
 })
-export class AppWeekController extends BaseController {
-}
+export class AppWeekController extends BaseController {}

@@ -178,9 +178,7 @@ export class VideosService extends BaseService {
   /**
    * 排序查询
    */
-  async sort(
-    query: any
-  ): Promise<{
+  async sort(query: any): Promise<{
     list: VideoEntity[];
     pagination: { page: number; size: number };
   }> {

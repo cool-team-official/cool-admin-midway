@@ -82,16 +82,16 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import {BaseService} from '@cool-midway/core';
-import {InjectEntityModel} from '@midwayjs/typeorm';
-import {In, Repository} from 'typeorm';
-import {ILogger, Inject, InjectClient, Provide} from '@midwayjs/core';
-import {PlayLineEntity} from '../entity/play_line';
-import {Line} from '../bean/SourceVideo';
+import { BaseService } from '@cool-midway/core';
+import { InjectEntityModel } from '@midwayjs/typeorm';
+import { In, Repository } from 'typeorm';
+import { ILogger, Inject, InjectClient, Provide } from '@midwayjs/core';
+import { PlayLineEntity } from '../entity/play_line';
+import { Line } from '../bean/SourceVideo';
 import axios from 'axios';
-import {VideoLineEntity} from '../entity/video_line';
-import {playFileMergeSQL} from "./play_file_merge";
-import {CachingFactory, MidwayCache} from '@midwayjs/cache-manager';
+import { VideoLineEntity } from '../entity/video_line';
+import { playFileMergeSQL } from './play_file_merge';
+import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 
 const TAG = 'PlayLineService';
 
@@ -118,7 +118,9 @@ export class PlayLineService extends BaseService {
    * @param playLines 播放线路数据数组
    * @returns 插入结果统计
    */
-  async batchInsert(playLines: Line[]): Promise<{ successCount: number; skipCount: number }> {
+  async batchInsert(
+    playLines: Line[]
+  ): Promise<{ successCount: number; skipCount: number }> {
     if (!playLines || playLines.length === 0) {
       return { successCount: 0, skipCount: 0 };
     }
@@ -135,23 +137,35 @@ export class PlayLineService extends BaseService {
 
       this.logger.info(TAG, `开始批量插入播放线路，总计 ${totalLines} 条`);
 
-      const cacheKeyPrefix = `playLine:file:`;
+      const cacheKeyPrefix = 'playLine:file:';
 
       for (let i = 0; i < playLines.length; i += this.BATCH_SIZE) {
-        const batch = playLines.slice(i, Math.min(i + this.BATCH_SIZE, playLines.length));
+        const batch = playLines.slice(
+          i,
+          Math.min(i + this.BATCH_SIZE, playLines.length)
+        );
         const batchNum = Math.floor(i / this.BATCH_SIZE) + 1;
         const totalBatches = Math.ceil(playLines.length / this.BATCH_SIZE);
 
-        this.logger.info(TAG, `处理第 ${batchNum}/${totalBatches} 批，本批 ${batch.length} 条`);
+        this.logger.info(
+          TAG,
+          `处理第 ${batchNum}/${totalBatches} 批，本批 ${batch.length} 条`
+        );
 
         const batchResult = await this.processBatch(batch, cacheKeyPrefix);
         successCount += batchResult.successCount;
         skipCount += batchResult.skipCount;
 
-        this.logger.info(TAG, `第 ${batchNum}/${totalBatches} 批处理完成，成功 ${batchResult.successCount} 条，跳过 ${batchResult.skipCount} 条`);
+        this.logger.info(
+          TAG,
+          `第 ${batchNum}/${totalBatches} 批处理完成，成功 ${batchResult.successCount} 条，跳过 ${batchResult.skipCount} 条`
+        );
       }
 
-      this.logger.info(TAG, `批量插入播放线路完成，总计成功 ${successCount} 条，跳过 ${skipCount} 条`);
+      this.logger.info(
+        TAG,
+        `批量插入播放线路完成，总计成功 ${successCount} 条，跳过 ${skipCount} 条`
+      );
     } catch (error) {
       this.logger.error(TAG, '批量插入播放线路异常', error);
       throw error;
@@ -160,18 +174,29 @@ export class PlayLineService extends BaseService {
     return { successCount, skipCount };
   }
 
-  private async processBatch(batch: Line[], cacheKeyPrefix: string): Promise<{ successCount: number; skipCount: number }> {
+  private async processBatch(
+    batch: Line[],
+    cacheKeyPrefix: string
+  ): Promise<{ successCount: number; skipCount: number }> {
     let successCount = 0;
     let skipCount = 0;
 
     const validPlayLines: Line[] = [];
 
     for (let i = 0; i < batch.length; i += this.CACHE_CHECK_BATCH_SIZE) {
-      const checkBatch = batch.slice(i, Math.min(i + this.CACHE_CHECK_BATCH_SIZE, batch.length));
+      const checkBatch = batch.slice(
+        i,
+        Math.min(i + this.CACHE_CHECK_BATCH_SIZE, batch.length)
+      );
 
       const checkResults = await Promise.allSettled(
-        checkBatch.map(async (data) => {
-          if (!data || !data.video_line_id || data.video_line_id === null || data.video_line_id === undefined) {
+        checkBatch.map(async data => {
+          if (
+            !data ||
+            !data.video_line_id ||
+            data.video_line_id === null ||
+            data.video_line_id === undefined
+          ) {
             return { valid: false, reason: 'invalid_video_line_id' };
           }
 
@@ -222,16 +247,19 @@ export class PlayLineService extends BaseService {
     }));
 
     try {
-      const upsertResult = await this.playLineEntity.upsert(
-        playLineData,
-        ['file']
-      );
+      const upsertResult = await this.playLineEntity.upsert(playLineData, [
+        'file',
+      ]);
 
       if (upsertResult.identifiers && upsertResult.identifiers.length > 0) {
         successCount = upsertResult.identifiers.length;
 
-        const cachePromises = validPlayLines.map(data => 
-          this.midwayCache.set(`${cacheKeyPrefix}${data.file}`, true, this.CACHE_TTL)
+        const cachePromises = validPlayLines.map(data =>
+          this.midwayCache.set(
+            `${cacheKeyPrefix}${data.file}`,
+            true,
+            this.CACHE_TTL
+          )
         );
         await Promise.allSettled(cachePromises);
       }
@@ -251,7 +279,11 @@ export class PlayLineService extends BaseService {
             if (this.isDuplicateKeyError(singleError)) {
               skipCount++;
             } else {
-              this.logger.error(TAG, `插入播放线路失败: ${data.file}`, singleError);
+              this.logger.error(
+                TAG,
+                `插入播放线路失败: ${data.file}`,
+                singleError
+              );
             }
           }
         }
@@ -267,9 +299,11 @@ export class PlayLineService extends BaseService {
    * 判断是否为重复键错误
    */
   private isDuplicateKeyError(error: any): boolean {
-    return error.code === 'ER_DUP_ENTRY' || 
-           error.errno === 1062 ||
-           (error.message && error.message.includes('Duplicate entry'));
+    return (
+      error.code === 'ER_DUP_ENTRY' ||
+      error.errno === 1062 ||
+      (error.message && error.message.includes('Duplicate entry'))
+    );
   }
 
   /**
@@ -283,7 +317,11 @@ export class PlayLineService extends BaseService {
 
     // 如果 data.video_line_id 不存在或无效，就不执行以下逻辑
     // 使用严格检查：null、undefined、0 都视为无效
-    if (!data.video_line_id || data.video_line_id === null || data.video_line_id === undefined) {
+    if (
+      !data.video_line_id ||
+      data.video_line_id === null ||
+      data.video_line_id === undefined
+    ) {
       return;
     }
 
@@ -305,7 +343,7 @@ export class PlayLineService extends BaseService {
     try {
       // 先检查是否存在相同 file 的记录
       const existing = await this.playLineEntity.findOne({
-        where: {file: data.file},
+        where: { file: data.file },
       });
 
       if (existing) {
@@ -321,9 +359,9 @@ export class PlayLineService extends BaseService {
           sort: data.sort,
           collection_id: data.collection_id,
           collection_name: data.collection_name,
-          video_line_id: data.video_line_id
+          video_line_id: data.video_line_id,
         };
-        await this.playLineEntity.update({file: data.file}, updateData);
+        await this.playLineEntity.update({ file: data.file }, updateData);
         this.logger.info(
           TAG,
           `update ${data.collection_name} ${data.video_name} ${data.name} video_line_id ${data.video_line_id}  success`
@@ -341,8 +379,16 @@ export class PlayLineService extends BaseService {
       await this.midwayCache.set(cacheKey, true, this.CACHE_TTL);
     } catch (error) {
       // 检查是否是数据源错误
-      if (error && error.message && error.message.includes('DataSource undefined not found')) {
-        this.logger.error(TAG, `数据源错误: ${data.collection_name} ${data.video_name} ${data.name}`, error);
+      if (
+        error &&
+        error.message &&
+        error.message.includes('DataSource undefined not found')
+      ) {
+        this.logger.error(
+          TAG,
+          `数据源错误: ${data.collection_name} ${data.video_name} ${data.name}`,
+          error
+        );
         throw error;
       }
 
@@ -364,9 +410,9 @@ export class PlayLineService extends BaseService {
             sort: data.sort,
             collection_id: data.collection_id,
             collection_name: data.collection_name,
-            video_line_id: data.video_line_id
+            video_line_id: data.video_line_id,
           };
-          await this.playLineEntity.update({file: data.file}, updateData);
+          await this.playLineEntity.update({ file: data.file }, updateData);
           this.logger.info(
             TAG,
             `update (duplicate key) ${data.collection_name} ${data.video_name} ${data.name} video_line_id ${data.video_line_id}  success`
@@ -376,8 +422,16 @@ export class PlayLineService extends BaseService {
           await this.midwayCache.set(cacheKey, true, this.CACHE_TTL);
         } catch (updateError) {
           // 检查是否是数据源错误
-          if (updateError && updateError.message && updateError.message.includes('DataSource undefined not found')) {
-            this.logger.error(TAG, `数据源错误 (更新阶段): ${data.collection_name} ${data.video_name} ${data.name}`, updateError);
+          if (
+            updateError &&
+            updateError.message &&
+            updateError.message.includes('DataSource undefined not found')
+          ) {
+            this.logger.error(
+              TAG,
+              `数据源错误 (更新阶段): ${data.collection_name} ${data.video_name} ${data.name}`,
+              updateError
+            );
             throw updateError;
           }
 
@@ -424,7 +478,10 @@ export class PlayLineService extends BaseService {
   /**
    * 根据视频ID查询所有播放线路并按collection_id分组
    */
-  async startVip(video_id: number, vipNumber: number): Promise<{ [collection_id: number]: PlayLineEntity[] }> {
+  async startVip(
+    video_id: number,
+    vipNumber: number
+  ): Promise<{ [collection_id: number]: PlayLineEntity[] }> {
     if (!video_id || typeof video_id !== 'number') {
       this.logger.warn(TAG, '视频ID必须是有效的数字');
       return {};
@@ -440,8 +497,8 @@ export class PlayLineService extends BaseService {
     }
 
     const playLines = await this.playLineEntity.find({
-      where: {video_id},
-      order: {sort: 'ASC'},
+      where: { video_id },
+      order: { sort: 'ASC' },
     });
     const groupedPlayLines = playLines.reduce((acc, playLine) => {
       if (!acc[playLine.collection_id]) {
@@ -453,7 +510,7 @@ export class PlayLineService extends BaseService {
 
     // 优化：使用批量更新代替逐个保存
     const idsToUpdate: number[] = [];
-    Object.values(groupedPlayLines).forEach((playLines) => {
+    Object.values(groupedPlayLines).forEach(playLines => {
       if (vipNumber >= 0 && vipNumber < playLines.length) {
         for (let i = vipNumber; i < playLines.length; i++) {
           idsToUpdate.push(playLines[i].id);
@@ -462,7 +519,7 @@ export class PlayLineService extends BaseService {
     });
 
     if (idsToUpdate.length > 0) {
-      await this.playLineEntity.update({id: In(idsToUpdate)}, {vip: 1});
+      await this.playLineEntity.update({ id: In(idsToUpdate) }, { vip: 1 });
       this.logger.info(TAG, `批量更新VIP状态: ${idsToUpdate.length} 条记录`);
     }
 
@@ -481,7 +538,7 @@ export class PlayLineService extends BaseService {
       return;
     }
 
-    await this.playLineEntity.update({video_id: video_id}, {vip: 0});
+    await this.playLineEntity.update({ video_id: video_id }, { vip: 0 });
   }
 
   /**
@@ -493,7 +550,7 @@ export class PlayLineService extends BaseService {
       return;
     }
 
-    const playLine = await this.playLineEntity.findBy({id: In(ids)});
+    const playLine = await this.playLineEntity.findBy({ id: In(ids) });
     for (const line of playLine) {
       await this.playLineEntity.delete(line.id);
       if (line.video_line_id) {
@@ -527,7 +584,7 @@ export class PlayLineService extends BaseService {
     // 将数字转换为字符串以匹配 bigint 类型
     const stringIds = ids.map(id => id.toString());
     this.playLineEntity.delete({
-      video_id: In(stringIds)
+      video_id: In(stringIds),
     });
   }
 }

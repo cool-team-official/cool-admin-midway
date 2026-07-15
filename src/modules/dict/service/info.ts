@@ -129,12 +129,12 @@ export class DictInfoService extends BaseService {
         'a.status',
         'a.color',
         'a.color',
-        'a.remark'
+        'a.remark',
       ])
       .where('a.typeId in(:...typeIds) and status = 1', {
         typeIds: typeData.map(e => {
           return e.id;
-        })
+        }),
       })
       .orderBy('a.orderNum', 'ASC')
       .addOrderBy('a.createTime', 'ASC')
@@ -145,7 +145,7 @@ export class DictInfoService extends BaseService {
         return {
           ...e,
           // @ts-ignore
-          value: isNaN(value) ? e.value : value
+          value: isNaN(value) ? e.value : value,
         };
       });
     }
@@ -175,7 +175,7 @@ export class DictInfoService extends BaseService {
 
     // 根据typeId获取所有相关的字典信息
     const dictValues = await this.dictInfoEntity.find({
-      where: { typeId: type.id }
+      where: { typeId: type.id },
     });
 
     // 如果value是字符串，直接查找

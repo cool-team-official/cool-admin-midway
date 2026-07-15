@@ -201,7 +201,7 @@ export class DuplicateKeyHandler extends BaseService {
         const updateRules = await this.videoRulesEntity.findOneBy({
           collection_id: videoData.collection_id,
         });
-      
+
         // 检查更新规则并删除不允许更新的字段
         if (updateRules?.updateRules?.length) {
           const fieldsToKeep = new Set(updateRules.updateRules);
@@ -392,7 +392,7 @@ export class DuplicateKeyHandler extends BaseService {
    */
   async batchSafeInsert(
     videoList: Partial<VideoEntity>[],
-    batchSize: number = 5
+    batchSize = 5
   ): Promise<{ success: number; failed: number; results: VideoEntity[] }> {
     if (!videoList || videoList.length === 0) {
       return { success: 0, failed: 0, results: [] };

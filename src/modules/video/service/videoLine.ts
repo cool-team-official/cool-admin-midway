@@ -82,16 +82,16 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import {BaseService} from '@cool-midway/core';
-import {InjectEntityModel} from '@midwayjs/typeorm';
-import {In, Repository} from 'typeorm';
-import {VideoEntity} from '../entity/videos';
-import {VideoLineEntity} from '../entity/video_line';
-import {ILogger, Inject, InjectClient, Provide} from '@midwayjs/core';
-import {CollectionEntity} from '../entity/collection';
-import {Line} from '../bean/SourceVideo';
-import {PlayLineService} from './play_line';
-import {CachingFactory, MidwayCache} from '@midwayjs/cache-manager';
+import { BaseService } from '@cool-midway/core';
+import { InjectEntityModel } from '@midwayjs/typeorm';
+import { In, Repository } from 'typeorm';
+import { VideoEntity } from '../entity/videos';
+import { VideoLineEntity } from '../entity/video_line';
+import { ILogger, Inject, InjectClient, Provide } from '@midwayjs/core';
+import { CollectionEntity } from '../entity/collection';
+import { Line } from '../bean/SourceVideo';
+import { PlayLineService } from './play_line';
+import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 
 const TAG = 'VideoLineService';
 
@@ -123,7 +123,11 @@ export class VideoLineService extends BaseService {
 
     // 尝试从缓存获取数据
     const cachedData = await this.midwayCache.get(cacheKey);
-    if (cachedData && typeof cachedData === 'object' && (cachedData as any).video_id) {
+    if (
+      cachedData &&
+      typeof cachedData === 'object' &&
+      (cachedData as any).video_id
+    ) {
       this.logger.debug(TAG, `从缓存获取视频线路: ${cacheKey}`);
       return cachedData as VideoLineEntity;
     }
@@ -174,7 +178,12 @@ export class VideoLineService extends BaseService {
       if (episodes.length === 0 || (episodes.length === 1 && !episodes[0])) {
         this.logger.warn(
           TAG,
-          `视频 [${videoEntity.title}] play_url 格式错误，无法解析: ${videoEntity.play_url.substring(0, 100)}`
+          `视频 [${
+            videoEntity.title
+          }] play_url 格式错误，无法解析: ${videoEntity.play_url.substring(
+            0,
+            100
+          )}`
         );
         return [];
       }
@@ -194,7 +203,9 @@ export class VideoLineService extends BaseService {
         if (parts.length !== 2) {
           this.logger.warn(
             TAG,
-            `视频 [${videoEntity.title}] 第${index + 1}集格式错误，缺少$分隔符: ${episode.substring(0, 50)}`
+            `视频 [${videoEntity.title}] 第${
+              index + 1
+            }集格式错误，缺少$分隔符: ${episode.substring(0, 50)}`
           );
           skippedCount++;
           return;
@@ -238,11 +249,7 @@ export class VideoLineService extends BaseService {
 
       return result;
     } catch (error) {
-      this.logger.error(
-        TAG,
-        `解析视频列表失败 [${videoEntity.title}]:`,
-        error
-      );
+      this.logger.error(TAG, `解析视频列表失败 [${videoEntity.title}]:`, error);
       return [];
     }
   }
@@ -289,7 +296,10 @@ export class VideoLineService extends BaseService {
           const existsInCache = await this.midwayCache.get(cacheKey);
 
           if (existsInCache) {
-            this.logger.debug(TAG, `视频线路已存在，跳过: ${videoEntity.title}`);
+            this.logger.debug(
+              TAG,
+              `视频线路已存在，跳过: ${videoEntity.title}`
+            );
             skipCount++;
             continue;
           }
@@ -317,23 +327,27 @@ export class VideoLineService extends BaseService {
 
       // 批量 upsert video_line 记录
       try {
-        await this.videoLineEntity.upsert(
-          videoLineData,
-          ['collection_id', 'video_id']
-        );
+        await this.videoLineEntity.upsert(videoLineData, [
+          'collection_id',
+          'video_id',
+        ]);
       } catch (upsertError) {
         this.logger.error(TAG, '批量 upsert video_line 失败:', upsertError);
         throw upsertError;
       }
 
-      this.logger.info(TAG, `upsert video_line 完成，开始查询生成的 ID`);
+      this.logger.info(TAG, 'upsert video_line 完成，开始查询生成的 ID');
 
       // 批量查询刚插入的 video_line 记录获取 ID
       const videoIds = validVideos.map(v => v.id);
 
       this.logger.debug(
         TAG,
-        `准备查询 video_line，videoIds 数量: ${videoIds.length}, collection_id: ${collectionId}, 示例 IDs: ${videoIds.slice(0, 3).join(', ')}`
+        `准备查询 video_line，videoIds 数量: ${
+          videoIds.length
+        }, collection_id: ${collectionId}, 示例 IDs: ${videoIds
+          .slice(0, 3)
+          .join(', ')}`
       );
 
       const insertedVideoLines = await this.videoLineEntity.find({
@@ -347,7 +361,9 @@ export class VideoLineService extends BaseService {
         this.logger.error(TAG, '查询 video_line 记录失败，未找到任何记录');
         this.logger.error(
           TAG,
-          `调试信息：videoIds=${JSON.stringify(videoIds.slice(0, 10))}, collection_id=${collectionId}`
+          `调试信息：videoIds=${JSON.stringify(
+            videoIds.slice(0, 10)
+          )}, collection_id=${collectionId}`
         );
         return { successCount: 0, skipCount: validVideos.length };
       }
@@ -362,15 +378,15 @@ export class VideoLineService extends BaseService {
         const foundIds = new Set(insertedVideoLines.map(vl => vl.video_id));
         const missingVideos = validVideos.filter(v => !foundIds.has(v.id));
 
-        this.logger.warn(
-          TAG,
-          `有 ${missingVideos.length} 条视频线路查询失败`
-        );
+        this.logger.warn(TAG, `有 ${missingVideos.length} 条视频线路查询失败`);
 
         // 记录前10个失败的 ID
         this.logger.warn(
           TAG,
-          `失败的 video_id 示例：${missingVideos.slice(0, 10).map(v => v.id).join(', ')}`
+          `失败的 video_id 示例：${missingVideos
+            .slice(0, 10)
+            .map(v => v.id)
+            .join(', ')}`
         );
 
         // 尝试单独查询第一个失败的记录，验证是否存在
@@ -384,7 +400,9 @@ export class VideoLineService extends BaseService {
           });
           this.logger.warn(
             TAG,
-            `单独查询 [${firstMissing.id}] ${firstMissing.title} 结果：${singleCheck ? '存在' : '不存在'}`
+            `单独查询 [${firstMissing.id}] ${firstMissing.title} 结果：${
+              singleCheck ? '存在' : '不存在'
+            }`
           );
         }
       }
@@ -403,7 +421,11 @@ export class VideoLineService extends BaseService {
 
       this.logger.debug(
         TAG,
-        `构建映射完成，map 大小: ${videoLineIdMap.size}, 示例键: ${Array.from(videoLineIdMap.keys()).slice(0, 3).join(', ')}`
+        `构建映射完成，map 大小: ${videoLineIdMap.size}, 示例键: ${Array.from(
+          videoLineIdMap.keys()
+        )
+          .slice(0, 3)
+          .join(', ')}`
       );
 
       // 批量准备 play_line 数据
@@ -477,7 +499,11 @@ export class VideoLineService extends BaseService {
 
       // 批量缓存存在标记
       const cachePromises = validVideos.map(videoEntity =>
-        this.midwayCache.set(`${cacheKeyPrefix}${videoEntity.id}`, true, this.CACHE_TTL)
+        this.midwayCache.set(
+          `${cacheKeyPrefix}${videoEntity.id}`,
+          true,
+          this.CACHE_TTL
+        )
       );
       await Promise.all(cachePromises);
     } catch (error) {
@@ -495,7 +521,12 @@ export class VideoLineService extends BaseService {
     videoEntity: VideoEntity,
     collectionEntity: CollectionEntity
   ): Promise<void> {
-    if (!videoEntity || !videoEntity.id || !collectionEntity || !collectionEntity.id) {
+    if (
+      !videoEntity ||
+      !videoEntity.id ||
+      !collectionEntity ||
+      !collectionEntity.id
+    ) {
       this.logger.warn(TAG, '插入视频线路参数无效');
       return;
     }
@@ -540,17 +571,26 @@ export class VideoLineService extends BaseService {
           writeData
         );
       } else {
-        const inserted = await this.videoLineEntity.save(writeData as VideoLineEntity);
-        videoLineEntityId = inserted?.id || (await this.videoLineEntity.findOne({
-          where: {
-            video_id: videoId,
-            collection_id: collectionId,
-          },
-        }))?.id;
+        const inserted = await this.videoLineEntity.save(
+          writeData as VideoLineEntity
+        );
+        videoLineEntityId =
+          inserted?.id ||
+          (
+            await this.videoLineEntity.findOne({
+              where: {
+                video_id: videoId,
+                collection_id: collectionId,
+              },
+            })
+          )?.id;
       }
 
       if (!videoLineEntityId) {
-        this.logger.error(TAG, `无法获取 videoLineEntity id: ${videoEntity.title}`);
+        this.logger.error(
+          TAG,
+          `无法获取 videoLineEntity id: ${videoEntity.title}`
+        );
         return;
       }
 
@@ -565,7 +605,10 @@ export class VideoLineService extends BaseService {
         playLines.map(item => this.playLineService.insert(item))
       );
 
-      this.logger.info(TAG, `insert ${videoEntity.title} videoLineEntityId ${videoLineEntityId} success`);
+      this.logger.info(
+        TAG,
+        `insert ${videoEntity.title} videoLineEntityId ${videoLineEntityId} success`
+      );
 
       // 缓存存在标记
       await this.midwayCache.set(cacheKey, true, this.CACHE_TTL);
@@ -601,7 +644,10 @@ export class VideoLineService extends BaseService {
       });
 
       if (!videoLineEntity || !videoLineEntity.id) {
-        this.logger.error(TAG, `无法获取 videoLineEntity id: ${videoEntity.title}`);
+        this.logger.error(
+          TAG,
+          `无法获取 videoLineEntity id: ${videoEntity.title}`
+        );
         return;
       }
 
@@ -616,7 +662,10 @@ export class VideoLineService extends BaseService {
         playLines.map(item => this.playLineService.insert(item))
       );
 
-      this.logger.info(TAG, `update ${videoEntity.title} videoLineEntityId ${videoLineEntity.id}  success`);
+      this.logger.info(
+        TAG,
+        `update ${videoEntity.title} videoLineEntityId ${videoLineEntity.id}  success`
+      );
 
       // 缓存存在标记
       await this.midwayCache.set(cacheKey, true, this.CACHE_TTL);
@@ -632,11 +681,14 @@ export class VideoLineService extends BaseService {
       return;
     }
 
-    this.videoLineEntity.update({
-      collection_id: id
-    }, {
-      sort: sort
-    });
+    this.videoLineEntity.update(
+      {
+        collection_id: id,
+      },
+      {
+        sort: sort,
+      }
+    );
   }
 
   /**
@@ -651,7 +703,7 @@ export class VideoLineService extends BaseService {
     // 将数字转换为字符串以匹配 bigint 类型
     const stringIds = ids.map(id => id.toString());
     this.videoLineEntity.delete({
-      video_id: In(stringIds)
+      video_id: In(stringIds),
     });
   }
 }

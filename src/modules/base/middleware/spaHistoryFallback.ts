@@ -104,6 +104,7 @@ export class SpaHistoryFallbackMiddleware
   private ignorePatterns = [
     /^\/admin\//, // 后台 API（所有 /admin/ 开头的都是 API）
     /^\/app\//, // 移动端 API
+    /^\/swagger\//, // Swagger API 文档
     /^\/upload\//, // 上传文件
     /^\/static\//, // 静态资源
     /\.js$/, // JS 文件

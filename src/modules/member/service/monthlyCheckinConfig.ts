@@ -82,7 +82,7 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import {Provide, Inject, ILogger} from '@midwayjs/core';
+import { Provide, Inject, ILogger } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Between } from 'typeorm';
 import { Repository } from 'typeorm';
@@ -90,7 +90,7 @@ import { MonthlyCheckinConfigEntity } from '../entity/monthlyCheckinConfig';
 import { BaseService } from '@cool-midway/core';
 import { BusinessType, ScoreType } from './score';
 import { ScoreEntity } from '../entity/score';
-import * as moment from "moment/moment";
+import * as moment from 'moment/moment';
 
 // 定义返回类型接口
 interface InitDefaultConfigResult {
@@ -142,7 +142,9 @@ export class MonthlyCheckinConfigService extends BaseService {
    * 获取指定月份的所有签到配置
    * @param month 月份 (1-12)
    */
-  async getConfigByMonth(month: number): Promise<MonthlyCheckinConfigWithStatus[]> {
+  async getConfigByMonth(
+    month: number
+  ): Promise<MonthlyCheckinConfigWithStatus[]> {
     try {
       // 输入验证
       if (!month || month < 1 || month > 12) {
@@ -151,8 +153,14 @@ export class MonthlyCheckinConfigService extends BaseService {
       }
 
       // 获取当前月份的开始和结束时间
-      const startTime = moment().month(month - 1).startOf('month').toDate();
-      const endTime = moment().month(month - 1).endOf('month').toDate();
+      const startTime = moment()
+        .month(month - 1)
+        .startOf('month')
+        .toDate();
+      const endTime = moment()
+        .month(month - 1)
+        .endOf('month')
+        .toDate();
       // 获取当前日期
       const currentDay = new Date().getDate();
 
@@ -228,7 +236,10 @@ export class MonthlyCheckinConfigService extends BaseService {
    * @param month 月份 (1-12)
    * @param day 日期 (1-31)
    */
-  async getConfigByDate(month: number, day: number): Promise<MonthlyCheckinConfigEntity | null> {
+  async getConfigByDate(
+    month: number,
+    day: number
+  ): Promise<MonthlyCheckinConfigEntity | null> {
     try {
       // 输入验证
       if (!month || month < 1 || month > 12) {
@@ -358,7 +369,10 @@ export class MonthlyCheckinConfigService extends BaseService {
       // 批量插入
       if (configsToSave.length > 0) {
         await this.monthlyCheckinConfigEntity.save(configsToSave);
-        this.logger.info(this.TAG, `成功初始化 ${configsToSave.length} 条签到配置`);
+        this.logger.info(
+          this.TAG,
+          `成功初始化 ${configsToSave.length} 条签到配置`
+        );
       }
 
       return {

@@ -102,14 +102,22 @@ export class CryptoUtil {
     const keyBuffer = Buffer.from(key || this.cryptoConfig.aesKey, 'hex');
     const iv = crypto.randomBytes(16);
     const cryptoKey = await crypto.webcrypto.subtle.importKey(
-      'raw', keyBuffer, { name: 'AES-GCM' }, false, ['encrypt']
+      'raw',
+      keyBuffer,
+      { name: 'AES-GCM' },
+      false,
+      ['encrypt']
     );
     const encoded = new TextEncoder().encode(text);
     const encrypted = await crypto.webcrypto.subtle.encrypt(
-      { name: 'AES-GCM', iv }, cryptoKey, encoded
+      { name: 'AES-GCM', iv },
+      cryptoKey,
+      encoded
     );
     const buf = Buffer.from(encrypted);
-    return Buffer.concat([iv, buf.slice(0, -16), buf.slice(-16)]).toString('base64');
+    return Buffer.concat([iv, buf.slice(0, -16), buf.slice(-16)]).toString(
+      'base64'
+    );
   }
 
   async aesDecrypt(encryptedText: string, key?: string): Promise<string> {
@@ -119,10 +127,16 @@ export class CryptoUtil {
     const authTag = buffer.slice(-16);
     const ciphertext = buffer.slice(16, -16);
     const cryptoKey = await crypto.webcrypto.subtle.importKey(
-      'raw', keyBuffer, { name: 'AES-GCM' }, false, ['decrypt']
+      'raw',
+      keyBuffer,
+      { name: 'AES-GCM' },
+      false,
+      ['decrypt']
     );
     const decrypted = await crypto.webcrypto.subtle.decrypt(
-      { name: 'AES-GCM', iv }, cryptoKey, Buffer.concat([ciphertext, authTag])
+      { name: 'AES-GCM', iv },
+      cryptoKey,
+      Buffer.concat([ciphertext, authTag])
     );
     return new TextDecoder().decode(decrypted);
   }
@@ -132,26 +146,41 @@ export class CryptoUtil {
     // 使用 16 字节 IV，与客户端 pointycastle GCMBlockCipher 一致
     const iv = crypto.randomBytes(16);
     const cryptoKey = await crypto.webcrypto.subtle.importKey(
-      'raw', keyBuffer, { name: 'AES-GCM' }, false, ['encrypt']
+      'raw',
+      keyBuffer,
+      { name: 'AES-GCM' },
+      false,
+      ['encrypt']
     );
     const encrypted = await crypto.webcrypto.subtle.encrypt(
-      { name: 'AES-GCM', iv }, cryptoKey, data
+      { name: 'AES-GCM', iv },
+      cryptoKey,
+      data
     );
     const buf = Buffer.from(encrypted);
     return Buffer.concat([iv, buf.slice(0, -16), buf.slice(-16)]);
   }
 
-  async aesDecryptBuffer(encryptedBuffer: Buffer, key?: string): Promise<Buffer> {
+  async aesDecryptBuffer(
+    encryptedBuffer: Buffer,
+    key?: string
+  ): Promise<Buffer> {
     const keyBuffer = Buffer.from(key || this.cryptoConfig.aesKey, 'hex');
     // 16 字节 IV，与客户端一致
     const iv = encryptedBuffer.slice(0, 16);
     const authTag = encryptedBuffer.slice(-16);
     const ciphertext = encryptedBuffer.slice(16, -16);
     const cryptoKey = await crypto.webcrypto.subtle.importKey(
-      'raw', keyBuffer, { name: 'AES-GCM' }, false, ['decrypt']
+      'raw',
+      keyBuffer,
+      { name: 'AES-GCM' },
+      false,
+      ['decrypt']
     );
     const decrypted = await crypto.webcrypto.subtle.decrypt(
-      { name: 'AES-GCM', iv }, cryptoKey, Buffer.concat([ciphertext, authTag])
+      { name: 'AES-GCM', iv },
+      cryptoKey,
+      Buffer.concat([ciphertext, authTag])
     );
     return Buffer.from(decrypted);
   }
@@ -169,10 +198,16 @@ export class CryptoUtil {
     const keyBuffer = Buffer.from(key || this.cryptoConfig.aesKey, 'hex');
     const iv = crypto.randomBytes(16);
     const cryptoKey = await crypto.webcrypto.subtle.importKey(
-      'raw', keyBuffer, { name: 'AES-GCM' }, false, ['encrypt']
+      'raw',
+      keyBuffer,
+      { name: 'AES-GCM' },
+      false,
+      ['encrypt']
     );
     const encrypted = await crypto.webcrypto.subtle.encrypt(
-      { name: 'AES-GCM', iv }, cryptoKey, data
+      { name: 'AES-GCM', iv },
+      cryptoKey,
+      data
     );
     const buf = Buffer.from(encrypted);
     return Buffer.concat([iv, buf.slice(0, -16), buf.slice(-16)]);
@@ -188,10 +223,16 @@ export class CryptoUtil {
     const authTag = encryptedData.slice(-16);
     const ciphertext = encryptedData.slice(16, -16);
     const cryptoKey = await crypto.webcrypto.subtle.importKey(
-      'raw', keyBuffer, { name: 'AES-GCM' }, false, ['decrypt']
+      'raw',
+      keyBuffer,
+      { name: 'AES-GCM' },
+      false,
+      ['decrypt']
     );
     const decrypted = await crypto.webcrypto.subtle.decrypt(
-      { name: 'AES-GCM', iv }, cryptoKey, Buffer.concat([ciphertext, authTag])
+      { name: 'AES-GCM', iv },
+      cryptoKey,
+      Buffer.concat([ciphertext, authTag])
     );
     return Buffer.from(decrypted);
   }

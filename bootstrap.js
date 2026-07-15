@@ -1,13 +1,25 @@
-const {Bootstrap} = require('@midwayjs/bootstrap');
+const { Bootstrap } = require('@midwayjs/bootstrap');
 
 // 内存监控代码
 setInterval(() => {
   const memoryUsage = process.memoryUsage();
   console.log('内存使用情况:');
-  console.log('堆内存总量:', Math.round(memoryUsage.heapTotal / 1024 / 1024) + 'MB');
-  console.log('堆内存使用量:', Math.round(memoryUsage.heapUsed / 1024 / 1024) + 'MB');
-  console.log('外部内存使用量:', Math.round(memoryUsage.external / 1024 / 1024) + 'MB');
-  console.log('RSS (常驻集大小):', Math.round(memoryUsage.rss / 1024 / 1024) + 'MB');
+  console.log(
+    '堆内存总量:',
+    Math.round(memoryUsage.heapTotal / 1024 / 1024) + 'MB'
+  );
+  console.log(
+    '堆内存使用量:',
+    Math.round(memoryUsage.heapUsed / 1024 / 1024) + 'MB'
+  );
+  console.log(
+    '外部内存使用量:',
+    Math.round(memoryUsage.external / 1024 / 1024) + 'MB'
+  );
+  console.log(
+    'RSS (常驻集大小):',
+    Math.round(memoryUsage.rss / 1024 / 1024) + 'MB'
+  );
   console.log('-----------------------------------');
 }, 5000); // 每5秒检查一次
 
@@ -15,7 +27,10 @@ setInterval(() => {
 process.on('unhandledRejection', (reason, promise) => {
   console.error('未处理的 Promise Rejection:', reason);
   // 如果是数据库连接错误，不退出进程
-  if (reason && (reason.code === 'ER_NET_READ_INTERRUPTED' || reason.code === 'ETIMEDOUT')) {
+  if (
+    reason &&
+    (reason.code === 'ER_NET_READ_INTERRUPTED' || reason.code === 'ETIMEDOUT')
+  ) {
     console.error('数据库连接错误，应用将继续运行:', {
       code: reason.code,
       errno: reason.errno,
@@ -28,7 +43,7 @@ process.on('unhandledRejection', (reason, promise) => {
   if (reason && reason.message && reason.message.includes('READONLY')) {
     console.warn('Redis只读副本错误，应用将继续运行:', {
       message: reason.message,
-      command: reason.command
+      command: reason.command,
     });
     return;
   }
@@ -39,7 +54,7 @@ process.on('unhandledRejection', (reason, promise) => {
   });
 });
 
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   console.error('未捕获的异常:', error);
   // 对于数据库连接错误，不退出进程
   if (

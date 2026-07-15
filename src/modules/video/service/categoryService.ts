@@ -104,7 +104,7 @@ export class CategoryService {
 
   @Inject()
   dictInfoService: DictInfoService;
-  
+
   @Inject()
   networkErrorHandler: NetworkErrorHandler;
 
@@ -122,14 +122,14 @@ export class CategoryService {
   async syncCategory(query: CollectionEntity): Promise<any> {
     try {
       let list = [];
-      
+
       // 使用网络错误处理器进行请求
       this.logger.info(TAG, `开始同步分类: ${query.address}`);
       const result: any = await this.networkErrorHandler.requestWithRetry(
         {
           url: query.address,
           method: 'GET',
-          ...this.networkErrorHandler.getCollectionAxiosConfig()
+          ...this.networkErrorHandler.getCollectionAxiosConfig(),
         },
         3, // 最大重试3次
         2000 // 初始延迟2秒
@@ -139,11 +139,15 @@ export class CategoryService {
       return { list };
     } catch (error) {
       if (this.networkErrorHandler.isNetworkError(error)) {
-        const errorDetails = this.networkErrorHandler.getNetworkErrorDetails(error);
+        const errorDetails =
+          this.networkErrorHandler.getNetworkErrorDetails(error);
         this.logger.error(TAG, `分类同步网络错误: ${errorDetails}`);
-        
+
         if (this.networkErrorHandler.isDnsError(error)) {
-          this.logger.warn(TAG, `分类同步DNS解析失败，请检查URL: ${query.address}`);
+          this.logger.warn(
+            TAG,
+            `分类同步DNS解析失败，请检查URL: ${query.address}`
+          );
         }
       } else {
         this.logger.error(TAG, '分类同步失败:', error);

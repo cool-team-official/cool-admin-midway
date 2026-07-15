@@ -82,35 +82,35 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import {Column, Entity} from 'typeorm';
-import {BaseEntity} from '../../base/entity/base';
+import { Column, Entity } from 'typeorm';
+import { BaseEntity } from '../../base/entity/base';
 
 /**
  * 分类
  */
 @Entity('video_category')
 export class CategoryEntity extends BaseEntity {
-  @Column({comment: '父id', type: 'bigint'})
+  @Column({ comment: '父id', type: 'bigint' })
   parent_id: number;
 
-  @Column({comment: '类型 1影片 2名人 3文章', nullable: true, type: 'bigint'})
+  @Column({ comment: '类型 1影片 2名人 3文章', nullable: true, type: 'bigint' })
   type: number;
 
-  @Column({comment: '分类名称', length: 191, nullable: true})
+  @Column({ comment: '分类名称', length: 191, nullable: true })
   name: string;
 
-  @Column({comment: '排序', nullable: true, default: 0})
+  @Column({ comment: '排序', nullable: true, default: 0 })
   sort: number;
 
-  @Column({comment: '是否是竖屏，1-是，0-否', nullable: true, type: 'int'})
+  @Column({ comment: '是否是竖屏，1-是，0-否', nullable: true, type: 'int' })
   is_vertical: number;
 
-  @Column({comment: '是否是纯文字，1-是，0-否', nullable: true, type: 'int'})
+  @Column({ comment: '是否是纯文字，1-是，0-否', nullable: true, type: 'int' })
   is_font: string;
 
-  @Column({comment: '站点id', nullable: true, type: 'int'})
+  @Column({ comment: '站点id', nullable: true, type: 'int' })
   site_id: number;
 
-  @Column({comment: 'status', nullable: true, type: 'int'})
+  @Column({ comment: 'status', nullable: true, type: 'int' })
   status: number;
 }

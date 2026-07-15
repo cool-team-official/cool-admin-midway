@@ -138,7 +138,7 @@ export class ScoreController extends BaseController {
           createUserId,
           businessId,
           businessType,
-          reason,
+          reason
         )
       );
     } catch (e) {

@@ -201,7 +201,18 @@ fwIDAQAB
       },
     },
   },
+  // socketio 即时通讯配置
+  socketIO: {
+    upgrades: ['websocket'], // 可升级的协议
+    cors: {
+      origin: '*', // 允许所有来源，生产环境建议配置具体域名
+      methods: ['GET', 'POST'],
+      credentials: true,
+    },
+  },
   cool: {
+    // 是否开启API接口文档（Swagger）
+    eps: true,
     // Redis 配置（任务队列需要）
     redis: {
       host: '127.0.0.1',

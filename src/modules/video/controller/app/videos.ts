@@ -82,11 +82,17 @@
  未经授权的复制、修改、分发或商业使用将被追究法律责任。
 */
 
-import {BaseController, CoolController, CoolTag, CoolUrlTag, TagTypes,} from '@cool-midway/core';
-import {Body, Get, Inject, Post, Query} from '@midwayjs/core';
-import {Context} from '@midwayjs/koa';
-import {VideoEntity} from '../../entity/videos';
-import {VideosService} from '../../service/videos';
+import {
+  BaseController,
+  CoolController,
+  CoolTag,
+  CoolUrlTag,
+  TagTypes,
+} from '@cool-midway/core';
+import { Body, Get, Inject, Post, Query } from '@midwayjs/core';
+import { Context } from '@midwayjs/koa';
+import { VideoEntity } from '../../entity/videos';
+import { VideosService } from '../../service/videos';
 
 /**
  * 商品
@@ -108,7 +114,7 @@ import {VideosService} from '../../service/videos';
       'directors',
       'actors',
       'video_tag',
-      'video_class'
+      'video_class',
     ],
     fieldEq: [
       'category_id',
@@ -120,14 +126,15 @@ import {VideosService} from '../../service/videos';
       'searchRecommendType',
     ],
     where: ctx => {
-      const {directors, actors, video_tag, lastYear, lastId} = ctx.request.body;
-      const {aldult} = ctx.request.headers;
+      const { directors, actors, video_tag, lastYear, lastId } =
+        ctx.request.body;
+      const { aldult } = ctx.request.headers;
       const where = [];
 
       if (directors) {
         where.push([
           'MATCH(directors) AGAINST(:directors IN BOOLEAN MODE)',
-          {directors: `+${directors}*`},
+          { directors: `+${directors}*` },
           directors,
         ]);
       }
@@ -135,7 +142,7 @@ import {VideosService} from '../../service/videos';
       if (actors) {
         where.push([
           'MATCH(actors) AGAINST(:actors IN BOOLEAN MODE)',
-          {actors: `+${actors}*`},
+          { actors: `+${actors}*` },
           actors,
         ]);
       }
@@ -143,19 +150,22 @@ import {VideosService} from '../../service/videos';
       if (video_tag) {
         where.push([
           'MATCH(video_tag) AGAINST(:video_tag IN BOOLEAN MODE)',
-          {video_tag: `+${video_tag}*`},
+          { video_tag: `+${video_tag}*` },
           video_tag,
         ]);
       }
       if (aldult) {
         if (aldult === '0') {
-          where.push(['category_pid != :category_pid', {category_pid: 643}]);
+          where.push(['category_pid != :category_pid', { category_pid: 643 }]);
         }
       }
 
       // Keyset 分页条件
       if (lastYear && lastId) {
-        where.push(['(year < :lastYear OR (year = :lastYear AND id < :lastId))', {lastYear, lastId}]);
+        where.push([
+          '(year < :lastYear OR (year = :lastYear AND id < :lastId))',
+          { lastYear, lastId },
+        ]);
       }
 
       return where;
@@ -187,7 +197,6 @@ export class AppVideoController extends BaseController {
   @Inject()
   ctx: Context;
 
-
   @CoolTag(TagTypes.IGNORE_TOKEN)
   @Post('/sort')
   async sort(@Body() body): Promise<unknown> {
@@ -213,7 +222,7 @@ export class AppVideoController extends BaseController {
    * @param id 视频ID
    */
   @CoolTag(TagTypes.IGNORE_TOKEN)
-  @Get('/detail', {summary: '获取视频详情'})
+  @Get('/detail', { summary: '获取视频详情' })
   async detail(@Query('id') id: number): Promise<unknown> {
     try {
       const createUserId = this.ctx.user?.id;
@@ -225,7 +234,7 @@ export class AppVideoController extends BaseController {
   }
 
   @CoolTag(TagTypes.IGNORE_TOKEN)
-  @Get('/rank', {summary: '获取视频排行信息'})
+  @Get('/rank', { summary: '获取视频排行信息' })
   async videoRank(): Promise<unknown> {
     try {
       return this.ok(await this.videosService.getVideoRank());
@@ -238,7 +247,7 @@ export class AppVideoController extends BaseController {
    * 获取视频VideoEntity字段信息
    */
   @CoolTag(TagTypes.IGNORE_TOKEN)
-  @Get('/videoEntity', {summary: '获取视频字段信息'})
+  @Get('/videoEntity', { summary: '获取视频字段信息' })
   async videoEntity(): Promise<unknown> {
     try {
       return this.ok(await this.videosService.getVideoEntityFields());
@@ -248,7 +257,7 @@ export class AppVideoController extends BaseController {
   }
 
   @CoolTag(TagTypes.IGNORE_TOKEN)
-  @Post('/rematchCategory', {summary: '视频重新匹配分类'})
+  @Post('/rematchCategory', { summary: '视频重新匹配分类' })
   async rematchCategory(): Promise<unknown> {
     try {
       return this.ok(await this.videosService.rematchCategory());
