@@ -138,7 +138,10 @@ export class ConcurrencyService {
   private readonly yieldThreshold = 20;
   private readonly listYieldThreshold = 100;
   private readonly redisPopBatchSize = 40;
-  private readonly pageWorkerCount = 8;
+  private readonly pageWorkerCount = 2; // 降低并发数，避免被采集源拉黑
+
+  // 请求间隔时间（毫秒），避免请求过于频繁被采集源拉黑
+  private readonly requestInterval = 500; // 500ms
 
   // 单次处理的最大数量，防止长时间阻塞
   private readonly maxProcessPerCall = 200;
@@ -282,6 +285,11 @@ export class ConcurrencyService {
 
         try {
           this.logger.debug(TAG, `开始处理第${sequence}条数据`);
+
+          // 请求间隔，避免过于频繁被采集源拉黑
+          if (handledCount > 0) {
+            await new Promise(resolve => setTimeout(resolve, this.requestInterval));
+          }
 
           const pageStart = Date.now();
           const pageParams = new VideoParams(data.videoParams);

@@ -258,46 +258,57 @@ export class VideoLineService extends BaseService {
       }));
 
       // 批量 upsert video_line 记录
-      const upsertResult = await this.videoLineEntity.upsert(
+      await this.videoLineEntity.upsert(
         videoLineData,
         ['collection_id', 'video_id']
       );
 
-      if (upsertResult.identifiers && upsertResult.identifiers.length > 0) {
-        successCount = upsertResult.identifiers.length;
+      // upsert 后重新查询获取所有 video_line 的 ID（upsert 的 identifiers 可能不完整）
+      const videoIds = validVideos.map(v => v.id);
+      const existingVideoLines = await this.videoLineEntity.find({
+        where: {
+          collection_id: collectionId,
+          video_id: In(videoIds),
+        },
+        select: ['id', 'video_id'],
+      });
 
-        // 批量准备 play_line 数据
-        const allPlayLines: Array<Line> = [];
-        const videoLineIdMap = new Map<number, number>();
+      const videoLineIdMap = new Map<number, number>();
+      existingVideoLines.forEach(vl => {
+        videoLineIdMap.set(Number(vl.video_id), vl.id);
+      });
 
-        for (let i = 0; i < validVideos.length && i < upsertResult.identifiers.length; i++) {
-          const videoEntity = validVideos[i];
-          const videoLineEntityId = upsertResult.identifiers[i]?.id;
+      // 批量准备 play_line 数据
+      const allPlayLines: Array<Line> = [];
 
-          if (videoLineEntityId) {
-            videoLineIdMap.set(videoEntity.id, videoLineEntityId);
-            const playLines = this.parseVideoList(
-              videoEntity,
-              collectionEntity,
-              videoLineEntityId
-            );
-            allPlayLines.push(...playLines);
-          }
+      for (const videoEntity of validVideos) {
+        const videoLineEntityId = videoLineIdMap.get(Number(videoEntity.id));
+        if (videoLineEntityId) {
+          const playLines = this.parseVideoList(
+            videoEntity,
+            collectionEntity,
+            videoLineEntityId
+          );
+          allPlayLines.push(...playLines);
+        } else {
+          this.logger.warn(TAG, `未找到 video_line ID, video_id: ${videoEntity.id}, title: ${videoEntity.title}`);
         }
-
-        // 批量插入 play_line 记录
-        if (allPlayLines.length > 0) {
-          await this.playLineService.batchInsert(allPlayLines);
-        }
-
-        // 批量缓存存在标记
-        const cachePromises = validVideos.map(videoEntity => 
-          this.midwayCache.set(`${cacheKeyPrefix}${videoEntity.id}`, true, this.CACHE_TTL)
-        );
-        await Promise.all(cachePromises);
-
-        this.logger.info(TAG, `批量插入视频线路完成，成功${successCount}条，跳过${skipCount}条`);
       }
+
+      // 批量插入 play_line 记录
+      if (allPlayLines.length > 0) {
+        await this.playLineService.batchInsert(allPlayLines);
+      }
+
+      successCount = existingVideoLines.length;
+
+      // 批量缓存存在标记
+      const cachePromises = validVideos.map(videoEntity => 
+        this.midwayCache.set(`${cacheKeyPrefix}${videoEntity.id}`, true, this.CACHE_TTL)
+      );
+      await Promise.all(cachePromises);
+
+      this.logger.info(TAG, `批量插入视频线路完成，成功${successCount}条，跳过${skipCount}条`);
     } catch (error) {
       this.logger.error(TAG, '批量插入视频线路异常', error);
       throw error;
