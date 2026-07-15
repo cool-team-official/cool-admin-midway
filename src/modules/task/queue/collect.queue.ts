@@ -212,7 +212,9 @@ export class CollectQueue extends BaseCoolQueue {
 
         this.logger.info(
           'CollectQueue',
-          `处理第 ${Math.floor(i / this.BATCH_SIZE) + 1} 批次，包含 ${batch.length} 个采集源`
+          `处理第 ${Math.floor(i / this.BATCH_SIZE) + 1} 批次，包含 ${
+            batch.length
+          } 个采集源`
         );
 
         // 并发处理当前批次
@@ -246,7 +248,10 @@ export class CollectQueue extends BaseCoolQueue {
   /**
    * 处理单个采集源
    */
-  private async processSingleCollection(id: number, name: string): Promise<void> {
+  private async processSingleCollection(
+    id: number,
+    name: string
+  ): Promise<void> {
     try {
       await this.collectionService.day(id);
     } catch (error) {

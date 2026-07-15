@@ -89,49 +89,28 @@ import {
   TagTypes,
 } from '@cool-midway/core';
 import { Get, Inject, Query } from '@midwayjs/core';
-import { TaskProgressService } from '../../service/taskProgress';
+import { RedisService } from '@midwayjs/redis';
 
 /**
  * 任务进度查询控制器
- * 提供基于 Redis 的任务状态轮询接口
+ * 直接查询 Redis 队列剩余记录数
  */
 @CoolController()
 export class TaskProgressController extends BaseController {
   @Inject()
-  taskProgressService: TaskProgressService;
+  redisService: RedisService;
 
   /**
-   * 查询任务进度
+   * 查询任务进度（直接查询 Redis 队列剩余记录）
    * GET /admin/task/progress?taskId=xxx
    */
   @CoolTag(TagTypes.IGNORE_TOKEN)
-  @Get('/progress', { summary: '查询任务进度' })
-  async getProgress(@Query('taskId') taskId: string) {
-    if (!taskId) {
-      return this.fail('taskId 不能为空');
-    }
+  @Get('/overview', { summary: '查询任务进度' })
+  async getProgress() {
+    const remaining = await this.redisService.llen('video:collection');
 
-    const progress = await this.taskProgressService.getProgress(taskId);
-
-    if (!progress) {
-      return this.fail('任务不存在或已过期');
-    }
-
-    return this.ok(progress);
-  }
-
-  /**
-   * 删除任务进度
-   * GET /admin/task/progress/delete?taskId=xxx
-   */
-  @CoolTag(TagTypes.IGNORE_TOKEN)
-  @Get('/progress/delete', { summary: '删除任务进度' })
-  async deleteProgress(@Query('taskId') taskId: string) {
-    if (!taskId) {
-      return this.fail('taskId 不能为空');
-    }
-
-    await this.taskProgressService.deleteProgress(taskId);
-    return this.ok();
+    return this.ok({
+      remaining,
+    });
   }
 }
