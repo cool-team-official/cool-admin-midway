@@ -7,6 +7,7 @@ import { v1 as uuid } from 'uuid';
 import { CoolCommException } from '@cool-midway/core';
 import * as _ from 'lodash';
 import { pUploadPath } from '../../../../comm/path';
+import { app } from '@midwayjs/core'; // 导入app以获取配置
 
 /**
  * 文件上传
@@ -40,6 +41,42 @@ export class CoolPlugin extends BasePluginHook implements BaseUpload {
       throw new CoolCommException('非法的文件路径');
     }
     return normalized;
+  }
+
+  /**
+   * 验证文件扩展名是否在允许的白名单中
+   * @param filename 文件名
+   * @returns 验证结果
+   */
+  private validateFileExtension(filename: string): boolean {
+    // 从配置中获取允许的文件扩展名白名单
+    const uploadConfig = app.getConfig('upload');
+    const whitelist = uploadConfig?.whitelist;
+    
+    // 如果白名单为null或undefined，则允许所有扩展名（向后兼容）
+    if (!whitelist) {
+      return true;
+    }
+    
+    // 获取文件扩展名
+    const ext = path.extname(filename).toLowerCase();
+    
+    // 检查扩展名是否在白名单中
+    return whitelist.includes(ext);
+  }
+
+  /**
+   * 获取默认的文件扩展名白名单
+   * @returns 默认白名单
+   */
+  private getDefaultWhitelist(): string[] {
+    return [
+      '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', // 图片
+      '.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm',  // 视频
+      '.mp3', '.wav', '.flac', '.aac', '.ogg',         // 音频
+      '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', // 文档
+      '.txt', '.csv', '.json', '.xml', '.zip', '.rar', '.7z'  // 其他
+    ];
   }
 
   /**
@@ -93,7 +130,16 @@ export class CoolPlugin extends BasePluginHook implements BaseUpload {
       safeFileName = this.sanitizePath(fileName);
       // 只取文件名部分，去除可能的子目录
       safeFileName = path.basename(safeFileName);
+      
+      // 验证文件扩展名是否在白名单中
+      if (!this.validateFileExtension(safeFileName)) {
+        throw new CoolCommException('不允许的文件类型');
+      }
     } else {
+      // 验证从URL获取的扩展名是否在白名单中
+      if (extend && !this.validateFileExtension(`file${extend}`)) {
+        throw new CoolCommException('不允许的文件类型');
+      }
       safeFileName = uuid() + extend;
     }
 
@@ -129,6 +175,11 @@ export class CoolPlugin extends BasePluginHook implements BaseUpload {
 
     // 验证key安全性
     const safeKey = this.sanitizePath(key);
+    
+    // 验证文件扩展名是否在白名单中
+    if (!this.validateFileExtension(safeKey)) {
+      throw new CoolCommException('不允许的文件类型');
+    }
 
     const data = fs.readFileSync(filePath);
 
@@ -164,6 +215,11 @@ export class CoolPlugin extends BasePluginHook implements BaseUpload {
       let safeKey: string | undefined;
       if (key) {
         safeKey = this.sanitizePath(key);
+        
+        // 验证文件扩展名是否在白名单中
+        if (!this.validateFileExtension(safeKey)) {
+          throw new CoolCommException('不允许的文件类型');
+        }
       }
 
       if (_.isEmpty(ctx.files)) {
@@ -174,8 +230,15 @@ export class CoolPlugin extends BasePluginHook implements BaseUpload {
       // 安全处理原始文件名
       const originalFileName = path.basename(file.filename);
       const extension = originalFileName.split('.').pop();
-
+      
+      // 构建待验证的最终文件名
       const finalName = safeKey || `${uuid()}.${extension}`;
+      
+      // 验证最终文件名的扩展名
+      if (!this.validateFileExtension(finalName)) {
+        throw new CoolCommException('不允许的文件类型');
+      }
+      
       const name = `${dateDir}/${finalName}`;
       const target = path.join(basePath, name);
 
