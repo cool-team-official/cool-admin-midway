@@ -51,9 +51,9 @@ export class BaseTranslateMiddleware
             return;
           }
         }
-        ctx.status = 200;
+        ctx.status = error.statusCode || 200;
         ctx.body = {
-          code: RESCODE.COMMFAIL,
+          code: error.status || RESCODE.COMMFAIL,
           message: error.message,
         };
         return;
