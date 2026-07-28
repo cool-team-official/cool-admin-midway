@@ -6,7 +6,7 @@ import * as moment from 'moment';
 import { v1 as uuid } from 'uuid';
 import { CoolCommException } from '@cool-midway/core';
 import * as _ from 'lodash';
-import { pUploadPath } from '../../../../comm/path';
+import { pUploadPath } from '@/comm/path';
 
 /**
  * 文件上传

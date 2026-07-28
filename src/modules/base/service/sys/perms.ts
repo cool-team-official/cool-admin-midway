@@ -1,21 +1,21 @@
-import { Inject, InjectClient, Provide } from '@midwayjs/core';
+import { Inject, Provide } from '@midwayjs/core';
 import { BaseService } from '@cool-midway/core';
 import { BaseSysMenuService } from './menu';
 import { BaseSysRoleService } from './role';
 import { BaseSysDepartmentService } from './department';
 import { Context } from '@midwayjs/koa';
-import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 import { BaseSysRoleEntity } from '../../entity/sys/role';
 import { In, Repository } from 'typeorm';
 import { InjectEntityModel } from '@midwayjs/typeorm';
+import { CacheStore } from '@/comm/cache';
 
 /**
  * 权限
  */
 @Provide()
 export class BaseSysPermsService extends BaseService {
-  @InjectClient(CachingFactory, 'default')
-  midwayCache: MidwayCache;
+  @Inject()
+  cache: CacheStore;
 
   @Inject()
   baseSysMenuService: BaseSysMenuService;
@@ -41,13 +41,13 @@ export class BaseSysPermsService extends BaseService {
     await this.midwayCache.del(`admin:token:${userId}`);
     const roleIds = await this.baseSysRoleService.getByUser(userId);
     const perms = await this.baseSysMenuService.getPerms(roleIds);
-    await this.midwayCache.set(`admin:perms:${userId}`, perms);
+    await this.cache.set(`admin:perms:${userId}`, perms);
     // 更新部门权限
     const departments = await this.baseSysDepartmentService.getByRoleIds(
       roleIds,
       await this.isAdmin(roleIds)
     );
-    await this.midwayCache.set(`admin:department:${userId}`, departments);
+    await this.cache.set(`admin:department:${userId}`, departments);
   }
 
   /**
@@ -79,9 +79,7 @@ export class BaseSysPermsService extends BaseService {
    * @return 部门ID数组
    */
   async departmentIds(userId: number) {
-    const department: any = await this.midwayCache.get(
-      `admin:department:${userId}`
-    );
+    const department: any = await this.cache.get(`admin:department:${userId}`);
     if (department) {
       return department;
     } else {

@@ -2,9 +2,8 @@ import {
   App,
   IMidwayApplication,
   Inject,
-  InjectClient,
-  Scope,
   Provide,
+  Scope,
   ScopeEnum,
 } from '@midwayjs/core';
 import * as fs from 'fs';
@@ -13,10 +12,9 @@ import { PluginInfoEntity } from '../entity/info';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Repository } from 'typeorm';
 import { PluginInfo } from '../interface';
-import * as _ from 'lodash';
-import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 import { CoolEventManager } from '@cool-midway/core';
 import { PluginService } from './info';
+import { CacheStore } from '@/comm/cache';
 
 export const PLUGIN_CACHE_KEY = 'plugin:init';
 
@@ -40,8 +38,8 @@ export class PluginCenterService {
   @InjectEntityModel(PluginInfoEntity)
   pluginInfoEntity: Repository<PluginInfoEntity>;
 
-  @InjectClient(CachingFactory, 'default')
-  midwayCache: MidwayCache;
+  @Inject()
+  cache: CacheStore;
 
   @Inject()
   coolEventManager: CoolEventManager;
@@ -95,7 +93,7 @@ export class PluginCenterService {
     if (pluginInfo?.singleton) {
       const instance = new cls();
       await instance.init(this.pluginInfos.get(key), null, this.app, {
-        cache: this.midwayCache,
+        cache: this.cache,
         pluginService: this.pluginService,
       });
       this.plugins.set(key, instance);

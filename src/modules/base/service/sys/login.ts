@@ -1,4 +1,4 @@
-import { Inject, Provide, Config, InjectClient } from '@midwayjs/core';
+import { Config, Inject, Provide } from '@midwayjs/core';
 import { BaseService, CoolCommException } from '@cool-midway/core';
 import { LoginDTO } from '../../dto/login';
 import { v1 as uuid } from 'uuid';
@@ -12,17 +12,17 @@ import { BaseSysMenuService } from './menu';
 import { BaseSysDepartmentService } from './department';
 import * as jwt from 'jsonwebtoken';
 import { Context } from '@midwayjs/koa';
-import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 import { Utils } from '../../../../comm/utils';
 import * as svgCaptcha from 'svg-captcha';
+import { CacheStore } from '@/comm/cache';
 
 /**
  * 登录
  */
 @Provide()
 export class BaseSysLoginService extends BaseService {
-  @InjectClient(CachingFactory, 'default')
-  midwayCache: MidwayCache;
+  @Inject()
+  cache: CacheStore;
 
   @InjectEntityModel(BaseSysUserEntity)
   baseSysUserEntity: Repository<BaseSysUserEntity>;
@@ -90,13 +90,10 @@ export class BaseSysLoginService extends BaseService {
         roleIds,
         user.username === 'admin'
       );
-      await this.midwayCache.set(`admin:department:${user.id}`, departments);
-      await this.midwayCache.set(`admin:perms:${user.id}`, perms);
-      await this.midwayCache.set(`admin:token:${user.id}`, result.token);
-      await this.midwayCache.set(
-        `admin:token:refresh:${user.id}`,
-        result.token
-      );
+      await this.cache.set(`admin:department:${user.id}`, departments);
+      await this.cache.set(`admin:perms:${user.id}`, perms);
+      await this.cache.set(`admin:token:${user.id}`, result.token);
+      await this.cache.set(`admin:token:refresh:${user.id}`, result.token);
 
       return result;
     } else {
@@ -141,7 +138,7 @@ export class BaseSysLoginService extends BaseService {
     result.data = `data:image/svg+xml;base64,${base64Data}`;
 
     // 半小时过期
-    await this.midwayCache.set(
+    await this.cache.set(
       `verify:img:${result.captchaId}`,
       svg.text.toLowerCase(),
       1800 * 1000
@@ -155,11 +152,11 @@ export class BaseSysLoginService extends BaseService {
   async logout() {
     if (!this.coolConfig.jwt.sso) return;
     const { userId } = this.ctx.admin;
-    await this.midwayCache.del(`admin:department:${userId}`);
-    await this.midwayCache.del(`admin:perms:${userId}`);
-    await this.midwayCache.del(`admin:token:${userId}`);
-    await this.midwayCache.del(`admin:token:refresh:${userId}`);
-    await this.midwayCache.del(`admin:passwordVersion:${userId}`);
+    await this.cache.del(`admin:department:${userId}`);
+    await this.cache.del(`admin:perms:${userId}`);
+    await this.cache.del(`admin:token:${userId}`);
+    await this.cache.del(`admin:token:refresh:${userId}`);
+    await this.cache.del(`admin:passwordVersion:${userId}`);
   }
 
   /**
@@ -168,11 +165,11 @@ export class BaseSysLoginService extends BaseService {
    * @param value 验证码
    */
   async captchaCheck(captchaId, value) {
-    const rv = await this.midwayCache.get(`verify:img:${captchaId}`);
+    const rv = await this.cache.get(`verify:img:${captchaId}`);
     if (!rv || !value || value.toLowerCase() !== rv) {
       return false;
     } else {
-      this.midwayCache.del(`verify:img:${captchaId}`);
+      this.cache.del(`verify:img:${captchaId}`);
       return true;
     }
   }
@@ -185,10 +182,7 @@ export class BaseSysLoginService extends BaseService {
    * @param isRefresh 是否是刷新
    */
   async generateToken(user, roleIds, expire, isRefresh?) {
-    await this.midwayCache.set(
-      `admin:passwordVersion:${user.id}`,
-      user.passwordV
-    );
+    await this.cache.set(`admin:passwordVersion:${user.id}`, user.passwordV);
     const tokenInfo = {
       isRefresh: false,
       roleIds,
@@ -229,14 +223,11 @@ export class BaseSysLoginService extends BaseService {
       result.refreshToken = jwt.sign(decoded, this.coolConfig.jwt.secret, {
         expiresIn: refreshExpire,
       });
-      await this.midwayCache.set(
+      await this.cache.set(
         `admin:passwordVersion:${decoded['userId']}`,
         decoded['passwordVersion']
       );
-      await this.midwayCache.set(
-        `admin:token:${decoded['userId']}`,
-        result.token
-      );
+      await this.cache.set(`admin:token:${decoded['userId']}`, result.token);
       return result;
     }
   }

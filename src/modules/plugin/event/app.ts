@@ -1,16 +1,9 @@
 import { CoolEvent, Event } from '@cool-midway/core';
-import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
-import {
-  App,
-  Config,
-  ILogger,
-  Inject,
-  InjectClient,
-  Logger,
-} from '@midwayjs/core';
+import { App, Config, ILogger, Inject, Logger } from '@midwayjs/core';
 import { IMidwayKoaApplication } from '@midwayjs/koa';
 import { PLUGIN_CACHE_KEY, PluginCenterService } from '../service/center';
 import { PluginTypesService } from '../service/types';
+import { CacheStore } from '@/comm/cache';
 
 /**
  * 插件事件
@@ -26,8 +19,8 @@ export class PluginAppEvent {
   @App()
   app: IMidwayKoaApplication;
 
-  @InjectClient(CachingFactory, 'default')
-  midwayCache: MidwayCache;
+  @Inject()
+  cache: CacheStore;
 
   @Inject()
   pluginCenterService: PluginCenterService;
@@ -37,7 +30,7 @@ export class PluginAppEvent {
 
   @Event('onServerReady')
   async onServerReady() {
-    await this.midwayCache.set(PLUGIN_CACHE_KEY, []);
+    await this.cache.set(PLUGIN_CACHE_KEY, []);
     this.pluginCenterService.init();
     // this.pluginTypesService.reGenerate();
   }

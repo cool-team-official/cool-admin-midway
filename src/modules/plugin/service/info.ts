@@ -13,23 +13,23 @@ import {
   IMidwayApplication,
   IMidwayContext,
   Inject,
-  InjectClient,
   Logger,
   Provide,
 } from '@midwayjs/core';
 import * as _ from 'lodash';
 import { PluginInfo } from '../interface';
 import { PluginCenterService } from './center';
-import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 import {
   GLOBAL_EVENT_PLUGIN_INIT,
   GLOBAL_EVENT_PLUGIN_REMOVE,
 } from '../event/init';
-import { PluginMap, AnyString } from '../../../../typings/plugin';
+import { AnyString, PluginMap } from '../../../../typings/plugin';
 import { PluginTypesService } from './types';
 import * as path from 'path';
 import * as fs from 'fs';
 import { pPluginPath } from '../../../comm/path';
+import { CacheStore } from '@/comm/cache';
+
 /**
  * 插件信息
  */
@@ -50,8 +50,8 @@ export class PluginService extends BaseService {
   @Config('module.plugin.hooks')
   hooksConfig;
 
-  @InjectClient(CachingFactory, 'default')
-  midwayCache: MidwayCache;
+  @Inject()
+  cache: CacheStore;
 
   @Inject()
   coolEventManager: CoolEventManager;
@@ -182,7 +182,7 @@ export class PluginService extends BaseService {
     } else {
       instance = new (await this.pluginCenterService.plugins.get(key))();
       await instance.init(pluginInfo, this.ctx, this.app, {
-        cache: this.midwayCache,
+        cache: this.cache,
         pluginService: this,
       });
     }
