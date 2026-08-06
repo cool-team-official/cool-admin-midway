@@ -11,6 +11,7 @@ import { UserSmsService } from './sms';
 import { v1 as uuid } from 'uuid';
 import * as md5 from 'md5';
 import { PluginService } from '../../plugin/service/info';
+import { CryptoUtil } from '../../../utils/crypto';
 
 /**
  * 登录
@@ -265,13 +266,31 @@ export class UserLoginService extends BaseService {
   async password(phone, password) {
     const user = await this.userInfoEntity.findOneBy({ phone });
 
-    if (user && user.password == md5(password)) {
-      return this.token({
-        id: user.id,
-      });
-    } else {
-      throw new CoolCommException('账号或密码错误');
+    if (user && user.password) {
+      let isPasswordValid = false;
+
+      // 检查密码格式，支持MD5向bcrypt的平滑迁移
+      if (CryptoUtil.isBcryptHash(user.password)) {
+        // 新的bcrypt格式
+        isPasswordValid = await CryptoUtil.verifyPassword(password, user.password);
+      } else if (CryptoUtil.isMD5Hash(user.password)) {
+        // 旧的MD5格式，验证后自动升级为bcrypt
+        isPasswordValid = user.password === md5(password);
+        if (isPasswordValid) {
+          // 自动升级密码为bcrypt格式
+          const hashedPassword = await CryptoUtil.hashPassword(password);
+          await this.userInfoEntity.update(user.id, { password: hashedPassword });
+        }
+      }
+
+      if (isPasswordValid) {
+        return this.token({
+          id: user.id,
+        });
+      }
     }
+
+    throw new CoolCommException('账号或密码错误');
   }
 
   /**
