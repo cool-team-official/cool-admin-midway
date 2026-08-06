@@ -84,7 +84,7 @@ export class BaseTranslateService {
       return;
     }
     if (!this.basePath) {
-      this.basePath = path.join(this.app.getBaseDir(), '..', 'src', 'locales');
+      this.basePath = path.join(this.app.getBaseDir(), '..', this.app.getEnv() === 'local' ? 'src' : 'dist', 'locales');
     }
 
     // 清空现有映射
